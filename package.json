@@ -35,6 +35,7 @@
     "prop-types": "15.6.2",
     "react": "16.6.3",
     "react-addons-pure-render-mixin": "15.6.2",
+    "react-bluekit": "0.4.4",
     "react-bootstrap": "0.32.4",
     "react-color": "2.14.1",
     "react-contextmenu": "2.10.0",
@@ -102,6 +103,7 @@
     "nightwatch": "1.0.14",
     "node-sass": "4.10.0",
     "react-router-enzyme-context": "^1.2.0",
+    "react-styleguidist": "^8.0.6",
     "redux-mock-store": "1.5.3",
     "redux-persist-node-storage": "2.0.0",
     "remote-redux-devtools": "0.5.13",
@@ -179,6 +181,8 @@
     "selenium-install": "selenium-standalone install --config=./tests/e2e/config.js",
     "selenium-start": "selenium-standalone start --config=./tests/e2e/config.js",
     "cypress:run": "cypress run",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "styleguide": "styleguidist server",
+    "styleguide:build": "styleguidist build"
   }
 }

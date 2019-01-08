@@ -8,6 +8,8 @@ import loadingGif from 'images/load.gif';
 
 export default class LoadingBars extends React.PureComponent {
     static propTypes = {
+
+        /** Text to show aside the bars */
         text: PropTypes.string,
     }
 

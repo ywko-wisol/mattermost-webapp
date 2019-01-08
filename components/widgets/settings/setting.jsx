@@ -35,12 +35,26 @@ const Setting = (props) => {
 };
 
 Setting.propTypes = {
+
+    /** for attribute of the label to bind it to the input field */
     inputId: PropTypes.string,
+
+    /** Text to show as label */
     label: PropTypes.node.isRequired,
+
+    /** Extra class names to add to the label */
     labelClassName: PropTypes.string,
+
+    /** Extra class names to add to the input container */
     inputClassName: PropTypes.string,
+
+    /** Input field */
     children: PropTypes.node.isRequired,
+
+    /** Text with the help information of the setting */
     helpText: PropTypes.node,
+
+    /** Text to show at the very end of the setting */
     footer: PropTypes.node,
 };
 

@@ -8,15 +8,21 @@ import LoadingSpinner from './loading_spinner.jsx';
 
 export default class LoadingWrapper extends React.Component {
     static propTypes = {
+
+        /** Show or not the loading spinner and text */
         loading: PropTypes.bool.isRequired,
+
+        /** Text to show aside the spinner while loading */
         text: PropTypes.string,
+
+        /** Content to show while is not loading */
         children: PropTypes.node,
     }
 
     static defaultProps = {
         loading: true,
-        text: null,
-        children: null,
+        text: '',
+        children: '',
     }
 
     render() {

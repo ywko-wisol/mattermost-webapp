@@ -18,8 +18,14 @@ const FormattedAdminHeader = (props) => (
 );
 
 FormattedAdminHeader.propTypes = {
+
+    /** Translation id of the text to be shown */
     id: PropTypes.string.isRequired,
+
+    /** Default string to be shown when the translation is not found */
     defaultMessage: PropTypes.string.isRequired,
+
+    /** Values to fill in translation string placeholders */
     values: PropTypes.object,
 };
 

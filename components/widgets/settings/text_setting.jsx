@@ -8,21 +8,47 @@ import Setting from './setting.jsx';
 
 export default class TextSetting extends React.Component {
     static propTypes = {
+
+        /** id attribute of the input field */
         id: PropTypes.string.isRequired,
+
+        /** Text to show as label */
         label: PropTypes.node.isRequired,
+
+        /** Extra class names to add to the label */
         labelClassName: PropTypes.string,
+
+        /** Placeholder for the input field */
         placeholder: PropTypes.string,
+
+        /** Text with the help information of the setting */
         helpText: PropTypes.node,
+
+        /** Text to show at the very end of the setting */
         footer: PropTypes.node,
+
+        /** Value in the input field */
         value: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.number,
         ]).isRequired,
+
+        /** Extra class names to add to the input container */
         inputClassName: PropTypes.string,
+
+        /** Max length of the input field */
         maxLength: PropTypes.number,
+
+        /** Allow to resize the input field */
         resizable: PropTypes.bool,
+
+        /** Function executed for each change in the input field */
         onChange: PropTypes.func,
+
+        /** Disable the input field */
         disabled: PropTypes.bool,
+
+        /** Input field type */
         type: PropTypes.oneOf([
             'input',
             'textarea',

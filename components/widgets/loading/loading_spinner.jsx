@@ -8,6 +8,8 @@ import * as Utils from 'utils/utils.jsx';
 
 export default class LoadingSpinner extends React.PureComponent {
     static propTypes = {
+
+        /** Text to show aside the spinner */
         text: PropTypes.string,
     }
 

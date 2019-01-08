@@ -11,6 +11,8 @@ const AdminHeader = (props) => (
 );
 
 AdminHeader.propTypes = {
+
+    /** Header content */
     children: PropTypes.node.isRequired,
 };
 
