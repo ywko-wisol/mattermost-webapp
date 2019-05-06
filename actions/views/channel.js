@@ -18,7 +18,7 @@ import {openDirectChannelToUserId} from 'actions/channel_actions.jsx';
 import {getLastViewedChannelName} from 'selectors/local_storage';
 
 import {browserHistory} from 'utils/browser_history';
-import {Constants, ActionTypes} from 'utils/constants.jsx';
+import {Constants, ActionTypes, EventTypes} from 'utils/constants.jsx';
 import {isMobile} from 'utils/utils.jsx';
 
 export function checkAndSetMobileView() {
@@ -206,6 +206,12 @@ export function increasePostVisibility(channelId, beforePostId) {
 
 export function scrollPostListToBottom() {
     return () => {
-        EventEmitter.emit('scroll_post_list_to_bottom');
+        EventEmitter.emit(EventTypes.POST_LIST_SCROLL_CHANGE, true);
+    };
+}
+
+export function scrollPostList() {
+    return () => {
+        EventEmitter.emit(EventTypes.POST_LIST_SCROLL_CHANGE, false);
     };
 }
