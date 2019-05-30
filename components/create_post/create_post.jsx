@@ -36,6 +36,7 @@ import TutorialTip from 'components/tutorial/tutorial_tip';
 
 import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx';
 import MessageSubmitError from 'components/message_submit_error';
+import {mark} from 'actions/diagnostics_actions.jsx';
 
 const KeyCodes = Constants.KeyCodes;
 
@@ -375,6 +376,7 @@ export default class CreatePost extends React.Component {
     }
 
     toggleEmojiPicker = () => {
+        mark('CreatePost#toggleEmojiPicker');
         this.setState({showEmojiPicker: !this.state.showEmojiPicker});
     }
 

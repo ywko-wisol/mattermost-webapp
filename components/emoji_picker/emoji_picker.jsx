@@ -13,6 +13,8 @@ import imgTrans from 'images/img_trans.gif';
 
 import LocalizedInput from 'components/localized_input/localized_input';
 
+import {clearMarks, mark, measure, trackEvent} from 'actions/diagnostics_actions.jsx';
+
 import EmojiPickerCategory from './components/emoji_picker_category';
 import EmojiPickerItem from './components/emoji_picker_item';
 import EmojiPickerCategorySection from './emoji_picker_category_section';
@@ -184,6 +186,16 @@ export default class EmojiPicker extends React.PureComponent {
             }
         });
         this.divHeight = this.emojiPickerContainer.offsetHeight;
+
+        mark('EmojiPicker#componentDidMount');
+        const [dur] = measure('CreatePost#toggleEmojiPicker', 'EmojiPicker#componentDidMount');
+        clearMarks([
+            'CreatePost#toggleEmojiPicker',
+            'EmojiPicker#componentDidMount',
+        ]);
+        if (dur !== -1) {
+            trackEvent('performance', 'emoji_picker_open', {duration: Math.round(dur)});
+        }
     }
 
     UNSAFE_componentWillUpdate(nextProps, nextState) { // eslint-disable-line camelcase
