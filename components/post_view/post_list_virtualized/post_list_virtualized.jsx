@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import {DynamicSizeList} from 'react-window';
-import {isDateLine, isStartOfNewMessages} from 'mattermost-redux/utils/post_list';
 
 import {debounce} from 'mattermost-redux/actions/helpers';
 import EventEmitter from 'mattermost-redux/utils/event_emitter';
@@ -308,31 +307,13 @@ export default class PostList extends React.PureComponent {
 
     renderRow = ({data, itemId, style}) => {
         const index = data.indexOf(itemId);
-        let className = '';
-        const basePaddingClass = 'post-row__padding';
-        const previousItemId = (index !== -1 && index < data.length - 1) ? data[index + 1] : '';
-        const nextItemId = (index > 0 && index < data.length) ? data[index - 1] : '';
-
-        if (isDateLine(nextItemId) || isStartOfNewMessages(nextItemId)) {
-            className += basePaddingClass + ' bottom';
-        }
-
-        if (isDateLine(previousItemId) || isStartOfNewMessages(previousItemId)) {
-            if (className.includes(basePaddingClass)) {
-                className += ' top';
-            } else {
-                className += basePaddingClass + ' top';
-            }
-        }
+        const previousItemId = getPreviousPostId(data, index);
 
         return (
-            <div
-                style={style}
-                className={className}
-            >
+            <div style={style}>
                 <PostListRow
                     listId={itemId}
-                    previousListId={getPreviousPostId(data, index)}
+                    previousListId={previousItemId}
                     channel={this.props.channel}
                     shouldHighlight={itemId === this.props.focusedPostId}
                     loadMorePosts={this.loadMorePosts}
