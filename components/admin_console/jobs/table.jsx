@@ -160,10 +160,6 @@ class JobTable extends React.PureComponent {
     }
 
     getExtraInfoText = (job) => {
-        if (job.data && job.data.error && job.data.error.length > 0) {
-            return <span title={job.data.error}>{job.data.error}</span>;
-        }
-
         if (this.props.getExtraInfoText) {
             return this.props.getExtraInfoText(job);
         }

@@ -2535,6 +2535,7 @@ export default {
                             let groupDeleteCount = 0;
                             let groupMemberDeleteCount = 0;
                             let groupMemberAddCount = 0;
+                            let errors = [];
 
                             if (job && job.data) {
                                 if (job.data.ldap_users_count && job.data.ldap_users_count.length > 0) {
@@ -2571,7 +2572,40 @@ export default {
                                 if (job.data.group_member_add_count) {
                                     groupMemberAddCount = job.data.group_member_add_count;
                                 }
+
+                                if (job.data.errors) {
+                                    if (job.data.error) {
+                                        errors.push(job.data.error);
+                                    }
+                                    errors.push(...JSON.parse(job.data.errors));
+                                }
                             }
+
+                            const errorsF = (errors) => {
+                                if (errors.length === 0) {
+                                    return null;
+                                }
+                                return (<li>Errors (see sync logs):
+                                    <ul>
+                                        {errors.map((e) => {
+                                            if (!e.id || e.id === '') {
+                                                return <li>{JSON.stringify(e)}</li>;
+                                            }
+                                            return (
+                                                <li
+                                                    key={e.id}
+                                                    className='error'
+                                                >
+                                                    <FormattedMessage
+                                                        id={e.id}
+                                                        defaultMessage={e.message}
+                                                    />
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </li>);
+                            };
 
                             return (
                                 <span>
@@ -2639,6 +2673,7 @@ export default {
                                                 />
                                             </li>
                                         }
+                                        {errorsF(errors)}
                                     </ul>
                                 </span>
                             );
