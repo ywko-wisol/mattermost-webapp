@@ -58,8 +58,6 @@ describe('components/EmoticonProvider', () => {
             'thumbsdown-custom',
             'thumbsup',
             'thumbsup-custom',
-            'lithuania',
-            'lithuania-custom',
         ]);
     });
 
@@ -86,7 +84,7 @@ describe('components/EmoticonProvider', () => {
         });
         const customEmojisWithBlacklist = new Map([
             ...blacklistedEmojis,
-            ['not-blacklisted', {name: 'not-blacklisted', category: 'custom'}],
+            ['blacklisted-not', {name: 'blacklisted-not', category: 'custom'}],
         ]);
         const emojiMapWithBlacklist = new EmojiMap(customEmojisWithBlacklist);
 
@@ -97,7 +95,7 @@ describe('components/EmoticonProvider', () => {
         expect(resultsCallback).toHaveBeenCalled();
         const args = resultsCallback.mock.calls[0][0];
         expect(args.items.map((item) => item.name)).toEqual([
-            'not-blacklisted',
+            'blacklisted-not',
         ]);
     });
 
@@ -114,11 +112,9 @@ describe('components/EmoticonProvider', () => {
             const args = resultsCallback.mock.calls[0][0];
             expect(args.items.map((item) => item.name)).toEqual([
                 'thumbsup',
-                'lithuania',
                 'thumbsdown',
                 'thumbsdown-custom',
                 'thumbsup-custom',
-                'lithuania-custom',
             ]);
         }
     });
@@ -134,11 +130,9 @@ describe('components/EmoticonProvider', () => {
         const args = resultsCallback.mock.calls[0][0];
         expect(args.items.map((item) => item.name)).toEqual([
             'thumbsdown-custom',
-            'lithuania-custom',
             'thumbsdown',
             'thumbsup',
             'thumbsup-custom',
-            'lithuania',
         ]);
     });
 
@@ -155,9 +149,7 @@ describe('components/EmoticonProvider', () => {
             'thumbsdown',
             'thumbsdown-custom',
             'thumbsup',
-            'lithuania-custom',
             'thumbsup-custom',
-            'lithuania',
         ]);
     });
 
@@ -171,10 +163,6 @@ describe('components/EmoticonProvider', () => {
         expect(resultsCallback).toHaveBeenCalled();
         const args = resultsCallback.mock.calls[0][0];
         expect(args.items.map((item) => item.name)).toEqual([
-            'thumbsup',
-            'thumbsup-custom',
-            'thumbsdown',
-            'thumbsdown-custom',
         ]);
     });
 });

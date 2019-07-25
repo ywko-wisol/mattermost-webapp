@@ -106,7 +106,7 @@ export default class EmoticonProvider extends Provider {
             if (emoji.aliases) {
                 // This is a system emoji so it may have multiple names
                 for (const alias of emoji.aliases) {
-                    if (alias.indexOf(partialName) !== -1) {
+                    if (alias.indexOf(partialName) === 0) {
                         const matchedArray = recentEmojis.includes(alias) || recentEmojis.includes(name) ?
                             recentMatched :
                             matched;
@@ -115,7 +115,7 @@ export default class EmoticonProvider extends Provider {
                         break;
                     }
                 }
-            } else if (name.indexOf(partialName) !== -1) {
+            } else if (name.indexOf(partialName) === 0) {
                 // This is a custom emoji so it only has one name
                 if (emojiMap.hasSystemEmoji(name)) {
                     // System emojis take precedence over custom ones
