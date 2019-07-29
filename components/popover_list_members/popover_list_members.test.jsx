@@ -36,6 +36,7 @@ describe('components/PopoverListMembers', () => {
     const actions = {
         getProfilesInChannel: jest.fn(),
         openDirectChannelToUserId: jest.fn().mockResolvedValue({data: {name: 'channelname'}}),
+        openModal: jest.fn(),
     };
 
     const baseProps = {
@@ -87,32 +88,6 @@ describe('components/PopoverListMembers', () => {
         expect(wrapper.state('showPopover')).toEqual(false);
     });
 
-    test('should match state when showMembersModal is called', () => {
-        const wrapper = shallow(
-            <PopoverListMembers {...baseProps}/>
-        );
-
-        wrapper.instance().componentDidUpdate = jest.fn();
-        wrapper.setState({showPopover: true, showChannelMembersModal: false});
-        expect(wrapper).toMatchSnapshot();
-
-        wrapper.instance().showMembersModal({preventDefault: jest.fn()});
-        expect(wrapper.state('showPopover')).toEqual(false);
-        expect(wrapper.state('showChannelMembersModal')).toEqual(true);
-    });
-
-    test('should match state when hideChannelMembersModal is called', () => {
-        const wrapper = shallow(
-            <PopoverListMembers {...baseProps}/>
-        );
-
-        wrapper.instance().componentDidUpdate = jest.fn();
-        wrapper.setState({showChannelMembersModal: true});
-        wrapper.instance().hideChannelMembersModal({preventDefault: jest.fn()});
-
-        expect(wrapper.state('showChannelMembersModal')).toEqual(false);
-    });
-
     test('should match state when showChannelInviteModal is called', () => {
         const wrapper = shallow(
             <PopoverListMembers {...baseProps}/>
@@ -152,6 +127,16 @@ describe('components/PopoverListMembers', () => {
 
     test('should match snapshot with archived channel', () => {
         const props = {...baseProps, channel: {...channel, delete_at: 1234}};
+
+        const wrapper = shallow(
+            <PopoverListMembers {...props}/>
+        );
+
+        expect(wrapper).toMatchSnapshot();
+    });
+
+    test('should match snapshot with group-constrained channel', () => {
+        const props = {...baseProps, channel: {...channel, group_constrained: true}};
 
         const wrapper = shallow(
             <PopoverListMembers {...props}/>

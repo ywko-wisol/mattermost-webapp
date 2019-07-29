@@ -3,10 +3,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FormattedMessage} from 'react-intl';
 
 import {showLeavePrivateChannelModal} from 'actions/global_actions';
 import {Constants} from 'utils/constants';
+import {localizeMessage} from 'utils/utils';
+
+import MenuItemAction from 'components/widgets/menu/menu_items/menu_item_action';
 
 export default class LeaveChannel extends React.PureComponent {
     static propTypes = {
@@ -22,6 +24,16 @@ export default class LeaveChannel extends React.PureComponent {
         isDefault: PropTypes.bool.isRequired,
 
         /**
+         * Boolean whether the user is a guest or no
+         */
+        isGuestUser: PropTypes.bool.isRequired,
+
+        /**
+         * Use for test selector
+         */
+        id: PropTypes.string,
+
+        /**
          * Object with action creators
          */
         actions: PropTypes.shape({
@@ -32,6 +44,10 @@ export default class LeaveChannel extends React.PureComponent {
             leaveChannel: PropTypes.func.isRequired,
         }).isRequired,
     };
+
+    static defaultProps = {
+        isGuestUser: false,
+    }
 
     handleLeave = (e) => {
         e.preventDefault();
@@ -51,34 +67,15 @@ export default class LeaveChannel extends React.PureComponent {
     }
 
     render() {
-        const {channel, isDefault} = this.props;
-
-        if (isDefault) {
-            return null;
-        }
-
-        if (channel.type === Constants.DM_CHANNEL) {
-            return null;
-        }
-
-        if (channel.type === Constants.GM_CHANNEL) {
-            return null;
-        }
+        const {channel, isDefault, isGuestUser, id} = this.props;
 
         return (
-            <li role='presentation'>
-                <button
-                    id='channelLeave'
-                    role='menuitem'
-                    className='style--none'
-                    onClick={this.handleLeave}
-                >
-                    <FormattedMessage
-                        id='channel_header.leave'
-                        defaultMessage='Leave Channel'
-                    />
-                </button>
-            </li>
+            <MenuItemAction
+                id={id}
+                show={(!isDefault || isGuestUser) && channel.type !== Constants.DM_CHANNEL && channel.type !== Constants.GM_CHANNEL}
+                onClick={this.handleLeave}
+                text={localizeMessage('channel_header.leave', 'Leave Channel')}
+            />
         );
     }
 }

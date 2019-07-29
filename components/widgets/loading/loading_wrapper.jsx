@@ -13,7 +13,7 @@ export default class LoadingWrapper extends React.Component {
         loading: PropTypes.bool.isRequired,
 
         /** Text to show aside the spinner while loading */
-        text: PropTypes.string,
+        text: PropTypes.node,
 
         /** Content to show while is not loading */
         children: PropTypes.node,

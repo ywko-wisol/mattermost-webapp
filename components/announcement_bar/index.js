@@ -3,7 +3,6 @@
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {sendVerificationEmail} from 'mattermost-redux/actions/users';
 import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
 import {haveISystemPermission} from 'mattermost-redux/selectors/entities/roles';
 import {Permissions} from 'mattermost-redux/constants';
@@ -11,6 +10,8 @@ import {getConfig, getLicense} from 'mattermost-redux/selectors/entities/general
 import {getDisplayableErrors} from 'mattermost-redux/selectors/errors';
 import {dismissError} from 'mattermost-redux/actions/errors';
 import {getStandardAnalytics} from 'mattermost-redux/actions/admin';
+
+import {dismissNotice} from 'actions/views/notice';
 
 import AnnouncementBarController from './announcement_bar_controller.jsx';
 
@@ -40,9 +41,9 @@ function mapDispatchToProps(dispatch) {
     const dismissFirstError = dismissError.bind(null, 0);
     return {
         actions: bindActionCreators({
-            sendVerificationEmail,
             getStandardAnalytics,
             dismissError: dismissFirstError,
+            dismissNotice,
         }, dispatch),
     };
 }

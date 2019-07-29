@@ -4,14 +4,19 @@ exports[`components/ProfilePicture should match snapshot, no user specified, def
 <span
   className="status-wrapper"
 >
-  <img
-    alt="user profile image"
-    className="more-modal__image"
-    height="36"
-    src="http://example.com/image.png"
-    width="36"
-  />
+  <span
+    className="profile-icon "
+  >
+    <img
+      alt=""
+      className="more-modal__image"
+      height="36"
+      src="http://example.com/image.png"
+      width="36"
+    />
+  </span>
   <StatusIcon
+    button={false}
     className=""
     status="away"
   />
@@ -22,55 +27,58 @@ exports[`components/ProfilePicture should match snapshot, no user specified, ove
 <span
   className="status-wrapper"
 >
-  <img
-    alt="user profile image"
-    className="more-modal__image"
-    height="48"
-    src="http://example.com/image.png"
-    width="48"
-  />
+  <span
+    className="profile-icon "
+  >
+    <img
+      alt=""
+      className="more-modal__image"
+      height="48"
+      src="http://example.com/image.png"
+      width="48"
+    />
+  </span>
   <StatusIcon
+    button={false}
     className=""
     status="away"
   />
 </span>
 `;
 
-exports[`components/ProfilePicture should match snapshot, user specified 1`] = `
+exports[`components/ProfilePicture should match snapshot, profile and src, default props 1`] = `
 <OverlayTrigger
   defaultOverlayShown={false}
   overlay={
-    <Connect(Pluggable)>
-      <Connect(ProfilePopover)
-        hasMention={false}
-        hide={[Function]}
-        isBusy={true}
-        isRHS={false}
-        src="http://example.com/image.png"
-        status="away"
-        user={
-          Object {
-            "username": "username",
-          }
-        }
-      />
-    </Connect(Pluggable)>
+    <Connect(InjectIntl(ProfilePopover))
+      hasMention={false}
+      hide={[Function]}
+      isBusy={true}
+      isRHS={false}
+      src="http://example.com/image.png"
+      userId="uid"
+    />
   }
   placement="right"
   rootClose={true}
   trigger="click"
 >
   <span
-    className="status-wrapper"
+    className="status-wrapper "
   >
-    <img
-      alt="username profile image"
-      className="more-modal__image"
-      height="36"
-      src="http://example.com/image.png"
-      width="36"
-    />
+    <span
+      className="profile-icon "
+    >
+      <img
+        alt="user profile image"
+        className="more-modal__image"
+        height="36"
+        src="http://example.com/emoji.png"
+        width="36"
+      />
+    </span>
     <StatusIcon
+      button={false}
       className=""
       status="away"
     />
@@ -78,44 +86,48 @@ exports[`components/ProfilePicture should match snapshot, user specified 1`] = `
 </OverlayTrigger>
 `;
 
-exports[`components/ProfilePicture should match snapshot, user specified, overridden props 1`] = `
-<OverlayTrigger
-  defaultOverlayShown={false}
-  overlay={
-    <Connect(Pluggable)>
-      <Connect(ProfilePopover)
-        hasMention={true}
-        hide={[Function]}
-        isBusy={true}
-        isRHS={true}
-        src="http://example.com/image.png"
-        status="away"
-        user={
-          Object {
-            "username": "username",
-          }
-        }
-      />
-    </Connect(Pluggable)>
-  }
-  placement="right"
-  rootClose={true}
-  trigger="click"
+exports[`components/ProfilePicture should match snapshot, user specified 1`] = `
+<span
+  className="status-wrapper"
 >
   <span
-    className="status-wrapper"
+    className="profile-icon "
   >
     <img
-      alt="username profile image"
+      alt=""
+      className="more-modal__image"
+      height="36"
+      src="http://example.com/image.png"
+      width="36"
+    />
+  </span>
+  <StatusIcon
+    button={false}
+    className=""
+    status="away"
+  />
+</span>
+`;
+
+exports[`components/ProfilePicture should match snapshot, user specified, overridden props 1`] = `
+<span
+  className="status-wrapper"
+>
+  <span
+    className="profile-icon "
+  >
+    <img
+      alt=""
       className="more-modal__image"
       height="48"
       src="http://example.com/image.png"
       width="48"
     />
-    <StatusIcon
-      className=""
-      status="away"
-    />
   </span>
-</OverlayTrigger>
+  <StatusIcon
+    button={false}
+    className=""
+    status="away"
+  />
+</span>
 `;

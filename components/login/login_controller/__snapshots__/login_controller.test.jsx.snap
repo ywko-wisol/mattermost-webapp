@@ -14,6 +14,7 @@ exports[`components/login/LoginController should match snapshot 1`] = `
         className="signup__markdown"
       />
       <img
+        alt="signup team logo"
         className="signup-team-logo"
         src={null}
       />
@@ -58,6 +59,7 @@ exports[`components/login/LoginController should match snapshot when expired 1`]
         className="signup__markdown"
       />
       <img
+        alt="signup team logo"
         className="signup-team-logo"
         src={null}
       />
@@ -72,9 +74,8 @@ exports[`components/login/LoginController should match snapshot when expired 1`]
           <div
             className="alert alert-warning"
           >
-            <i
-              className="fa fa-exclamation-triangle"
-              title="Warning Icon"
+            <WarningIcon
+              additionalClassName={null}
             />
              
             <FormattedMessage
@@ -86,7 +87,6 @@ exports[`components/login/LoginController should match snapshot when expired 1`]
             <Link
               className="btn-close"
               onClick={[Function]}
-              replace={false}
               to="/login"
             >
               <span>
@@ -134,6 +134,7 @@ exports[`components/login/LoginController should show session expiry notificatio
         className="signup__markdown"
       />
       <img
+        alt="signup team logo"
         className="signup-team-logo"
         src={null}
       />
@@ -148,9 +149,8 @@ exports[`components/login/LoginController should show session expiry notificatio
           <div
             className="alert alert-warning"
           >
-            <i
-              className="fa fa-exclamation-triangle"
-              title="Warning Icon"
+            <WarningIcon
+              additionalClassName={null}
             />
              
             <FormattedMessage
@@ -162,7 +162,6 @@ exports[`components/login/LoginController should show session expiry notificatio
             <Link
               className="btn-close"
               onClick={[Function]}
-              replace={false}
               to="/login"
             >
               <span>
@@ -203,6 +202,7 @@ exports[`components/login/LoginController should suppress session expiry notific
         className="signup__markdown"
       />
       <img
+        alt="signup team logo"
         className="signup-team-logo"
         src={null}
       />
@@ -217,10 +217,7 @@ exports[`components/login/LoginController should suppress session expiry notific
           <div
             className="alert alert-success"
           >
-            <i
-              className="fa fa-check"
-              title="Success Icon"
-            />
+            <SuccessIcon />
             <FormattedMessage
               defaultMessage=" Sign-in method changed successfully"
               id="login.changed"

@@ -4,16 +4,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const AdminHeader = (props) => (
-    <h3 className='admin-console-header'>
-        {props.children}
-    </h3>
-);
+export default class AdminHeader extends React.Component {
+    static get propTypes() {
+        return {
 
-AdminHeader.propTypes = {
+            /** Header content */
+            children: PropTypes.node.isRequired,
+        };
+    }
 
-    /** Header content */
-    children: PropTypes.node.isRequired,
-};
-
-export default AdminHeader;
+    render() {
+        return (
+            <div className={'admin-console__header'}>
+                {this.props.children}
+            </div>
+        );
+    }
+}

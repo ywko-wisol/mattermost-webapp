@@ -12,6 +12,7 @@ import GenericChannelProvider from 'components/suggestion/generic_channel_provid
 
 import TextSetting from 'components/widgets/settings/text_setting';
 import AutocompleteSelector from 'components/widgets/settings/autocomplete_selector';
+import BoolSetting from 'components/widgets/settings/bool_setting';
 
 const TEXT_DEFAULT_MAX_LENGTH = 150;
 const TEXTAREA_DEFAULT_MAX_LENGTH = 3000;
@@ -120,7 +121,7 @@ export default class DialogElement extends React.PureComponent {
             if (type === 'text') {
                 maxLength = maxLength || TEXT_DEFAULT_MAX_LENGTH;
 
-                if (subtype) {
+                if (subtype && TextSetting.validTypes.includes(subtype)) {
                     type = subtype;
                 } else {
                     type = 'input';
@@ -152,6 +153,17 @@ export default class DialogElement extends React.PureComponent {
                     helpText={helpTextContent}
                     placeholder={placeholder}
                     value={this.state.value}
+                />
+            );
+        } else if (type === 'bool') {
+            return (
+                <BoolSetting
+                    id={name}
+                    label={displayNameContent}
+                    value={value || false}
+                    helpText={helpTextContent}
+                    placeholder={placeholder}
+                    onChange={onChange}
                 />
             );
         }

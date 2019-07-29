@@ -8,16 +8,21 @@ import * as UserUtils from 'mattermost-redux/utils/user_utils';
 import {Permissions} from 'mattermost-redux/constants';
 
 import {adminResetMfa} from 'actions/admin_actions.jsx';
-import {updateActive, revokeAllSessions} from 'actions/user_actions.jsx';
+import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx';
 import {Constants} from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
 import {t} from 'utils/i18n';
 import {emitUserLoggedOutEvent} from 'actions/global_actions.jsx';
 import ConfirmModal from 'components/confirm_modal.jsx';
 import SystemPermissionGate from 'components/permissions_gates/system_permission_gate';
-import {browserHistory} from 'utils/browser_history';
 
-export default class SystemUsersDropdown extends React.Component {
+import MenuWrapper from 'components/widgets/menu/menu_wrapper';
+import Menu from 'components/widgets/menu/menu';
+import MenuItemAction from 'components/widgets/menu/menu_items/menu_item_action';
+
+const ROWS_FROM_BOTTOM_TO_OPEN_UP = 5;
+
+export default class SystemUsersDropdown extends React.PureComponent {
     static propTypes = {
 
         /*
@@ -70,16 +75,28 @@ export default class SystemUsersDropdown extends React.Component {
          */
         onError: PropTypes.func.isRequired,
         currentUser: PropTypes.object.isRequired,
-        teamUrl: PropTypes.string,
+        index: PropTypes.number.isRequired,
+        totalUsers: PropTypes.number.isRequired,
+        actions: PropTypes.shape({
+            updateUserActive: PropTypes.func.isRequired,
+            revokeAllSessionsForUser: PropTypes.func.isRequired,
+            promoteGuestToUser: PropTypes.func.isRequired,
+            demoteUserToGuest: PropTypes.func.isRequired,
+            loadBots: PropTypes.func.isRequired,
+        }).isRequired,
+        config: PropTypes.object.isRequired,
+        bots: PropTypes.object.isRequired,
+
     };
 
     constructor(props) {
         super(props);
 
         this.state = {
-            showDemoteModal: false,
             showDeactivateMemberModal: false,
             showRevokeSessionsModal: false,
+            showPromoteToUserModal: false,
+            showDemoteToGuestModal: false,
             user: null,
             role: null,
         };
@@ -87,7 +104,8 @@ export default class SystemUsersDropdown extends React.Component {
 
     handleMakeActive = (e) => {
         e.preventDefault();
-        updateActive(this.props.user.id, true, null, this.props.onError);
+        this.props.actions.updateUserActive(this.props.user.id, true).
+            then(this.onUpdateActiveResult);
     }
 
     handleManageTeams = (e) => {
@@ -123,45 +141,27 @@ export default class SystemUsersDropdown extends React.Component {
         adminResetMfa(this.props.user.id, null, this.props.onError);
     }
 
-    handleDemoteSystemAdmin = (user, role) => {
-        this.setState({
-            showDemoteModal: true,
-            user,
-            role,
-        });
-    }
-
-    handleDemoteCancel = () => {
-        this.setState({
-            showDemoteModal: false,
-            user: null,
-            role: null,
-        });
-        this.props.onError(null);
-    }
-
-    handleDemoteSubmit = () => {
-        if (this.state.role === 'member') {
-            this.doMakeMember();
-        }
-
-        const teamUrl = this.props.teamUrl;
-        if (teamUrl) {
-            // the channel is added to the URL cause endless loading not being fully fixed
-            browserHistory.push(teamUrl + `/channels/${Constants.DEFAULT_CHANNEL}`);
-        } else {
-            browserHistory.push('/');
-        }
-    }
-
-    handleShowDeactivateMemberModal = (e) => {
+    handleShowDeactivateMemberModal = async (e) => {
         e.preventDefault();
+        if (this.shouldDisableBotsWhenOwnerIsDeactivated()) {
+            await this.props.actions.loadBots(
+                Constants.Integrations.START_PAGE_NUM,
+                Constants.Integrations.PAGE_SIZE,
+            );
+        }
         this.setState({showDeactivateMemberModal: true});
     }
 
     handleDeactivateMember = () => {
-        updateActive(this.props.user.id, false, null, this.props.onError);
+        this.props.actions.updateUserActive(this.props.user.id, false).
+            then(this.onUpdateActiveResult);
         this.setState({showDeactivateMemberModal: false});
+    }
+
+    onUpdateActiveResult = ({error}) => {
+        if (error) {
+            this.props.onError({id: error.server_error_id, ...error});
+        }
     }
 
     handleDeactivateCancel = () => {
@@ -170,7 +170,6 @@ export default class SystemUsersDropdown extends React.Component {
 
     renderDeactivateMemberModal = () => {
         const user = this.props.user;
-
         const title = (
             <FormattedMessage
                 id='deactivate_member_modal.title'
@@ -180,6 +179,15 @@ export default class SystemUsersDropdown extends React.Component {
                 }}
             />
         );
+
+        const defaultMessage = (
+            <FormattedMarkdownMessage
+                id='deactivate_member_modal.desc'
+                defaultMessage='This action deactivates {username}. They will be logged out and not have access to any teams or channels on this system.\n'
+                values={{
+                    username: user.username,
+                }}
+            />);
 
         let warning;
         if (user.auth_service !== '' && user.auth_service !== Constants.EMAIL_SERVICE) {
@@ -195,15 +203,35 @@ export default class SystemUsersDropdown extends React.Component {
             );
         }
 
+        const confirmationMessage = (
+            <FormattedMarkdownMessage
+                id='deactivate_member_modal.desc.confirm'
+                defaultMessage='Are you sure you want to deactivate {username}?'
+                values={{
+                    username: user.username,
+                }}
+            />);
+        let messageForUsersWithBotAccounts;
+        if (this.shouldDisableBotsWhenOwnerIsDeactivated()) {
+            for (const bot of Object.values(this.props.bots)) {
+                if ((bot.owner_id === user.id) && this.state.showDeactivateMemberModal && (bot.delete_at === 0)) {
+                    messageForUsersWithBotAccounts = (
+                        <FormattedMarkdownMessage
+                            id='deactivate_member_modal.desc.for_users_with_bot_accounts'
+                            defaultMessage='This action deactivates {username}.\n \n * They will be logged out and not have access to any teams or channels on this system.\n * Bot accounts they manage will be disabled along with their integrations. To enable them again, go to Integrations > Bot Accounts. [Learn more about bot accounts](!https://mattermost.com/pl/default-bot-accounts).\n \n \n'
+                            values={{
+                                username: user.username,
+                            }}
+                        />);
+                    break;
+                }
+            }
+        }
+
         const message = (
             <div>
-                <FormattedMessage
-                    id='deactivate_member_modal.desc'
-                    defaultMessage='This action deactivates {username}. They will be logged out and not have access to any teams or channels on this system. Are you sure you want to deactivate {username}?'
-                    values={{
-                        username: user.username,
-                    }}
-                />
+                {messageForUsersWithBotAccounts || defaultMessage}
+                {confirmationMessage}
                 {warning}
             </div>
         );
@@ -229,27 +257,147 @@ export default class SystemUsersDropdown extends React.Component {
         );
     }
 
+    shouldDisableBotsWhenOwnerIsDeactivated() {
+        return this.props.config &&
+            this.props.config.ServiceSettings &&
+            this.props.config.ServiceSettings.DisableBotsWhenOwnerIsDeactivated;
+    }
+
     handleShowRevokeSessionsModal = (e) => {
         e.preventDefault();
         this.setState({showRevokeSessionsModal: true});
     }
 
-    handleRevokeSessions = () => {
+    handleRevokeSessions = async () => {
         const me = this.props.currentUser;
-        revokeAllSessions(this.props.user.id,
-            () => {
-                if (this.props.user.id === me.id) {
-                    emitUserLoggedOutEvent();
-                }
-            },
-            this.props.onError
-        );
+
+        const {data, error} = await this.props.actions.revokeAllSessionsForUser(this.props.user.id);
+        if (data && this.props.user.id === me.id) {
+            emitUserLoggedOutEvent();
+        } else if (error) {
+            this.props.onError(error);
+        }
 
         this.setState({showRevokeSessionsModal: false});
     }
 
     handleRevokeSessionsCancel = () => {
         this.setState({showRevokeSessionsModal: false});
+    }
+
+    handlePromoteToUser = () => {
+        this.setState({showPromoteToUserModal: true});
+    }
+
+    handlePromoteToUserConfirm = async () => {
+        const {error} = await this.props.actions.promoteGuestToUser(this.props.user.id);
+        if (error) {
+            this.props.onError(error);
+        }
+
+        this.setState({showPromoteToUserModal: false});
+    }
+
+    handlePromoteToUserCancel = () => {
+        this.setState({showPromoteToUserModal: false});
+    }
+
+    handleDemoteToGuest = () => {
+        this.setState({showDemoteToGuestModal: true});
+    }
+
+    handleDemoteToGuestConfirm = async () => {
+        const {error} = await this.props.actions.demoteUserToGuest(this.props.user.id);
+        if (error) {
+            this.props.onError(error);
+        }
+        this.setState({showDemoteToGuestModal: false});
+    }
+
+    handleDemoteToGuestCancel = () => {
+        this.setState({showDemoteToGuestModal: false});
+    }
+
+    renderPromoteToUserModal = () => {
+        const title = (
+            <FormattedMessage
+                id='promote_to_user_modal.title'
+                defaultMessage='Promote guest {username} to user'
+                values={{
+                    username: this.props.user.username,
+                }}
+            />
+        );
+
+        const message = (
+            <FormattedMessage
+                id='promote_to_user_modal.desc'
+                defaultMessage='This action promotes the guest {username} to a member. It will allow the user to join public channels and interact with users outside of the channels they are currently members of. Are you sure you want to promote guest {username} to user?'
+                values={{
+                    username: this.props.user.username,
+                }}
+            />
+        );
+
+        const promoteUserButton = (
+            <FormattedMessage
+                id='promote_to_user_modal.promote'
+                defaultMessage='Promote'
+            />
+        );
+
+        return (
+            <ConfirmModal
+                show={this.state.showPromoteToUserModal}
+                title={title}
+                message={message}
+                confirmButtonClass='btn btn-danger'
+                confirmButtonText={promoteUserButton}
+                onConfirm={this.handlePromoteToUserConfirm}
+                onCancel={this.handlePromoteToUserCancel}
+            />
+        );
+    }
+
+    renderDemoteToGuestModal = () => {
+        const title = (
+            <FormattedMessage
+                id='demote_to_user_modal.title'
+                defaultMessage='Demote user {username} to guest'
+                values={{
+                    username: this.props.user.username,
+                }}
+            />
+        );
+
+        const message = (
+            <FormattedMessage
+                id='demote_to_user_modal.desc'
+                defaultMessage={'This action demotes the user {username} to a guest. It will restrict the user\'s ability to join public channels and interact with users outside of the channels they are currently members of. Are you sure you want to demote user {username} to guest?'}
+                values={{
+                    username: this.props.user.username,
+                }}
+            />
+        );
+
+        const demoteGuestButton = (
+            <FormattedMessage
+                id='demote_to_user_modal.demote'
+                defaultMessage='Demote'
+            />
+        );
+
+        return (
+            <ConfirmModal
+                show={this.state.showDemoteToGuestModal}
+                title={title}
+                message={message}
+                confirmButtonClass='btn btn-danger'
+                confirmButtonText={demoteGuestButton}
+                onConfirm={this.handleDemoteToGuestConfirm}
+                onCancel={this.handleDemoteToGuestCancel}
+            />
+        );
     }
 
     renderRevokeSessionsModal = () => {
@@ -331,16 +479,27 @@ export default class SystemUsersDropdown extends React.Component {
     }
 
     render() {
-        const user = this.props.user;
+        const {currentUser, user} = this.props;
+        const isGuest = Utils.isGuest(user);
         if (!user) {
             return <div/>;
         }
+
         let currentRoles = (
             <FormattedMessage
                 id='admin.user_item.member'
                 defaultMessage='Member'
             />
         );
+
+        if (isGuest) {
+            currentRoles = (
+                <FormattedMessage
+                    id='team_members_dropdown.guest'
+                    defaultMessage='Guest'
+                />
+            );
+        }
 
         if (user.roles.length > 0 && Utils.isSystemAdmin(user.roles)) {
             currentRoles = (
@@ -351,12 +510,11 @@ export default class SystemUsersDropdown extends React.Component {
             );
         }
 
-        const me = this.props.currentUser;
         let showMakeActive = false;
         let showMakeNotActive = !Utils.isSystemAdmin(user.roles);
         let showManageTeams = true;
         let showRevokeSessions = true;
-        const showMfaReset = this.props.mfaEnabled && user.mfa_active;
+        const showMfaReset = this.props.mfaEnabled && Boolean(user.mfa_active);
 
         if (user.delete_at > 0) {
             currentRoles = (
@@ -376,282 +534,105 @@ export default class SystemUsersDropdown extends React.Component {
             disableActivationToggle = true;
         }
 
-        let menuClass = '';
-        if (disableActivationToggle) {
-            menuClass = 'disabled';
-        }
-
-        let makeActive = null;
-        if (showMakeActive) {
-            makeActive = (
-                <li
-                    role='presentation'
-                    className={menuClass}
-                >
-                    <a
-                        id='activate'
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleMakeActive}
-                    >
-                        <FormattedMessage
-                            id='admin.user_item.makeActive'
-                            defaultMessage='Activate'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let makeNotActive = null;
-        if (showMakeNotActive) {
-            makeNotActive = (
-                <li
-                    role='presentation'
-                    className={menuClass}
-                >
-                    <a
-                        id='deactivate'
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleShowDeactivateMemberModal}
-                    >
-                        <FormattedMessage
-                            id='admin.user_item.makeInactive'
-                            defaultMessage='Deactivate'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let manageTeams = null;
-        if (showManageTeams) {
-            manageTeams = (
-                <li role='presentation'>
-                    <a
-                        id='manageTeams'
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleManageTeams}
-                    >
-                        <FormattedMessage
-                            id='admin.user_item.manageTeams'
-                            defaultMessage='Manage Teams'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let mfaReset = null;
-        if (showMfaReset) {
-            mfaReset = (
-                <li role='presentation'>
-                    <a
-                        id='removeMFA'
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleResetMfa}
-                    >
-                        <FormattedMessage
-                            id='admin.user_item.resetMfa'
-                            defaultMessage='Remove MFA'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let passwordReset;
-        if (user.auth_service) {
-            if (this.props.experimentalEnableAuthenticationTransfer) {
-                passwordReset = (
-                    <li role='presentation'>
-                        <a
-                            id='switchEmailPassword'
-                            role='menuitem'
-                            href='#'
-                            onClick={this.handleResetPassword}
-                        >
-                            <FormattedMessage
-                                id='admin.user_item.switchToEmail'
-                                defaultMessage='Switch to Email/Password'
-                            />
-                        </a>
-                    </li>
-                );
-            }
-        } else {
-            passwordReset = (
-                <li role='presentation'>
-                    <a
-                        id='resetPassword'
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleResetPassword}
-                    >
-                        <FormattedMessage
-                            id='admin.user_item.resetPwd'
-                            defaultMessage='Reset Password'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let emailReset;
-        if (!user.auth_service) {
-            emailReset = (
-                <li role='presentation'>
-                    <a
-                        id='resetEmail'
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleResetEmail}
-                    >
-                        <FormattedMessage
-                            id='admin.user_item.resetEmail'
-                            defaultMessage='Update Email'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let revokeSessions;
-        if (showRevokeSessions) {
-            revokeSessions = (
-                <SystemPermissionGate permissions={[Permissions.REVOKE_USER_ACCESS_TOKEN]}>
-                    <li role='presentation'>
-                        <a
-                            id='revokeSessions'
-                            role='menuItem'
-                            href='#'
-                            onClick={this.handleShowRevokeSessionsModal}
-                        >
-                            <FormattedMessage
-                                id='admin.user_item.revokeSessions'
-                                defaultMessage='Revoke Sessions'
-                            />
-                        </a>
-                    </li>
-                </SystemPermissionGate>
-            );
-        }
-
-        let manageTokens;
-        if (this.props.enableUserAccessTokens) {
-            manageTokens = (
-                <li role='presentation'>
-                    <a
-                        id='manageTokens'
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleManageTokens}
-                    >
-                        <FormattedMessage
-                            id='admin.user_item.manageTokens'
-                            defaultMessage='Manage Tokens'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let makeDemoteModal = null;
-        if (this.props.user.id === me.id) {
-            const title = (
-                <FormattedMessage
-                    id='admin.user_item.confirmDemoteRoleTitle'
-                    defaultMessage='Confirm demotion from System Admin role'
-                />
-            );
-
-            const message = (
-                <div>
-                    <FormattedMessage
-                        id='admin.user_item.confirmDemoteDescription'
-                        defaultMessage="If you demote yourself from the System Admin role and there is not another user with System Admin privileges, you'll need to re-assign a System Admin by accessing the Mattermost server through a terminal and running the following command."
-                    />
-                    <br/>
-                    <br/>
-                    <FormattedMessage
-                        id='admin.user_item.confirmDemotionCmd'
-                        defaultMessage='platform roles system_admin {username}'
-                        values={{
-                            username: me.username,
-                        }}
-                    />
-                </div>
-            );
-
-            const confirmButton = (
-                <FormattedMessage
-                    id='admin.user_item.confirmDemotion'
-                    defaultMessage='Confirm Demotion'
-                />
-            );
-
-            makeDemoteModal = (
-                <ConfirmModal
-                    show={this.state.showDemoteModal}
-                    title={title}
-                    message={message}
-                    confirmButtonText={confirmButton}
-                    onConfirm={this.handleDemoteSubmit}
-                    onCancel={this.handleDemoteCancel}
-                />
-            );
-        }
-
         const deactivateMemberModal = this.renderDeactivateMemberModal();
         const revokeSessionsModal = this.renderRevokeSessionsModal();
+        const promoteToUserModal = this.renderPromoteToUserModal();
+        const demoteToGuestModal = this.renderDemoteToGuestModal();
+
+        const {index, totalUsers} = this.props;
+        let openUp = false;
+        if (totalUsers > ROWS_FROM_BOTTOM_TO_OPEN_UP && totalUsers - index <= ROWS_FROM_BOTTOM_TO_OPEN_UP) {
+            openUp = true;
+        }
 
         return (
-            <div className='dropdown member-drop text-right'>
-                <a
-                    id='memberDropdown'
-                    href='#'
-                    className='dropdown-toggle theme'
-                    type='button'
-                    data-toggle='dropdown'
-                    aria-expanded='true'
-                >
-                    <span>{currentRoles} </span>
-                    <span className='caret'/>
-                </a>
-                {this.renderAccessToken()}
-                <ul
-                    className='dropdown-menu member-menu'
-                    role='menu'
-                >
-                    {makeActive}
-                    {makeNotActive}
-                    <li role='presentation'>
-                        <a
-                            id='manageRoles'
-                            role='menuitem'
-                            href='#'
-                            onClick={this.handleManageRoles}
-                        >
-                            <FormattedMessage
-                                id='admin.user_item.manageRoles'
-                                defaultMessage='Manage Roles'
-                            />
-                        </a>
-                    </li>
-                    {manageTeams}
-                    {manageTokens}
-                    {mfaReset}
-                    {passwordReset}
-                    {emailReset}
-                    {revokeSessions}
-                </ul>
-                {makeDemoteModal}
+            <React.Fragment>
                 {deactivateMemberModal}
                 {revokeSessionsModal}
-            </div>
+                {promoteToUserModal}
+                {demoteToGuestModal}
+                <MenuWrapper>
+                    <div className='text-right'>
+                        <a>
+                            <span>{currentRoles} </span>
+                            <span className='caret'/>
+                        </a>
+                        {this.renderAccessToken()}
+                    </div>
+                    <div>
+                        <Menu
+                            openLeft={true}
+                            openUp={openUp}
+                            ariaLabel={Utils.localizeMessage('admin.user_item.menuAriaLabel', 'User Actions Menu')}
+                        >
+                            <MenuItemAction
+                                show={showMakeActive}
+                                onClick={this.handleMakeActive}
+                                text={Utils.localizeMessage('admin.user_item.makeActive', 'Activate')}
+                                disabled={disableActivationToggle}
+                            />
+                            <MenuItemAction
+                                show={showMakeNotActive}
+                                onClick={this.handleShowDeactivateMemberModal}
+                                text={Utils.localizeMessage('admin.user_item.makeInactive', 'Deactivate')}
+                                disabled={disableActivationToggle}
+                            />
+                            <MenuItemAction
+                                show={!isGuest}
+                                onClick={this.handleManageRoles}
+                                text={Utils.localizeMessage('admin.user_item.manageRoles', 'Manage Roles')}
+                            />
+                            <MenuItemAction
+                                show={showManageTeams}
+                                onClick={this.handleManageTeams}
+                                text={Utils.localizeMessage('admin.user_item.manageTeams', 'Manage Teams')}
+                            />
+                            <MenuItemAction
+                                show={this.props.enableUserAccessTokens}
+                                onClick={this.handleManageTokens}
+                                text={Utils.localizeMessage('admin.user_item.manageTokens', 'Manage Tokens')}
+                            />
+                            <MenuItemAction
+                                show={showMfaReset}
+                                onClick={this.handleResetMfa}
+                                text={Utils.localizeMessage('admin.user_item.resetMfa', 'Remove MFA')}
+                            />
+                            <MenuItemAction
+                                show={Boolean(user.auth_service) && this.props.experimentalEnableAuthenticationTransfer}
+                                onClick={this.handleResetPassword}
+                                text={Utils.localizeMessage('admin.user_item.switchToEmail', 'Switch to Email/Password')}
+                            />
+                            <MenuItemAction
+                                show={!user.auth_service}
+                                onClick={this.handleResetPassword}
+                                text={Utils.localizeMessage('admin.user_item.resetPwd', 'Reset Password')}
+                            />
+                            <MenuItemAction
+                                show={!user.auth_service && user.id !== this.state.userId}
+                                onClick={this.handleResetEmail}
+                                text={Utils.localizeMessage('admin.user_item.resetEmail', 'Update Email')}
+                            />
+                            <MenuItemAction
+                                show={isGuest}
+                                onClick={this.handlePromoteToUser}
+                                text={Utils.localizeMessage('admin.user_item.promoteToUser', 'Promote to User')}
+                            />
+                            <MenuItemAction
+                                show={!isGuest && user.id !== currentUser.id}
+                                onClick={this.handleDemoteToGuest}
+                                text={Utils.localizeMessage('admin.user_item.demoteToGuest', 'Demote to Guest')}
+                            />
+                            <SystemPermissionGate permissions={[Permissions.REVOKE_USER_ACCESS_TOKEN]}>
+                                <MenuItemAction
+                                    show={showRevokeSessions}
+                                    onClick={this.handleShowRevokeSessionsModal}
+                                    text={Utils.localizeMessage('admin.user_item.revokeSessions', 'Revoke Sessions')}
+                                />
+                            </SystemPermissionGate>
+                        </Menu>
+                    </div>
+                </MenuWrapper>
+            </React.Fragment>
         );
     }
 }

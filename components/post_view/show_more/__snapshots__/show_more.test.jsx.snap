@@ -6,7 +6,11 @@ exports[`components/post_view/ShowMore should match snapshot 1`] = `
 >
   <div
     className="post-message__text-container"
-    style={null}
+    style={
+      Object {
+        "maxHeight": 600,
+      }
+    }
   >
     <div>
       <p>
@@ -34,6 +38,7 @@ exports[`components/post_view/ShowMore should match snapshot, PostAttachment on 
   >
     <div
       className="post-attachment-collapse__gradient"
+      id="collapseGradient"
     />
     <div
       className="post-attachment-collapse__show-more"
@@ -43,6 +48,7 @@ exports[`components/post_view/ShowMore should match snapshot, PostAttachment on 
       />
       <button
         className="post-collapse__show-more-button"
+        id="showMoreButton"
         onClick={[Function]}
       >
         <span
@@ -64,12 +70,18 @@ exports[`components/post_view/ShowMore should match snapshot, PostAttachment on 
 >
   <div
     className="post-message__text-container"
+    style={
+      Object {
+        "maxHeight": undefined,
+      }
+    }
   />
   <div
     className="post-collapse"
   >
     <div
       className="post-attachment-collapse__gradient"
+      id="collapseGradient"
     />
     <div
       className="post-attachment-collapse__show-more"
@@ -79,6 +91,7 @@ exports[`components/post_view/ShowMore should match snapshot, PostAttachment on 
       />
       <button
         className="post-collapse__show-more-button"
+        id="showMoreButton"
         onClick={[Function]}
       >
         <span
@@ -100,13 +113,18 @@ exports[`components/post_view/ShowMore should match snapshot, PostMessageView on
 >
   <div
     className="post-message__text-container"
-    style={null}
+    style={
+      Object {
+        "maxHeight": 600,
+      }
+    }
   />
   <div
     className="post-collapse"
   >
     <div
       className="post-collapse__gradient"
+      id="collapseGradient"
     />
     <div
       className="post-collapse__show-more"
@@ -116,6 +134,7 @@ exports[`components/post_view/ShowMore should match snapshot, PostMessageView on
       />
       <button
         className="post-collapse__show-more-button"
+        id="showMoreButton"
         onClick={[Function]}
       >
         <span
@@ -137,12 +156,18 @@ exports[`components/post_view/ShowMore should match snapshot, PostMessageView on
 >
   <div
     className="post-message__text-container"
+    style={
+      Object {
+        "maxHeight": undefined,
+      }
+    }
   />
   <div
     className="post-collapse"
   >
     <div
       className="post-collapse__gradient"
+      id="collapseGradient"
     />
     <div
       className="post-collapse__show-more"
@@ -152,6 +177,50 @@ exports[`components/post_view/ShowMore should match snapshot, PostMessageView on
       />
       <button
         className="post-collapse__show-more-button"
+        id="showMoreButton"
+        onClick={[Function]}
+      >
+        <span
+          className="fa fa-angle-up"
+        />
+        Show Less
+      </button>
+      <div
+        className="post-collapse__show-more-line"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`components/post_view/ShowMore should match snapshot, PostMessageView on expanded view with compactDisplay 1`] = `
+<div
+  className="post-message post-message--expanded post-message--overflow"
+>
+  <div
+    className="post-message__text-container"
+    style={
+      Object {
+        "maxHeight": undefined,
+      }
+    }
+  />
+  <div
+    className="post-collapse"
+  >
+    <div
+      className="post-collapse__gradient"
+      id="collapseGradient"
+    />
+    <div
+      className="post-collapse__show-more"
+    >
+      <div
+        className="post-collapse__show-more-line"
+      />
+      <button
+        className="post-collapse__show-more-button"
+        id="showMoreButton"
         onClick={[Function]}
       >
         <span

@@ -12,6 +12,9 @@ import LoadingWrapper from 'components/widgets/loading/loading_wrapper.jsx';
 import QuickInput from 'components/quick_input';
 import * as UserAgent from 'utils/user_agent.jsx';
 import {localizeMessage} from 'utils/utils.jsx';
+import LocalizedInput from 'components/localized_input/localized_input';
+
+import {t} from 'utils/i18n';
 
 const NEXT_BUTTON_TIMEOUT_MILLISECONDS = 500;
 
@@ -63,13 +66,21 @@ export default class SearchableChannelList extends React.Component {
     }
 
     createChannelRow(channel) {
+        const ariaLabel = `${channel.display_name}, ${channel.purpose}`.toLowerCase();
+
         return (
             <div
                 className='more-modal__row'
                 key={channel.id}
             >
                 <div className='more-modal__details'>
-                    <p className='more-modal__name'>{channel.display_name}</p>
+                    <button
+                        onClick={this.handleJoin.bind(this, channel)}
+                        aria-label={ariaLabel}
+                        className='style--none more-modal__name'
+                    >
+                        {channel.display_name}
+                    </button>
                     <p className='more-modal__description'>{channel.purpose}</p>
                 </div>
                 <div className='more-modal__actions'>
@@ -178,7 +189,8 @@ export default class SearchableChannelList extends React.Component {
                         id='searchChannelsTextbox'
                         ref='filter'
                         className='form-control filter-textbox'
-                        placeholder={localizeMessage('filtered_channels_list.search', 'Search channels')}
+                        placeholder={{id: t('filtered_channels_list.search'), defaultMessage: 'Search channels'}}
+                        inputComponent={LocalizedInput}
                         onInput={this.doSearch}
                     />
                 </div>
@@ -193,7 +205,8 @@ export default class SearchableChannelList extends React.Component {
                             id='searchChannelsTextbox'
                             ref='filter'
                             className='form-control filter-textbox'
-                            placeholder={localizeMessage('filtered_channels_list.search', 'Search channels')}
+                            placeholder={{id: t('filtered_channels_list.search'), defaultMessage: 'Search channels'}}
+                            inputComponent={LocalizedInput}
                             onInput={this.doSearch}
                         />
                     </div>
@@ -208,6 +221,7 @@ export default class SearchableChannelList extends React.Component {
             <div className='filtered-user-list'>
                 {input}
                 <div
+                    role='application'
                     ref='channelList'
                     className='more-modal__list'
                 >

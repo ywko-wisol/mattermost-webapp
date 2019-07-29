@@ -101,14 +101,21 @@ export default class DeletePostModal extends React.PureComponent {
 
         return (
             <Modal
+                dialogClassName='a11y__modal'
                 show={this.state.show}
                 onEntered={this.handleEntered}
                 onHide={this.onHide}
                 onExited={this.props.onHide}
                 enforceFocus={false}
+                id='deletePostModal'
+                role='dialog'
+                aria-labelledby='deletePostModalLabel'
             >
                 <Modal.Header closeButton={true}>
-                    <Modal.Title>
+                    <Modal.Title
+                        componentClass='h1'
+                        id='deletePostModalLabel'
+                    >
                         <FormattedMessage
                             id='delete_post.confirm'
                             defaultMessage='Confirm {term} Delete'
@@ -149,6 +156,7 @@ export default class DeletePostModal extends React.PureComponent {
                         autoFocus={true}
                         className='btn btn-danger'
                         onClick={this.handleDelete}
+                        id='deletePostModalButton'
                     >
                         <FormattedMessage
                             id='delete_post.del'

@@ -18,6 +18,7 @@ exports[`components/SettingItemMin should match snapshot 1`] = `
     >
       <li
         className="setting-list-item"
+        role="presentation"
       >
         input_1
       </li>
@@ -27,12 +28,10 @@ exports[`components/SettingItemMin should match snapshot 1`] = `
         <hr />
         <SaveButton
           btnClass="btn-primary"
-          defaultMessage="Save"
           disabled={false}
           extraClasses=""
           onClick={[Function]}
           saving={false}
-          savingMessage="Saving"
         />
         <button
           className="btn btn-sm cursor--pointer style--none"
@@ -69,6 +68,7 @@ exports[`components/SettingItemMin should match snapshot, on clientError 1`] = `
     >
       <li
         className="setting-list-item"
+        role="presentation"
       >
         input_1
       </li>
@@ -88,12 +88,10 @@ exports[`components/SettingItemMin should match snapshot, on clientError 1`] = `
         </div>
         <SaveButton
           btnClass="btn-primary"
-          defaultMessage="Save"
           disabled={false}
           extraClasses=""
           onClick={[Function]}
           saving={false}
-          savingMessage="Saving"
         />
         <button
           className="btn btn-sm cursor--pointer style--none"
@@ -130,6 +128,7 @@ exports[`components/SettingItemMin should match snapshot, on serverError 1`] = `
     >
       <li
         className="setting-list-item"
+        role="presentation"
       >
         input_1
       </li>
@@ -149,12 +148,10 @@ exports[`components/SettingItemMin should match snapshot, on serverError 1`] = `
         </div>
         <SaveButton
           btnClass="btn-primary"
-          defaultMessage="Save"
           disabled={false}
           extraClasses=""
           onClick={[Function]}
           saving={false}
-          savingMessage="Saving"
         />
         <button
           className="btn btn-sm cursor--pointer style--none"
@@ -191,6 +188,7 @@ exports[`components/SettingItemMin should match snapshot, with new saveTextButto
     >
       <li
         className="setting-list-item"
+        role="presentation"
       >
         input_1
       </li>
@@ -205,7 +203,6 @@ exports[`components/SettingItemMin should match snapshot, with new saveTextButto
           extraClasses=""
           onClick={[Function]}
           saving={false}
-          savingMessage="Saving"
         />
         <button
           className="btn btn-sm cursor--pointer style--none"
@@ -242,6 +239,7 @@ exports[`components/SettingItemMin should match snapshot, without submit 1`] = `
     >
       <li
         className="setting-list-item"
+        role="presentation"
       >
         input_1
       </li>

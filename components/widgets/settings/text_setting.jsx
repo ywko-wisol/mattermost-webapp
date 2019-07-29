@@ -7,6 +7,14 @@ import React from 'react';
 import Setting from './setting.jsx';
 
 export default class TextSetting extends React.Component {
+    static validTypes = [
+        'input',
+        'textarea',
+        'number',
+        'email',
+        'tel',
+        'url',
+    ];
     static propTypes = {
 
         /** id attribute of the input field */
@@ -49,14 +57,7 @@ export default class TextSetting extends React.Component {
         disabled: PropTypes.bool,
 
         /** Input field type */
-        type: PropTypes.oneOf([
-            'input',
-            'textarea',
-            'number',
-            'email',
-            'tel',
-            'url',
-        ]),
+        type: PropTypes.oneOf(TextSetting.validTypes),
     };
 
     static defaultProps = {

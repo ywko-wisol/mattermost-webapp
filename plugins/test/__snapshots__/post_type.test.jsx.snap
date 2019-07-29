@@ -24,6 +24,7 @@ exports[`plugins/PostMessageView should match snapshot with extended post type 1
   }
   post={
     Object {
+      "id": "post_id",
       "message": "this is some text",
       "type": "testtype",
     }
@@ -43,6 +44,7 @@ exports[`plugins/PostMessageView should match snapshot with extended post type 1
     isRHS={false}
     post={
       Object {
+        "id": "post_id",
         "message": "this is some text",
         "type": "testtype",
       }
@@ -65,18 +67,19 @@ exports[`plugins/PostMessageView should match snapshot with extended post type 1
 exports[`plugins/PostMessageView should match snapshot with no extended post type 1`] = `
 <Connect(ShowMore)
   checkOverflow={0}
-  maxHeight={600}
   text="this is some text"
 >
   <div
+    aria-readonly="true"
     className="post-message__text"
-    id={null}
+    id="postMessageText_post_id"
     onClick={[Function]}
+    tabIndex="0"
   >
     <Connect(PostMarkdown)
       imageProps={
         Object {
-          "onHeightReceived": [Function],
+          "onImageLoaded": [Function],
         }
       }
       isRHS={false}
@@ -84,6 +87,7 @@ exports[`plugins/PostMessageView should match snapshot with no extended post typ
       options={Object {}}
       post={
         Object {
+          "id": "post_id",
           "message": "this is some text",
           "type": "testtype",
         }
@@ -93,6 +97,7 @@ exports[`plugins/PostMessageView should match snapshot with no extended post typ
   <Connect(Pluggable)
     onHeightChange={[Function]}
     pluggableName="PostMessageAttachment"
+    postId="post_id"
   />
 </Connect(ShowMore)>
 `;

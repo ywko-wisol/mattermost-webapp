@@ -10,9 +10,9 @@ exports[`components/SingleImageView should match snapshot 1`] = `
     <div
       className="image-name"
     >
-      <a
+      <button
         aria-label="Toggle Embed Visibility"
-        className="post__embed-visibility"
+        className="style--none post__embed-visibility color--link"
         data-expanded={true}
         key="toggle"
         onClick={[Function]}
@@ -28,29 +28,32 @@ exports[`components/SingleImageView should match snapshot 1`] = `
       style={Object {}}
     >
       <div
-        className="image-loaded "
-        onClick={[Function]}
-        style={
-          Object {
-            "height": 200,
-          }
-        }
+        className="image-loaded  "
+        style={Object {}}
       >
-        <img
-          className=" "
-          style={
+        <SizeAwareImage
+          className=""
+          dimensions={
             Object {
               "height": 200,
+              "width": 350,
             }
           }
-        />
-      </div>
-      <div
-        className="image-preload"
-      >
-        <LoadingImagePreview
-          containerClass="file__image-loading"
-          loading="Loading"
+          fileInfo={
+            Object {
+              "extension": "jpg",
+              "has_preview_image": true,
+              "height": 200,
+              "id": "file_info_id",
+              "name": "name",
+              "post_id": "post_id",
+              "width": 350,
+            }
+          }
+          onClick={[Function]}
+          onImageLoaded={[Function]}
+          showLoader={true}
+          src="/api/v4/files/file_info_id/preview"
         />
       </div>
     </div>
@@ -68,9 +71,9 @@ exports[`components/SingleImageView should match snapshot 2`] = `
     <div
       className="image-name"
     >
-      <a
+      <button
         aria-label="Toggle Embed Visibility"
-        className="post__embed-visibility"
+        className="style--none post__embed-visibility color--link"
         data-expanded={true}
         key="toggle"
         onClick={[Function]}
@@ -86,22 +89,34 @@ exports[`components/SingleImageView should match snapshot 2`] = `
       style={Object {}}
     >
       <div
-        className="image-loaded image-fade-in"
-        onClick={[Function]}
+        className="image-loaded image-fade-in "
         style={Object {}}
       >
-        <img
-          className=" "
-          style={
+        <SizeAwareImage
+          className=""
+          dimensions={
             Object {
-              "cursor": "pointer",
+              "height": 200,
+              "width": 350,
             }
           }
+          fileInfo={
+            Object {
+              "extension": "jpg",
+              "has_preview_image": true,
+              "height": 200,
+              "id": "file_info_id",
+              "name": "name",
+              "post_id": "post_id",
+              "width": 350,
+            }
+          }
+          onClick={[Function]}
+          onImageLoaded={[Function]}
+          showLoader={true}
+          src="/api/v4/files/file_info_id/preview"
         />
       </div>
-      <div
-        className="image-preload"
-      />
     </div>
     <Connect(ViewImageModal)
       fileInfos={
@@ -118,6 +133,7 @@ exports[`components/SingleImageView should match snapshot 2`] = `
         ]
       }
       onModalDismissed={[Function]}
+      postId="original_post_id"
       show={false}
     />
   </div>
@@ -134,9 +150,9 @@ exports[`components/SingleImageView should match snapshot, SVG image 1`] = `
     <div
       className="image-name"
     >
-      <a
+      <button
         aria-label="Toggle Embed Visibility"
-        className="post__embed-visibility"
+        className="style--none post__embed-visibility color--link"
         data-expanded={true}
         key="toggle"
         onClick={[Function]}
@@ -151,27 +167,35 @@ exports[`components/SingleImageView should match snapshot, SVG image 1`] = `
       className="image-container"
       style={
         Object {
-          "height": 350,
-          "width": 300,
+          "height": 150,
+          "width": "auto",
         }
       }
     >
       <div
-        className="image-loaded "
-        onClick={[Function]}
+        className="image-loaded  svg"
         style={Object {}}
       >
-        <img
-          className=" post-image normal"
-          style={Object {}}
-        />
-      </div>
-      <div
-        className="image-preload"
-      >
-        <LoadingImagePreview
-          containerClass="file__image-loading"
-          loading="Loading"
+        <SizeAwareImage
+          className=""
+          dimensions={
+            Object {
+              "height": undefined,
+              "width": undefined,
+            }
+          }
+          fileInfo={
+            Object {
+              "extension": "svg",
+              "id": "svg_file_info_id",
+              "name": "name_svg",
+              "post_id": "post_id",
+            }
+          }
+          onClick={[Function]}
+          onImageLoaded={[Function]}
+          showLoader={true}
+          src="/api/v4/files/svg_file_info_id"
         />
       </div>
     </div>
@@ -189,9 +213,9 @@ exports[`components/SingleImageView should match snapshot, SVG image 2`] = `
     <div
       className="image-name"
     >
-      <a
+      <button
         aria-label="Toggle Embed Visibility"
-        className="post__embed-visibility"
+        className="style--none post__embed-visibility color--link"
         data-expanded={true}
         key="toggle"
         onClick={[Function]}
@@ -206,27 +230,37 @@ exports[`components/SingleImageView should match snapshot, SVG image 2`] = `
       className="image-container"
       style={
         Object {
-          "width": 300,
+          "height": 150,
+          "width": "auto",
         }
       }
     >
       <div
-        className="image-loaded image-fade-in"
-        onClick={[Function]}
+        className="image-loaded image-fade-in svg"
         style={Object {}}
       >
-        <img
-          className=" post-image normal"
-          style={
+        <SizeAwareImage
+          className=""
+          dimensions={
             Object {
-              "cursor": "pointer",
+              "height": undefined,
+              "width": undefined,
             }
           }
+          fileInfo={
+            Object {
+              "extension": "svg",
+              "id": "svg_file_info_id",
+              "name": "name_svg",
+              "post_id": "post_id",
+            }
+          }
+          onClick={[Function]}
+          onImageLoaded={[Function]}
+          showLoader={true}
+          src="/api/v4/files/svg_file_info_id"
         />
       </div>
-      <div
-        className="image-preload"
-      />
     </div>
     <Connect(ViewImageModal)
       fileInfos={
@@ -240,6 +274,86 @@ exports[`components/SingleImageView should match snapshot, SVG image 2`] = `
         ]
       }
       onModalDismissed={[Function]}
+      postId="original_post_id"
+      show={false}
+    />
+  </div>
+</div>
+`;
+
+exports[`components/SingleImageView should set loaded state on callback of onImageLoaded on SizeAwareImage component 1`] = `
+<div
+  className="file-view--single"
+>
+  <div
+    className="file__image"
+  >
+    <div
+      className="image-name"
+    >
+      <button
+        aria-label="Toggle Embed Visibility"
+        className="style--none post__embed-visibility color--link"
+        data-expanded={true}
+        key="toggle"
+        onClick={[Function]}
+      />
+      <div
+        onClick={[Function]}
+      >
+        name
+      </div>
+    </div>
+    <div
+      className="image-container"
+      style={Object {}}
+    >
+      <div
+        className="image-loaded image-fade-in "
+        style={Object {}}
+      >
+        <SizeAwareImage
+          className=""
+          dimensions={
+            Object {
+              "height": 200,
+              "width": 350,
+            }
+          }
+          fileInfo={
+            Object {
+              "extension": "jpg",
+              "has_preview_image": true,
+              "height": 200,
+              "id": "file_info_id",
+              "name": "name",
+              "post_id": "post_id",
+              "width": 350,
+            }
+          }
+          onClick={[Function]}
+          onImageLoaded={[Function]}
+          showLoader={true}
+          src="/api/v4/files/file_info_id/preview"
+        />
+      </div>
+    </div>
+    <Connect(ViewImageModal)
+      fileInfos={
+        Array [
+          Object {
+            "extension": "jpg",
+            "has_preview_image": true,
+            "height": 200,
+            "id": "file_info_id",
+            "name": "name",
+            "post_id": "post_id",
+            "width": 350,
+          },
+        ]
+      }
+      onModalDismissed={[Function]}
+      postId="original_post_id"
       show={false}
     />
   </div>

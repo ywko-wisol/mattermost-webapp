@@ -5,10 +5,11 @@ import React from 'react';
 import {mount, shallow} from 'enzyme';
 
 import SizeAwareImage from 'components/size_aware_image';
+import LoadingImagePreview from 'components/loading_image_preview';
 
 jest.mock('utils/image_utils');
 
-import {createPlaceholderImage, loadImage} from 'utils/image_utils';
+import {loadImage} from 'utils/image_utils';
 
 describe('components/SizeAwareImage', () => {
     const baseProps = {
@@ -16,27 +17,47 @@ describe('components/SizeAwareImage', () => {
             height: 200,
             width: 300,
         },
-        onHeightReceived: jest.fn(),
+        onImageLoaded: jest.fn(),
+        onImageLoadFail: jest.fn(),
         src: 'https://example.com/image.png',
     };
 
     loadImage.mockReturnValue(() => ({}));
 
-    test('should render a placeholder when first mounted with dimensions', () => {
-        createPlaceholderImage.mockImplementation(() => 'data:image/png;base64,abc123');
-
+    test('should render an svg when first mounted with dimensions and button display set to position absolute', () => {
         const wrapper = mount(<SizeAwareImage {...baseProps}/>);
 
-        const img = wrapper.getDOMNode();
-        expect(img.src.startsWith('data:image')).toBeTruthy();
+        const viewBox = wrapper.find('svg').prop('viewBox');
+        expect(viewBox).toEqual('0 0 300 200');
+        const style = wrapper.find('button').prop('style');
+        expect(style).toHaveProperty('position', 'absolute');
+        expect(style).toHaveProperty('visibility', 'hidden');
     });
 
-    test('should render the actual image after it is loaded', () => {
-        const wrapper = mount(<SizeAwareImage {...baseProps}/>);
-        wrapper.setState({loaded: true});
+    test('img should have inherited class name from prop', () => {
+        const wrapper = mount(<SizeAwareImage {...{...baseProps, className: 'imgClass'}}/>);
 
-        const img = wrapper.getDOMNode();
-        expect(img.src).toEqual(baseProps.src);
+        const className = wrapper.find('img').prop('className');
+        expect(className).toEqual('imgClass');
+    });
+
+    test('should render a placeholder and has loader when showLoader is true', () => {
+        const props = {
+            ...baseProps,
+            showLoader: true,
+        };
+
+        const wrapper = shallow(<SizeAwareImage {...props}/>);
+        expect(wrapper.find(LoadingImagePreview).exists()).toEqual(true);
+        expect(wrapper).toMatchSnapshot();
+    });
+
+    test('should not have position absolute on button when image is in loaded state', () => {
+        const wrapper = mount(<SizeAwareImage {...baseProps}/>);
+        wrapper.setState({loaded: true, error: false});
+
+        const style = wrapper.find('button').prop('style');
+        expect(style).not.toHaveProperty('position', 'absolute');
     });
 
     test('should render the actual image when first mounted without dimensions', () => {
@@ -45,48 +66,30 @@ describe('components/SizeAwareImage', () => {
 
         const wrapper = mount(<SizeAwareImage {...props}/>);
 
-        const img = wrapper.getDOMNode();
-        expect(img.src).toEqual(baseProps.src);
+        wrapper.setState({error: false});
+
+        const src = wrapper.find('img').prop('src');
+        expect(src).toEqual(baseProps.src);
     });
 
-    test('should load image when mounted and when src changes', () => {
+    test('should set loaded state when img loads and call onImageLoaded prop', () => {
+        const height = 123;
+        const width = 1234;
+
         const wrapper = shallow(<SizeAwareImage {...baseProps}/>);
 
-        expect(loadImage).toHaveBeenCalledTimes(1);
-        expect(loadImage.mock.calls[0][0]).toEqual(baseProps.src);
-
-        const newSrc = 'https://example.com/new_image.png';
-        wrapper.setProps({src: newSrc});
-
-        expect(loadImage).toHaveBeenCalledTimes(2);
-        expect(loadImage.mock.calls[1][0]).toEqual(newSrc);
+        wrapper.find('img').prop('onLoad')({target: {naturalHeight: height, naturalWidth: width}});
+        expect(wrapper.state('loaded')).toBe(true);
+        expect(baseProps.onImageLoaded).toHaveBeenCalledWith({height, width});
     });
 
-    test('should call onHeightReceived on load when dimensions are needed', () => {
-        const height = 123;
-        loadImage.mockImplementation((src, onLoad) => {
-            onLoad({height});
+    test('should call onImageLoadFail when image load fails and should have svg', () => {
+        const wrapper = mount(<SizeAwareImage {...baseProps}/>);
 
-            return {};
-        });
+        wrapper.find('img').prop('onError')();
 
-        const props = {...baseProps};
-        Reflect.deleteProperty(props, 'dimensions');
-
-        shallow(<SizeAwareImage {...props}/>);
-
-        expect(baseProps.onHeightReceived).toHaveBeenCalledWith(height);
-    });
-
-    test('should not call onHeightReceived when dimensions are provided', () => {
-        loadImage.mockImplementation((src, onLoad) => {
-            onLoad({height: 100});
-
-            return {};
-        });
-
-        shallow(<SizeAwareImage {...baseProps}/>);
-
-        expect(baseProps.onHeightReceived).not.toHaveBeenCalled();
+        expect(wrapper.state('error')).toBe(true);
+        expect(wrapper.find('svg').exists()).toEqual(true);
+        expect(wrapper.find(LoadingImagePreview).exists()).toEqual(false);
     });
 });

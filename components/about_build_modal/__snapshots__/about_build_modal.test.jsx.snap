@@ -3,10 +3,11 @@
 exports[`components/AboutBuildModal should match snapshot for enterprise edition 1`] = `
 <Modal
   animation={true}
+  aria-labelledby="aboutModalLabel"
   autoFocus={true}
   backdrop={true}
   bsClass="modal"
-  dialogClassName="about-modal"
+  dialogClassName="a11y__modal about-modal"
   dialogComponentClass={[Function]}
   enforceFocus={true}
   keyboard={true}
@@ -25,6 +26,7 @@ exports[`components/AboutBuildModal should match snapshot for enterprise edition
   onHide={[Function]}
   renderBackdrop={[Function]}
   restoreFocus={true}
+  role="dialog"
   show={true}
 >
   <ModalHeader
@@ -34,12 +36,17 @@ exports[`components/AboutBuildModal should match snapshot for enterprise edition
   >
     <ModalTitle
       bsClass="modal-title"
-      componentClass="h4"
+      componentClass="h1"
+      id="aboutModalLabel"
     >
       <FormattedMessage
-        defaultMessage="About Mattermost"
+        defaultMessage="About {appTitle}"
         id="about.title"
-        values={Object {}}
+        values={
+          Object {
+            "appTitle": "Mattermost",
+          }
+        }
       />
     </ModalTitle>
   </ModalHeader>
@@ -143,17 +150,50 @@ exports[`components/AboutBuildModal should match snapshot for enterprise edition
         </a>
       </div>
       <div
-        className="form-group about-modal__copyright"
+        className="form-group"
       >
-        <FormattedMessage
-          defaultMessage="Copyright 2015 - {currentYear} Mattermost, Inc. All rights reserved"
-          id="about.copyright"
-          values={
-            Object {
-              "currentYear": 2017,
+        <div
+          className="about-modal__copyright"
+        >
+          <FormattedMessage
+            defaultMessage="Copyright 2015 - {currentYear} Mattermost, Inc. All rights reserved"
+            id="about.copyright"
+            values={
+              Object {
+                "currentYear": 2017,
+              }
             }
-          }
-        />
+          />
+        </div>
+        <div
+          className="about-modal__links"
+        >
+          <a
+            href="https://about.mattermost.com/default-terms/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FormattedMessage
+              defaultMessage="Terms of Service"
+              id="about.tos"
+              values={Object {}}
+            />
+          </a>
+          <span>
+             - 
+          </span>
+          <a
+            href="https://mattermost.com/privacy-policy/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FormattedMessage
+              defaultMessage="Privacy Policy"
+              id="about.privacy"
+              values={Object {}}
+            />
+          </a>
+        </div>
       </div>
     </div>
     <div
@@ -211,10 +251,11 @@ exports[`components/AboutBuildModal should match snapshot for enterprise edition
 exports[`components/AboutBuildModal should match snapshot for team edition 1`] = `
 <Modal
   animation={true}
+  aria-labelledby="aboutModalLabel"
   autoFocus={true}
   backdrop={true}
   bsClass="modal"
-  dialogClassName="about-modal"
+  dialogClassName="a11y__modal about-modal"
   dialogComponentClass={[Function]}
   enforceFocus={true}
   keyboard={true}
@@ -233,6 +274,7 @@ exports[`components/AboutBuildModal should match snapshot for team edition 1`] =
   onHide={[Function]}
   renderBackdrop={[Function]}
   restoreFocus={true}
+  role="dialog"
   show={true}
 >
   <ModalHeader
@@ -242,12 +284,17 @@ exports[`components/AboutBuildModal should match snapshot for team edition 1`] =
   >
     <ModalTitle
       bsClass="modal-title"
-      componentClass="h4"
+      componentClass="h1"
+      id="aboutModalLabel"
     >
       <FormattedMessage
-        defaultMessage="About Mattermost"
+        defaultMessage="About {appTitle}"
         id="about.title"
-        values={Object {}}
+        values={
+          Object {
+            "appTitle": "Mattermost",
+          }
+        }
       />
     </ModalTitle>
   </ModalHeader>
@@ -340,17 +387,50 @@ exports[`components/AboutBuildModal should match snapshot for team edition 1`] =
         </a>
       </div>
       <div
-        className="form-group about-modal__copyright"
+        className="form-group"
       >
-        <FormattedMessage
-          defaultMessage="Copyright 2015 - {currentYear} Mattermost, Inc. All rights reserved"
-          id="about.copyright"
-          values={
-            Object {
-              "currentYear": 2017,
+        <div
+          className="about-modal__copyright"
+        >
+          <FormattedMessage
+            defaultMessage="Copyright 2015 - {currentYear} Mattermost, Inc. All rights reserved"
+            id="about.copyright"
+            values={
+              Object {
+                "currentYear": 2017,
+              }
             }
-          }
-        />
+          />
+        </div>
+        <div
+          className="about-modal__links"
+        >
+          <a
+            href="https://about.mattermost.com/default-terms/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FormattedMessage
+              defaultMessage="Terms of Service"
+              id="about.tos"
+              values={Object {}}
+            />
+          </a>
+          <span>
+             - 
+          </span>
+          <a
+            href="https://mattermost.com/privacy-policy/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FormattedMessage
+              defaultMessage="Privacy Policy"
+              id="about.privacy"
+              values={Object {}}
+            />
+          </a>
+        </div>
       </div>
     </div>
     <div
@@ -407,10 +487,11 @@ exports[`components/AboutBuildModal should match snapshot for team edition 1`] =
 exports[`components/AboutBuildModal should show ci if a ci build 1`] = `
 <Modal
   animation={true}
+  aria-labelledby="aboutModalLabel"
   autoFocus={true}
   backdrop={true}
   bsClass="modal"
-  dialogClassName="about-modal"
+  dialogClassName="a11y__modal about-modal"
   dialogComponentClass={[Function]}
   enforceFocus={true}
   keyboard={true}
@@ -429,6 +510,7 @@ exports[`components/AboutBuildModal should show ci if a ci build 1`] = `
   onHide={[Function]}
   renderBackdrop={[Function]}
   restoreFocus={true}
+  role="dialog"
   show={true}
 >
   <ModalHeader
@@ -438,12 +520,17 @@ exports[`components/AboutBuildModal should show ci if a ci build 1`] = `
   >
     <ModalTitle
       bsClass="modal-title"
-      componentClass="h4"
+      componentClass="h1"
+      id="aboutModalLabel"
     >
       <FormattedMessage
-        defaultMessage="About Mattermost"
+        defaultMessage="About {appTitle}"
         id="about.title"
-        values={Object {}}
+        values={
+          Object {
+            "appTitle": "Mattermost",
+          }
+        }
       />
     </ModalTitle>
   </ModalHeader>
@@ -548,17 +635,50 @@ exports[`components/AboutBuildModal should show ci if a ci build 1`] = `
         </a>
       </div>
       <div
-        className="form-group about-modal__copyright"
+        className="form-group"
       >
-        <FormattedMessage
-          defaultMessage="Copyright 2015 - {currentYear} Mattermost, Inc. All rights reserved"
-          id="about.copyright"
-          values={
-            Object {
-              "currentYear": 2017,
+        <div
+          className="about-modal__copyright"
+        >
+          <FormattedMessage
+            defaultMessage="Copyright 2015 - {currentYear} Mattermost, Inc. All rights reserved"
+            id="about.copyright"
+            values={
+              Object {
+                "currentYear": 2017,
+              }
             }
-          }
-        />
+          />
+        </div>
+        <div
+          className="about-modal__links"
+        >
+          <a
+            href="https://about.mattermost.com/default-terms/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FormattedMessage
+              defaultMessage="Terms of Service"
+              id="about.tos"
+              values={Object {}}
+            />
+          </a>
+          <span>
+             - 
+          </span>
+          <a
+            href="https://mattermost.com/privacy-policy/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FormattedMessage
+              defaultMessage="Privacy Policy"
+              id="about.privacy"
+              values={Object {}}
+            />
+          </a>
+        </div>
       </div>
     </div>
     <div
@@ -615,10 +735,11 @@ exports[`components/AboutBuildModal should show ci if a ci build 1`] = `
 exports[`components/AboutBuildModal should show dev if this is a dev build 1`] = `
 <Modal
   animation={true}
+  aria-labelledby="aboutModalLabel"
   autoFocus={true}
   backdrop={true}
   bsClass="modal"
-  dialogClassName="about-modal"
+  dialogClassName="a11y__modal about-modal"
   dialogComponentClass={[Function]}
   enforceFocus={true}
   keyboard={true}
@@ -637,6 +758,7 @@ exports[`components/AboutBuildModal should show dev if this is a dev build 1`] =
   onHide={[Function]}
   renderBackdrop={[Function]}
   restoreFocus={true}
+  role="dialog"
   show={true}
 >
   <ModalHeader
@@ -646,12 +768,17 @@ exports[`components/AboutBuildModal should show dev if this is a dev build 1`] =
   >
     <ModalTitle
       bsClass="modal-title"
-      componentClass="h4"
+      componentClass="h1"
+      id="aboutModalLabel"
     >
       <FormattedMessage
-        defaultMessage="About Mattermost"
+        defaultMessage="About {appTitle}"
         id="about.title"
-        values={Object {}}
+        values={
+          Object {
+            "appTitle": "Mattermost",
+          }
+        }
       />
     </ModalTitle>
   </ModalHeader>
@@ -744,17 +871,50 @@ exports[`components/AboutBuildModal should show dev if this is a dev build 1`] =
         </a>
       </div>
       <div
-        className="form-group about-modal__copyright"
+        className="form-group"
       >
-        <FormattedMessage
-          defaultMessage="Copyright 2015 - {currentYear} Mattermost, Inc. All rights reserved"
-          id="about.copyright"
-          values={
-            Object {
-              "currentYear": 2017,
+        <div
+          className="about-modal__copyright"
+        >
+          <FormattedMessage
+            defaultMessage="Copyright 2015 - {currentYear} Mattermost, Inc. All rights reserved"
+            id="about.copyright"
+            values={
+              Object {
+                "currentYear": 2017,
+              }
             }
-          }
-        />
+          />
+        </div>
+        <div
+          className="about-modal__links"
+        >
+          <a
+            href="https://about.mattermost.com/default-terms/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FormattedMessage
+              defaultMessage="Terms of Service"
+              id="about.tos"
+              values={Object {}}
+            />
+          </a>
+          <span>
+             - 
+          </span>
+          <a
+            href="https://mattermost.com/privacy-policy/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FormattedMessage
+              defaultMessage="Privacy Policy"
+              id="about.privacy"
+              values={Object {}}
+            />
+          </a>
+        </div>
       </div>
     </div>
     <div

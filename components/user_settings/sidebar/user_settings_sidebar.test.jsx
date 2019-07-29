@@ -2,9 +2,8 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {shallow} from 'enzyme';
 
-import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
+import {mountWithIntl, shallowWithIntl} from 'tests/helpers/intl-test-helper.jsx';
 
 import UserSettingsSidebar from 'components/user_settings/sidebar/user_settings_sidebar.jsx';
 
@@ -31,10 +30,11 @@ describe('components/user_settings/sidebar/UserSettingsSidebar', () => {
         actions: {
             savePreferences: () => true,
         },
+        prevActiveSection: 'dummySectionName',
     };
 
     test('should match snapshot', () => {
-        const wrapper = shallow(<UserSettingsSidebar {...defaultProps}/>);
+        const wrapper = shallowWithIntl(<UserSettingsSidebar {...defaultProps}/>);
 
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.state('isSaving')).toEqual(false);
@@ -52,7 +52,7 @@ describe('components/user_settings/sidebar/UserSettingsSidebar', () => {
         const newUpdateSection = jest.fn();
         const updateArg = 'unreadChannels';
         const props = {...defaultProps, updateSection: newUpdateSection};
-        const wrapper = shallow(<UserSettingsSidebar {...props}/>);
+        const wrapper = shallowWithIntl(<UserSettingsSidebar {...props}/>);
 
         wrapper.setState({isSaving: true});
         wrapper.instance().updateSection(updateArg);

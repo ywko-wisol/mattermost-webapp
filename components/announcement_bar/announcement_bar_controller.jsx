@@ -4,7 +4,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ConfigurationAnnouncementBar from './configuration_bar.jsx';
+import ConfigurationAnnouncementBar from './configuration_bar';
+import VersionBar from './version_bar';
 import TextDismissableBar from './text_dismissable_bar.jsx';
 import AnnouncementBar from './announcement_bar.jsx';
 
@@ -20,14 +21,13 @@ export default class AnnouncementBarController extends React.PureComponent {
         latestError: PropTypes.object,
         totalUsers: PropTypes.number,
         actions: PropTypes.shape({
-            sendVerificationEmail: PropTypes.func.isRequired,
             dismissError: PropTypes.func.isRequired,
         }).isRequired,
     }
 
     render() {
         let adminConfiguredAnnouncementBar = null;
-        if (this.props.config.EnableBanner === 'true') {
+        if (this.props.config.EnableBanner === 'true' && this.props.config.BannerText.trim()) {
             adminConfiguredAnnouncementBar = (
                 <TextDismissableBar
                     color={this.props.config.BannerColor}
@@ -54,13 +54,13 @@ export default class AnnouncementBarController extends React.PureComponent {
             <React.Fragment>
                 {adminConfiguredAnnouncementBar}
                 {errorBar}
+                <VersionBar/>
                 <ConfigurationAnnouncementBar
                     config={this.props.config}
                     license={this.props.license}
                     canViewSystemErrors={this.props.canViewSystemErrors}
                     totalUsers={this.props.totalUsers}
                     user={this.props.user}
-                    sendVerificationEmail={this.props.actions.sendVerificationEmail}
                 />
             </React.Fragment>
         );

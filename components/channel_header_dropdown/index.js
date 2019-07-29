@@ -4,9 +4,11 @@
 import {connect} from 'react-redux';
 import {createSelector} from 'reselect';
 import {
+    getUser,
     getCurrentUser,
     getUserStatuses,
 } from 'mattermost-redux/selectors/entities/users';
+import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
 import {
     getCurrentChannel,
     isCurrentChannelDefault,
@@ -14,12 +16,16 @@ import {
     isCurrentChannelMuted,
     isCurrentChannelArchived,
     isCurrentChannelReadOnly,
+    getRedirectChannelNameForTeam,
 } from 'mattermost-redux/selectors/entities/channels';
+
+import {getPenultimateViewedChannelName} from 'selectors/local_storage';
 
 import {Constants} from 'utils/constants';
 import * as Utils from 'utils/utils';
 
 import Desktop from './channel_header_dropdown';
+import Items from './channel_header_dropdown_items';
 import Mobile from './mobile_channel_header_dropdown';
 
 const getTeammateId = createSelector(
@@ -53,9 +59,29 @@ const mapStateToProps = (state) => ({
     isMuted: isCurrentChannelMuted(state),
     isReadonly: isCurrentChannelReadOnly(state),
     isArchived: isCurrentChannelArchived(state),
-    teammateId: getTeammateId(state),
-    teammateStatus: getTeammateStatus(state),
+    penultimateViewedChannelName: getPenultimateViewedChannelName(state) || getRedirectChannelNameForTeam(state, getCurrentTeamId(state)),
 });
 
-export const ChannelHeaderDropdown = connect(mapStateToProps)(Desktop);
-export const MobileChannelHeaderDropdown = connect(mapStateToProps)(Mobile);
+const mobileMapStateToProps = (state) => {
+    const user = getCurrentUser(state);
+    const channel = getCurrentChannel(state);
+    const teammateId = getTeammateId(state);
+
+    let teammateIsBot = false;
+    if (teammateId) {
+        const teammate = getUser(state, teammateId);
+        teammateIsBot = teammate && teammate.is_bot;
+    }
+
+    return {
+        user,
+        channel,
+        teammateId,
+        teammateIsBot,
+        teammateStatus: getTeammateStatus(state),
+    };
+};
+
+export const ChannelHeaderDropdown = Desktop;
+export const ChannelHeaderDropdownItems = connect(mapStateToProps)(Items);
+export const MobileChannelHeaderDropdown = connect(mobileMapStateToProps)(Mobile);

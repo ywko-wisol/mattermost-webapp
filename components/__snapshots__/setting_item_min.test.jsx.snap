@@ -15,14 +15,12 @@ exports[`components/SettingItemMin should match snapshot 1`] = `
     className="col-xs-12 col-sm-3 section-edit"
   >
     <button
+      aria-labelledby="sectionTitle sectionEdit"
       className="color--link cursor--pointer style--none text-left"
       id="sectionEdit"
       onClick={[Function]}
     >
-      <i
-        className="fa fa-pencil"
-        title="Edit Icon"
-      />
+      <EditIcon />
       <FormattedMessage
         defaultMessage="Edit"
         id="setting_item_min.edit"

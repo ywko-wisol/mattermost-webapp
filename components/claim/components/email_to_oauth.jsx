@@ -9,14 +9,15 @@ import {FormattedMessage} from 'react-intl';
 import {emailToOAuth} from 'actions/admin_actions.jsx';
 import Constants from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
+import {t} from 'utils/i18n.jsx';
 import LoginMfa from 'components/login/login_mfa.jsx';
+import LocalizedInput from 'components/localized_input/localized_input';
 
 export default class EmailToOAuth extends React.PureComponent {
     static propTypes = {
         newType: PropTypes.string,
         email: PropTypes.string,
         siteName: PropTypes.string,
-        checkMfa: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -44,21 +45,7 @@ export default class EmailToOAuth extends React.PureComponent {
         state.error = null;
         this.setState(state);
 
-        this.props.checkMfa(this.props.email).then((result) => {
-            if (result.error) {
-                this.setState({
-                    error: result.error.message,
-                });
-                return;
-            }
-
-            const requiresMfa = result.data;
-            if (requiresMfa) {
-                this.setState({showMfa: true});
-            } else {
-                this.submit(this.props.email, password, '');
-            }
-        });
+        this.submit(this.props.email, password, '');
     }
 
     submit(loginId, password, token) {
@@ -73,7 +60,11 @@ export default class EmailToOAuth extends React.PureComponent {
                 }
             },
             (err) => {
-                this.setState({error: err.message, showMfa: false});
+                if (!this.state.showMfa && err.server_error_id === 'mfa.validate_token.authenticate.app_error') {
+                    this.setState({showMfa: true});
+                } else {
+                    this.setState({error: err.message, showMfa: false});
+                }
             }
         );
     }
@@ -132,12 +123,12 @@ export default class EmailToOAuth extends React.PureComponent {
                         />
                     </p>
                     <div className={formClass}>
-                        <input
+                        <LocalizedInput
                             type='password'
                             className='form-control'
                             name='password'
                             ref='password'
-                            placeholder={Utils.localizeMessage('claim.email_to_oauth.pwd', 'Password')}
+                            placeholder={{id: t('claim.email_to_oauth.pwd'), defaultMessage: 'Password'}}
                             spellCheck='false'
                         />
                     </div>

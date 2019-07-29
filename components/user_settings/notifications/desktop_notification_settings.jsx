@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
-import Constants, {NotificationLevels} from 'utils/constants.jsx';
+import {NotificationLevels} from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
+import {t} from 'utils/i18n.jsx';
 import SettingItemMax from 'components/setting_item_max.jsx';
 import SettingItemMin from 'components/setting_item_min.jsx';
 
@@ -50,15 +51,13 @@ export default class DesktopNotificationSettings extends React.Component {
 
             if (Utils.hasSoundOptions()) {
                 soundSection = (
-                    <div>
-                        <hr/>
-                        <label>
+                    <fieldset>
+                        <legend className='form-legend'>
                             <FormattedMessage
                                 id='user.settings.notifications.desktop.sound'
                                 defaultMessage='Notification sound'
                             />
-                        </label>
-                        <br/>
+                        </legend>
                         <div className='radio'>
                             <label>
                                 <input
@@ -95,104 +94,103 @@ export default class DesktopNotificationSettings extends React.Component {
                             </label>
                             <br/>
                         </div>
-                        <br/>
-                        <span>
+                        <span className='margin-top x3'>
                             <FormattedMessage
                                 id='user.settings.notifications.sounds_info'
                                 defaultMessage='Notification sounds are available on IE11, Safari, Chrome and Mattermost Desktop Apps.'
                             />
                         </span>
-                    </div>
+                    </fieldset>
                 );
             } else {
                 soundSection = (
-                    <div>
-                        <hr/>
-                        <label>
+                    <fieldset>
+                        <legend className='form-legend'>
                             <FormattedMessage
                                 id='user.settings.notifications.desktop.sound'
                                 defaultMessage='Notification sound'
                             />
-                        </label>
+                        </legend>
                         <br/>
                         <FormattedMessage
                             id='user.settings.notifications.soundConfig'
                             defaultMessage='Please configure notification sounds in your browser settings'
                         />
-                    </div>
+                    </fieldset>
                 );
             }
         }
 
         inputs.push(
             <div key='userNotificationLevelOption'>
-                <label>
-                    <FormattedMessage
-                        id='user.settings.notifications.desktop'
-                        defaultMessage='Send desktop notifications'
-                    />
-                </label>
-                <br/>
-                <div className='radio'>
-                    <label>
-                        <input
-                            id='desktopNotificationAllActivity'
-                            type='radio'
-                            name='desktopNotificationLevel'
-                            checked={activityRadio[0]}
-                            data-key={'desktopActivity'}
-                            data-value={NotificationLevels.ALL}
-                            onChange={this.handleOnChange}
-                        />
+                <fieldset>
+                    <legend className='form-legend'>
                         <FormattedMessage
-                            id='user.settings.notifications.allActivity'
-                            defaultMessage='For all activity'
+                            id='user.settings.notifications.desktop'
+                            defaultMessage='Send desktop notifications'
                         />
-                    </label>
-                    <br/>
-                </div>
-                <div className='radio'>
-                    <label>
-                        <input
-                            id='desktopNotificationMentions'
-                            type='radio'
-                            name='desktopNotificationLevel'
-                            checked={activityRadio[1]}
-                            data-key={'desktopActivity'}
-                            data-value={NotificationLevels.MENTION}
-                            onChange={this.handleOnChange}
-                        />
+                    </legend>
+                    <div className='radio'>
+                        <label>
+                            <input
+                                id='desktopNotificationAllActivity'
+                                type='radio'
+                                name='desktopNotificationLevel'
+                                checked={activityRadio[0]}
+                                data-key={'desktopActivity'}
+                                data-value={NotificationLevels.ALL}
+                                onChange={this.handleOnChange}
+                            />
+                            <FormattedMessage
+                                id='user.settings.notifications.allActivity'
+                                defaultMessage='For all activity'
+                            />
+                        </label>
+                        <br/>
+                    </div>
+                    <div className='radio'>
+                        <label>
+                            <input
+                                id='desktopNotificationMentions'
+                                type='radio'
+                                name='desktopNotificationLevel'
+                                checked={activityRadio[1]}
+                                data-key={'desktopActivity'}
+                                data-value={NotificationLevels.MENTION}
+                                onChange={this.handleOnChange}
+                            />
+                            <FormattedMessage
+                                id='user.settings.notifications.onlyMentions'
+                                defaultMessage='Only for mentions and direct messages'
+                            />
+                        </label>
+                        <br/>
+                    </div>
+                    <div className='radio'>
+                        <label>
+                            <input
+                                id='desktopNotificationNever'
+                                type='radio'
+                                name='desktopNotificationLevel'
+                                checked={activityRadio[2]}
+                                data-key={'desktopActivity'}
+                                data-value={NotificationLevels.NONE}
+                                onChange={this.handleOnChange}
+                            />
+                            <FormattedMessage
+                                id='user.settings.notifications.never'
+                                defaultMessage='Never'
+                            />
+                        </label>
+                    </div>
+                    <div className='margin-top x3'>
                         <FormattedMessage
-                            id='user.settings.notifications.onlyMentions'
-                            defaultMessage='Only for mentions and direct messages'
+                            id='user.settings.notifications.info'
+                            defaultMessage='Desktop notifications are available on Edge, Firefox, Safari, Chrome and Mattermost Desktop Apps.'
                         />
-                    </label>
-                    <br/>
-                </div>
-                <div className='radio'>
-                    <label>
-                        <input
-                            id='desktopNotificationNever'
-                            type='radio'
-                            name='desktopNotificationLevel'
-                            checked={activityRadio[2]}
-                            data-key={'desktopActivity'}
-                            data-value={NotificationLevels.NONE}
-                            onChange={this.handleOnChange}
-                        />
-                        <FormattedMessage
-                            id='user.settings.notifications.never'
-                            defaultMessage='Never'
-                        />
-                    </label>
-                </div>
-                <br/>
-                <span>
-                    <FormattedMessage
-                        id='user.settings.notifications.info'
-                        defaultMessage='Desktop notifications are available on Edge, Firefox, Safari, Chrome and Mattermost Desktop Apps.'
-                    />
-                </span>
+                    </div>
+                </fieldset>
+                <hr/>
                 {soundSection}
             </div>
         );
@@ -210,84 +208,53 @@ export default class DesktopNotificationSettings extends React.Component {
     }
 
     buildMinimizedSetting = () => {
-        let describe = '';
+        let formattedMessageProps;
+        const hasSoundOption = Utils.hasSoundOptions();
         if (this.props.activity === NotificationLevels.MENTION) {
-            if (Utils.hasSoundOptions() && this.props.sound !== 'false') {
-                describe = (
-                    <FormattedMessage
-                        id='user.settings.notifications.desktop.mentionsSoundTimed'
-                        defaultMessage='For mentions and direct messages, with sound, shown for {seconds} seconds'
-                        values={{
-                            seconds: Constants.DEFAULT_NOTIFICATION_DURATION / 1000,
-                        }}
-                    />
-                );
-            } else if (Utils.hasSoundOptions() && this.props.sound === 'false') {
-                describe = (
-                    <FormattedMessage
-                        id='user.settings.notifications.desktop.mentionsNoSoundTimed'
-                        defaultMessage='For mentions and direct messages, without sound, shown for {seconds} seconds'
-                        values={{
-                            seconds: Constants.DEFAULT_NOTIFICATION_DURATION / 1000,
-                        }}
-                    />
-                );
+            if (hasSoundOption && this.props.sound !== 'false') {
+                formattedMessageProps = {
+                    id: t('user.settings.notifications.desktop.mentionsSound'),
+                    defaultMessage: 'For mentions and direct messages, with sound',
+                };
+            } else if (hasSoundOption && this.props.sound === 'false') {
+                formattedMessageProps = {
+                    id: t('user.settings.notifications.desktop.mentionsNoSound'),
+                    defaultMessage: 'For mentions and direct messages, without sound',
+                };
             } else {
-                describe = (
-                    <FormattedMessage
-                        id='user.settings.notifications.desktop.mentionsSoundHiddenTimed'
-                        defaultMessage='For mentions and direct messages, shown for {seconds} seconds'
-                        values={{
-                            seconds: Constants.DEFAULT_NOTIFICATION_DURATION / 1000,
-                        }}
-                    />
-                );
+                formattedMessageProps = {
+                    id: t('user.settings.notifications.desktop.mentionsSoundHidden'),
+                    defaultMessage: 'For mentions and direct messages',
+                };
             }
         } else if (this.props.activity === NotificationLevels.NONE) {
-            describe = (
-                <FormattedMessage
-                    id='user.settings.notifications.off'
-                    defaultMessage='Off'
-                />
-            );
+            formattedMessageProps = {
+                id: t('user.settings.notifications.off'),
+                defaultMessage: 'Off',
+            };
         } else {
-            if (Utils.hasSoundOptions() && this.props.sound !== 'false') { //eslint-disable-line no-lonely-if
-                describe = (
-                    <FormattedMessage
-                        id='user.settings.notifications.desktop.allSoundTimed'
-                        defaultMessage='For all activity, with sound, shown for {seconds} seconds'
-                        values={{
-                            seconds: Constants.DEFAULT_NOTIFICATION_DURATION / 1000,
-                        }}
-                    />
-                );
-            } else if (Utils.hasSoundOptions() && this.props.sound === 'false') {
-                describe = (
-                    <FormattedMessage
-                        id='user.settings.notifications.desktop.allNoSoundTimed'
-                        defaultMessage='For all activity, without sound, shown for {seconds} seconds'
-                        values={{
-                            seconds: Constants.DEFAULT_NOTIFICATION_DURATION / 1000,
-                        }}
-                    />
-                );
+            if (hasSoundOption && this.props.sound !== 'false') { //eslint-disable-line no-lonely-if
+                formattedMessageProps = {
+                    id: t('user.settings.notifications.desktop.allSound'),
+                    defaultMessage: 'For all activity, with sound',
+                };
+            } else if (hasSoundOption && this.props.sound === 'false') {
+                formattedMessageProps = {
+                    id: t('user.settings.notifications.desktop.allNoSound'),
+                    defaultMessage: 'For all activity, without sound',
+                };
             } else {
-                describe = (
-                    <FormattedMessage
-                        id='user.settings.notifications.desktop.allSoundHiddenTimed'
-                        defaultMessage='For all activity, shown for {seconds} seconds'
-                        values={{
-                            seconds: Constants.DEFAULT_NOTIFICATION_DURATION / 1000,
-                        }}
-                    />
-                );
+                formattedMessageProps = {
+                    id: t('user.settings.notifications.desktop.allSoundHidden'),
+                    defaultMessage: 'For all activity',
+                };
             }
         }
 
         return (
             <SettingItemMin
                 title={Utils.localizeMessage('user.settings.notifications.desktop.title', 'Desktop notifications')}
-                describe={describe}
+                describe={<FormattedMessage {...formattedMessageProps}/>}
                 focused={this.props.focused}
                 section={'desktop'}
                 updateSection={this.handleMinUpdateSection}

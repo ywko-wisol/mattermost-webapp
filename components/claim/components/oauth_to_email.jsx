@@ -9,6 +9,8 @@ import {FormattedMessage} from 'react-intl';
 import {oauthToEmail} from 'actions/admin_actions.jsx';
 import Constants from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
+import {t} from 'utils/i18n.jsx';
+import LocalizedInput from 'components/localized_input/localized_input';
 
 export default class OAuthToEmail extends React.PureComponent {
     static propTypes = {
@@ -108,22 +110,22 @@ export default class OAuthToEmail extends React.PureComponent {
                         />
                     </p>
                     <div className={formClass}>
-                        <input
+                        <LocalizedInput
                             type='password'
                             className='form-control'
                             name='password'
                             ref='password'
-                            placeholder={Utils.localizeMessage('claim.oauth_to_email.newPwd', 'New Password')}
+                            placeholder={{id: t('claim.oauth_to_email.newPwd'), defaultMessage: 'New Password'}}
                             spellCheck='false'
                         />
                     </div>
                     <div className={formClass}>
-                        <input
+                        <LocalizedInput
                             type='password'
                             className='form-control'
                             name='passwordconfirm'
                             ref='passwordconfirm'
-                            placeholder={Utils.localizeMessage('claim.oauth_to_email.confirm', 'Confirm Password')}
+                            placeholder={{id: t('claim.oauth_to_email.confirm'), defaultMessage: 'Confirm Password'}}
                             spellCheck='false'
                         />
                     </div>

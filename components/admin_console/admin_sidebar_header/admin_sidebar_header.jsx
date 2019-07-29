@@ -1,28 +1,20 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import $ from 'jquery';
 import React from 'react';
 import PropTypes from 'prop-types';
 import {FormattedMessage} from 'react-intl';
 import {Client4} from 'mattermost-redux/client';
+
+import MenuIcon from 'components/svg/menu_icon';
+
+import MenuWrapper from 'components/widgets/menu/menu_wrapper';
 
 import AdminNavbarDropdown from 'components/admin_console/admin_navbar_dropdown';
 
 export default class SidebarHeader extends React.Component {
     static propTypes = {
         currentUser: PropTypes.object,
-    }
-
-    toggleDropdown = (e) => {
-        e.preventDefault();
-
-        if (this.refs.dropdown.blockToggle) {
-            this.refs.dropdown.blockToggle = false;
-            return;
-        }
-
-        $('.team__header').find('.dropdown-toggle').dropdown('toggle');
     }
 
     render() {
@@ -36,6 +28,7 @@ export default class SidebarHeader extends React.Component {
         if (me.last_picture_update) {
             profilePicture = (
                 <img
+                    alt={''}
                     className='user__picture'
                     src={Client4.getProfilePictureUrl(me.id, me.last_picture_update)}
                 />
@@ -43,11 +36,8 @@ export default class SidebarHeader extends React.Component {
         }
 
         return (
-            <div className='team__header theme'>
-                <a
-                    href='#'
-                    onClick={this.toggleDropdown}
-                >
+            <MenuWrapper className='AdminSidebarHeader'>
+                <div>
                     {profilePicture}
                     <div className='header__info'>
                         <div className='team__name'>
@@ -56,11 +46,14 @@ export default class SidebarHeader extends React.Component {
                                 defaultMessage='System Console'
                             />
                         </div>
-                        <div className='user__name'>{'@' + me.username}</div>
+                        <div className='user__name overflow--ellipsis whitespace--nowrap'>{'@' + me.username}</div>
                     </div>
-                </a>
-                <AdminNavbarDropdown ref='dropdown'/>
-            </div>
+                    <button className='style--none'>
+                        <MenuIcon className='menu-icon'/>
+                    </button>
+                </div>
+                <AdminNavbarDropdown/>
+            </MenuWrapper>
         );
     }
 }

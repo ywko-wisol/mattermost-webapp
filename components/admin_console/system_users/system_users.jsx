@@ -4,14 +4,21 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
+import {debounce} from 'mattermost-redux/actions/helpers';
+import {Permissions} from 'mattermost-redux/constants';
 
 import {getStandardAnalytics} from 'actions/admin_actions.jsx';
-import {reloadIfServerVersionChanged} from 'actions/global_actions.jsx';
-import {loadProfiles, loadProfilesWithoutTeam, searchUsers} from 'actions/user_actions.jsx';
-import {Constants, UserSearchOptions, SearchUserTeamFilter} from 'utils/constants.jsx';
+import {Constants, UserSearchOptions, SearchUserTeamFilter, UserFilters} from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
+import {t} from 'utils/i18n.jsx';
+import {getUserOptionsFromFilter, searchUserOptionsFromFilter} from 'utils/filter_users';
 
+import LocalizedInput from 'components/localized_input/localized_input';
 import FormattedAdminHeader from 'components/widgets/admin_console/formatted_admin_header.jsx';
+import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx';
+import SystemPermissionGate from 'components/permissions_gates/system_permission_gate';
+import ConfirmModal from 'components/confirm_modal.jsx';
+import {emitUserLoggedOutEvent} from 'actions/global_actions.jsx';
 
 import SystemUsersList from './list';
 
@@ -48,6 +55,7 @@ export default class SystemUsers extends React.Component {
         totalUsers: PropTypes.number.isRequired,
         searchTerm: PropTypes.string.isRequired,
         teamId: PropTypes.string.isRequired,
+        filter: PropTypes.string.isRequired,
         users: PropTypes.object.isRequired,
 
         actions: PropTypes.shape({
@@ -72,150 +80,154 @@ export default class SystemUsers extends React.Component {
              */
             getUserAccessToken: PropTypes.func.isRequired,
             loadProfilesAndTeamMembers: PropTypes.func.isRequired,
+            loadProfilesWithoutTeam: PropTypes.func.isRequired,
+            getProfiles: PropTypes.func.isRequired,
             setSystemUsersSearch: PropTypes.func.isRequired,
+            searchProfiles: PropTypes.func.isRequired,
+
+            /*
+             * Function to revoke all sessions in the system
+             */
+            revokeSessionsForAllUsers: PropTypes.func.isRequired,
+
+            /*
+            *  Function to log errors
+            */
+            logError: PropTypes.func.isRequired,
         }).isRequired,
     }
 
     constructor(props) {
         super(props);
 
-        this.loadComplete = this.loadComplete.bind(this);
-
-        this.handleTeamChange = this.handleTeamChange.bind(this);
-        this.handleTermChange = this.handleTermChange.bind(this);
-
-        this.doSearch = this.doSearch.bind(this);
-        this.search = this.search.bind(this);
-        this.getUserById = this.getUserById.bind(this);
-
-        this.renderFilterRow = this.renderFilterRow.bind(this);
-
         this.state = {
             loading: true,
             searching: false,
+            showRevokeAllSessionsModal: false,
         };
     }
 
     componentDidMount() {
-        this.loadDataForTeam(this.props.teamId);
-        this.props.actions.getTeams(0, 1000).then(reloadIfServerVersionChanged);
+        this.loadDataForTeam(this.props.teamId, this.props.filter);
+        this.props.actions.getTeams(0, 1000);
     }
 
     componentWillUnmount() {
-        this.props.actions.setSystemUsersSearch('', '');
+        this.props.actions.setSystemUsersSearch('', '', '');
     }
 
-    loadDataForTeam = async (teamId) => {
+    loadDataForTeam = async (teamId, filter) => {
+        const {
+            getProfiles,
+            loadProfilesWithoutTeam,
+            loadProfilesAndTeamMembers,
+            getTeamStats,
+        } = this.props.actions;
+
         if (this.props.searchTerm) {
-            this.search(this.props.searchTerm, teamId);
+            this.doSearch(this.props.searchTerm, teamId, filter);
             return;
         }
 
+        const options = getUserOptionsFromFilter(filter);
+
         if (teamId === SearchUserTeamFilter.ALL_USERS) {
-            loadProfiles(0, Constants.PROFILE_CHUNK_SIZE, this.loadComplete);
-            getStandardAnalytics();
+            await Promise.all([
+                getProfiles(0, Constants.PROFILE_CHUNK_SIZE, options),
+                getStandardAnalytics(),
+            ]);
         } else if (teamId === SearchUserTeamFilter.NO_TEAM) {
-            loadProfilesWithoutTeam(0, Constants.PROFILE_CHUNK_SIZE, this.loadComplete);
+            await loadProfilesWithoutTeam(0, Constants.PROFILE_CHUNK_SIZE);
         } else {
-            const {data} = await this.props.actions.loadProfilesAndTeamMembers(0, Constants.PROFILE_CHUNK_SIZE, teamId);
-            if (data) {
-                this.loadComplete();
-            }
-
-            this.props.actions.getTeamStats(teamId);
+            await Promise.all([
+                loadProfilesAndTeamMembers(0, Constants.PROFILE_CHUNK_SIZE, teamId),
+                getTeamStats(teamId),
+            ]);
         }
-    }
 
-    loadComplete() {
         this.setState({loading: false});
     }
 
-    handleTeamChange(e) {
+    handleTeamChange = (e) => {
         const teamId = e.target.value;
-        this.loadDataForTeam(teamId);
-        this.props.actions.setSystemUsersSearch(this.props.searchTerm, teamId);
+        this.loadDataForTeam(teamId, this.props.filter);
+        this.props.actions.setSystemUsersSearch(this.props.searchTerm, teamId, this.props.filter);
     }
 
-    handleTermChange(term) {
-        this.props.actions.setSystemUsersSearch(term, this.props.teamId);
+    handleFilterChange = (e) => {
+        const filter = e.target.value;
+        this.loadDataForTeam(this.props.teamId, filter);
+        this.props.actions.setSystemUsersSearch(this.props.searchTerm, this.props.teamId, filter);
+    }
+
+    handleTermChange = (term) => {
+        this.props.actions.setSystemUsersSearch(term, this.props.teamId, this.props.filter);
+    }
+    handleRevokeAllSessions = async () => {
+        const {data} = await this.props.actions.revokeSessionsForAllUsers();
+        if (data) {
+            emitUserLoggedOutEvent();
+        } else {
+            this.props.actions.logError({type: 'critical', message: 'Can\'t revoke all sessions'});
+        }
+    }
+    handleRevokeAllSessionsCancel = () => {
+        this.setState({showRevokeAllSessionsModal: false});
+    }
+    handleShowRevokeAllSessionsModal = () => {
+        this.setState({showRevokeAllSessionsModal: true});
     }
 
     nextPage = async (page) => {
         // Paging isn't supported while searching
+        const {
+            getProfiles,
+            loadProfilesWithoutTeam,
+            loadProfilesAndTeamMembers,
+        } = this.props.actions;
 
         if (this.props.teamId === SearchUserTeamFilter.ALL_USERS) {
-            loadProfiles(page + 1, USERS_PER_PAGE, this.loadComplete);
+            await getProfiles(page + 1, USERS_PER_PAGE, {});
         } else if (this.props.teamId === SearchUserTeamFilter.NO_TEAM) {
-            loadProfilesWithoutTeam(page + 1, USERS_PER_PAGE, this.loadComplete);
+            await loadProfilesWithoutTeam(page + 1, USERS_PER_PAGE);
         } else {
-            const {data} = await this.props.actions.loadProfilesAndTeamMembers(page + 1, USERS_PER_PAGE, this.props.teamId);
-            if (data) {
-                this.loadComplete();
-            }
+            await loadProfilesAndTeamMembers(page + 1, USERS_PER_PAGE, this.props.teamId);
         }
+        this.setState({loading: false});
     }
 
-    search(term, teamId = this.props.teamId) {
-        if (term === '') {
-            this.setState({
-                loading: false,
-            });
-
-            this.searchTimeoutId = '';
+    doSearch = debounce(async (term, teamId, filter = this.props.filter) => {
+        if (!term) {
             return;
         }
-
-        this.doSearch(teamId, term);
-    }
-
-    doSearch(teamId, term, now = false) {
-        clearTimeout(this.searchTimeoutId);
 
         this.setState({loading: true});
 
         const options = {
-            [UserSearchOptions.ALLOW_INACTIVE]: true,
+            ...searchUserOptionsFromFilter(filter),
+            ...teamId && {team_id: teamId},
+            ...teamId === SearchUserTeamFilter.NO_TEAM && {
+                [UserSearchOptions.WITHOUT_TEAM]: true,
+            },
+            allow_inactive: true,
         };
-        if (teamId === SearchUserTeamFilter.NO_TEAM) {
-            options[UserSearchOptions.WITHOUT_TEAM] = true;
+
+        const {data: profiles} = await this.props.actions.searchProfiles(term, options);
+        if (profiles.length === 0 && term.length === USER_ID_LENGTH) {
+            await this.getUserByTokenOrId(term);
         }
 
-        this.searchTimeoutId = setTimeout(
-            () => {
-                searchUsers(
-                    term,
-                    teamId,
-                    options,
-                    (users) => {
-                        if (users.length === 0 && term.length === USER_ID_LENGTH) {
-                            // This term didn't match any users name, but it does look like it might be a user's ID
-                            this.getUserByTokenOrId(term);
-                        } else {
-                            this.setState({loading: false});
-                        }
-                    },
-                    () => {
-                        this.setState({loading: false});
-                    }
-                );
-            },
-            now ? 0 : Constants.SEARCH_TIMEOUT_MILLISECONDS
-        );
-    }
+        this.setState({loading: false});
+    }, Constants.SEARCH_TIMEOUT_MILLISECONDS, true);
 
-    getUserById(id) {
+    getUserById = async (id) => {
         if (this.props.users[id]) {
             this.setState({loading: false});
             return;
         }
 
-        this.props.actions.getUser(id).then(
-            () => {
-                this.setState({
-                    loading: false,
-                });
-            }
-        );
+        await this.props.actions.getUser(id);
+        this.setState({loading: false});
     }
 
     getUserByTokenOrId = async (id) => {
@@ -232,34 +244,70 @@ export default class SystemUsers extends React.Component {
         this.getUserById(id);
     }
 
-    renderFilterRow(doSearch) {
-        const teams = this.props.teams.map((team) => {
-            return (
-                <option
-                    key={team.id}
-                    value={team.id}
-                >
-                    {team.display_name}
-                </option>
-            );
-        });
+    renderRevokeAllUsersModal = () => {
+        const title = (
+            <FormattedMessage
+                id='admin.system_users.revoke_all_sessions_modal_title'
+                defaultMessage='Revoke all sessions in the system'
+            />
+        );
+
+        const message = (
+            <div>
+                <FormattedMarkdownMessage
+                    id='admin.system_users.revoke_all_sessions_modal_message'
+                    defaultMessage='This action revokes all sessions in the system. All users will be logged out from all devices. Are you sure you want to revoke all sessions?'
+                />
+            </div>
+        );
+
+        const confirmButtonClass = 'btn btn-danger';
+        const revokeAllButton = (
+            <FormattedMessage
+                id='admin.system_users.revoke_all_sessions_button'
+                defaultMessage='Revoke All Sessions'
+            />
+        );
+
+        return (
+            <ConfirmModal
+                show={this.state.showRevokeAllSessionsModal}
+                title={title}
+                message={message}
+                confirmButtonClass={confirmButtonClass}
+                confirmButtonText={revokeAllButton}
+                onConfirm={this.handleRevokeAllSessions}
+                onCancel={this.handleRevokeAllSessionsCancel}
+            />
+        );
+    }
+
+    renderFilterRow = (doSearch) => {
+        const teams = this.props.teams.map((team) => (
+            <option
+                key={team.id}
+                value={team.id}
+            >
+                {team.display_name}
+            </option>
+        ));
 
         return (
             <div className='system-users__filter-row'>
                 <div className='system-users__filter'>
-                    <input
+                    <LocalizedInput
                         id='searchUsers'
                         ref='filter'
                         className='form-control filter-textbox'
-                        placeholder={Utils.localizeMessage('filtered_user_list.search', 'Search users')}
+                        placeholder={{id: t('filtered_user_list.search'), defaultMessage: 'Search users'}}
                         onInput={doSearch}
                     />
                 </div>
                 <label>
                     <span className='system-users__team-filter-label'>
                         <FormattedMessage
-                            id='filtered_user_list.show'
-                            defaultMessage='Filter:'
+                            id='filtered_user_list.team'
+                            defaultMessage='Team:'
                         />
                     </span>
                     <select
@@ -272,11 +320,31 @@ export default class SystemUsers extends React.Component {
                         {teams}
                     </select>
                 </label>
+                <label>
+                    <span className='system-users__filter-label'>
+                        <FormattedMessage
+                            id='filtered_user_list.userStatus'
+                            defaultMessage='User Status:'
+                        />
+                    </span>
+                    <select
+                        className='form-control system-users__filter'
+                        value={this.props.filter}
+                        onChange={this.handleFilterChange}
+                    >
+                        <option value=''>{Utils.localizeMessage('admin.system_users.allUsers', 'All Users')}</option>
+                        <option value={UserFilters.SYSTEM_ADMIN}>{Utils.localizeMessage('admin.system_users.system_admin', 'System Admin')}</option>
+                        <option value={UserFilters.SYSTEM_GUEST}>{Utils.localizeMessage('admin.system_users.guest', 'Guest')}</option>
+                        <option value={UserFilters.INACTIVE}>{Utils.localizeMessage('admin.system_users.inactive', 'Inactive')}</option>
+                    </select>
+                </label>
             </div>
         );
     }
 
     render() {
+        const revokeAllUsersModal = this.renderRevokeAllUsersModal();
+
         return (
             <div className='wrapper--fixed'>
                 <FormattedAdminHeader
@@ -286,22 +354,43 @@ export default class SystemUsers extends React.Component {
                         siteName: this.props.siteName,
                     }}
                 />
-                <div className='more-modal__list member-list-holder'>
-                    <SystemUsersList
-                        loading={this.state.loading}
-                        renderFilterRow={this.renderFilterRow}
-                        search={this.search}
-                        nextPage={this.nextPage}
-                        usersPerPage={USERS_PER_PAGE}
-                        total={this.props.totalUsers}
-                        teams={this.props.teams}
-                        teamId={this.props.teamId}
-                        term={this.props.searchTerm}
-                        onTermChange={this.handleTermChange}
-                        mfaEnabled={this.props.mfaEnabled}
-                        enableUserAccessTokens={this.props.enableUserAccessTokens}
-                        experimentalEnableAuthenticationTransfer={this.props.experimentalEnableAuthenticationTransfer}
-                    />
+
+                <div className='admin-console__wrapper'>
+                    <div className='admin-console__content'>
+                        <div className='more-modal__list member-list-holder'>
+                            <SystemUsersList
+                                loading={this.state.loading}
+                                renderFilterRow={this.renderFilterRow}
+                                search={this.doSearch}
+                                nextPage={this.nextPage}
+                                usersPerPage={USERS_PER_PAGE}
+                                total={this.props.totalUsers}
+                                teams={this.props.teams}
+                                teamId={this.props.teamId}
+                                filter={this.props.filter}
+                                term={this.props.searchTerm}
+                                onTermChange={this.handleTermChange}
+                                mfaEnabled={this.props.mfaEnabled}
+                                enableUserAccessTokens={this.props.enableUserAccessTokens}
+                                experimentalEnableAuthenticationTransfer={this.props.experimentalEnableAuthenticationTransfer}
+                            />
+                        </div>
+                        <SystemPermissionGate permissions={[Permissions.REVOKE_USER_ACCESS_TOKEN]}>
+                            {revokeAllUsersModal}
+                            <div className='padding-top padding-bottom x2'>
+                                <button
+                                    id='revoke-all-users'
+                                    className='btn btn-default'
+                                    onClick={() => this.handleShowRevokeAllSessionsModal()}
+                                >
+                                    <FormattedMessage
+                                        id='admin.system_users.revokeAllSessions'
+                                        defaultMessage='Revoke All Sessions'
+                                    />
+                                </button>
+                            </div>
+                        </SystemPermissionGate>
+                    </div>
                 </div>
             </div>
         );

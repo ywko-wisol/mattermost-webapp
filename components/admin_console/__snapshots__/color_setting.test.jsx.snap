@@ -67,6 +67,8 @@ exports[`components/ColorSetting should match snapshot, clicked on color setting
         color="#fff"
         disableAlpha={false}
         onChange={[Function]}
+        styles={Object {}}
+        width={225}
       />
     </div>
   </div>

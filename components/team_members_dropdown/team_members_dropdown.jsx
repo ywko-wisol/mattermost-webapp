@@ -6,23 +6,35 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {browserHistory} from 'utils/browser_history';
-import {loadMyTeamMembers, updateActive} from 'actions/user_actions.jsx';
 import * as Utils from 'utils/utils.jsx';
 import ConfirmModal from 'components/confirm_modal.jsx';
+import DropdownIcon from 'components/icon/dropdown_icon';
+
+import Menu from 'components/widgets/menu/menu';
+import MenuWrapper from 'components/widgets/menu/menu_wrapper';
+import MenuItemAction from 'components/widgets/menu/menu_items/menu_item_action';
+
+const ROWS_FROM_BOTTOM_TO_OPEN_UP = 3;
 
 export default class TeamMembersDropdown extends React.Component {
     static propTypes = {
         user: PropTypes.object.isRequired,
         currentUser: PropTypes.object.isRequired,
-        currentChannelId: PropTypes.string.isRequired,
         teamMember: PropTypes.object.isRequired,
         teamUrl: PropTypes.string.isRequired,
+        currentTeam: PropTypes.object.isRequired,
+        index: PropTypes.number.isRequired,
+        totalUsers: PropTypes.number.isRequired,
         actions: PropTypes.shape({
+            getMyTeamMembers: PropTypes.func.isRequired,
+            getMyTeamUnreads: PropTypes.func.isRequired,
             getUser: PropTypes.func.isRequired,
+            getTeamMember: PropTypes.func.isRequired,
             getTeamStats: PropTypes.func.isRequired,
             getChannelStats: PropTypes.func.isRequired,
             updateTeamMemberSchemeRoles: PropTypes.func.isRequired,
             removeUserFromTeamAndGetStats: PropTypes.func.isRequired,
+            updateUserActive: PropTypes.func.isRequired,
         }).isRequired,
     }
 
@@ -47,8 +59,10 @@ export default class TeamMembersDropdown extends React.Component {
                 this.setState({serverError: error.message});
             } else {
                 this.props.actions.getUser(this.props.user.id);
+                this.props.actions.getTeamMember(this.props.teamMember.team_id, this.props.user.id);
                 if (this.props.user.id === me.id) {
-                    loadMyTeamMembers();
+                    await this.props.actions.getMyTeamMembers();
+                    this.props.actions.getMyTeamUnreads();
                 }
             }
         }
@@ -61,30 +75,6 @@ export default class TeamMembersDropdown extends React.Component {
         }
     }
 
-    handleMakeActive = () => {
-        updateActive(this.props.user.id, true,
-            () => {
-                this.props.actions.getChannelStats(this.props.currentChannelId);
-                this.props.actions.getTeamStats(this.props.teamMember.team_id);
-            },
-            (err) => {
-                this.setState({serverError: err.message});
-            }
-        );
-    }
-
-    handleMakeNotActive = () => {
-        updateActive(this.props.user.id, false,
-            () => {
-                this.props.actions.getChannelStats(this.props.currentChannelId);
-                this.props.actions.getTeamStats(this.props.teamMember.team_id);
-            },
-            (err) => {
-                this.setState({serverError: err.message});
-            }
-        );
-    }
-
     handleMakeAdmin = async () => {
         const me = this.props.currentUser;
         if (this.props.user.id === me.id && me.roles.includes('system_admin')) {
@@ -95,6 +85,7 @@ export default class TeamMembersDropdown extends React.Component {
                 this.setState({serverError: error.message});
             } else {
                 this.props.actions.getUser(this.props.user.id);
+                this.props.actions.getTeamMember(this.props.teamMember.team_id, this.props.user.id);
             }
         }
     }
@@ -139,38 +130,43 @@ export default class TeamMembersDropdown extends React.Component {
             );
         }
 
-        const teamMember = this.props.teamMember;
-        const user = this.props.user;
-        let currentRoles = (
-            <FormattedMessage
-                id='team_members_dropdown.member'
-                defaultMessage='Member'
-            />
-        );
+        const {currentTeam, teamMember, user} = this.props;
 
-        if ((teamMember.roles.length > 0 && Utils.isAdmin(teamMember.roles)) || teamMember.scheme_admin) {
+        let currentRoles = null;
+
+        if (Utils.isGuest(user)) {
             currentRoles = (
                 <FormattedMessage
-                    id='team_members_dropdown.teamAdmin'
-                    defaultMessage='Team Admin'
+                    id='team_members_dropdown.guest'
+                    defaultMessage='Guest'
                 />
             );
-        }
-
-        if (user.roles.length > 0 && Utils.isSystemAdmin(user.roles)) {
+        } else if (user.roles.length > 0 && Utils.isSystemAdmin(user.roles)) {
             currentRoles = (
                 <FormattedMessage
                     id='team_members_dropdown.systemAdmin'
                     defaultMessage='System Admin'
                 />
             );
+        } else if ((teamMember.roles.length > 0 && Utils.isAdmin(teamMember.roles)) || teamMember.scheme_admin) {
+            currentRoles = (
+                <FormattedMessage
+                    id='team_members_dropdown.teamAdmin'
+                    defaultMessage='Team Admin'
+                />
+            );
+        } else {
+            currentRoles = (
+                <FormattedMessage
+                    id='team_members_dropdown.member'
+                    defaultMessage='Member'
+                />
+            );
         }
 
         const me = this.props.currentUser;
-        let showMakeMember = (Utils.isAdmin(teamMember.roles) || teamMember.scheme_admin) && !Utils.isSystemAdmin(user.roles);
-        let showMakeAdmin = !Utils.isAdmin(teamMember.roles) && !Utils.isSystemAdmin(user.roles) && !teamMember.scheme_admin;
-        let showMakeActive = false;
-        let showMakeNotActive = Utils.isSystemAdmin(user.roles);
+        let showMakeMember = !Utils.isGuest(user) && (Utils.isAdmin(teamMember.roles) || teamMember.scheme_admin) && !Utils.isSystemAdmin(user.roles);
+        let showMakeAdmin = !Utils.isGuest(user) && !Utils.isAdmin(teamMember.roles) && !Utils.isSystemAdmin(user.roles) && !teamMember.scheme_admin;
 
         if (user.delete_at > 0) {
             currentRoles = (
@@ -181,102 +177,12 @@ export default class TeamMembersDropdown extends React.Component {
             );
             showMakeMember = false;
             showMakeAdmin = false;
-            showMakeActive = true;
-            showMakeNotActive = false;
         }
 
-        let makeAdmin = null;
-        if (showMakeAdmin) {
-            makeAdmin = (
-                <li role='presentation'>
-                    <a
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleMakeAdmin}
-                    >
-                        <FormattedMessage
-                            id='team_members_dropdown.makeAdmin'
-                            defaultMessage='Make Team Admin'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let makeMember = null;
-        if (showMakeMember) {
-            makeMember = (
-                <li role='presentation'>
-                    <a
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleMakeMember}
-                    >
-                        <FormattedMessage
-                            id='team_members_dropdown.makeMember'
-                            defaultMessage='Make Member'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        let removeFromTeam = null;
-        if (this.props.user.id !== me.id) {
-            removeFromTeam = (
-                <li role='presentation'>
-                    <a
-                        role='menuitem'
-                        href='#'
-                        onClick={this.handleRemoveFromTeam}
-                    >
-                        <FormattedMessage
-                            id='team_members_dropdown.leave_team'
-                            defaultMessage='Remove From Team'
-                        />
-                    </a>
-                </li>
-            );
-        }
-
-        const makeActive = null;
-        if (showMakeActive) {
-            // makeActive = (
-            //     <li role='presentation'>
-            //         <a
-            //             role='menuitem'
-            //             href='#'
-            //             onClick={this.handleMakeActive}
-            //         >
-            //             <FormattedMessage
-            //                 id='team_members_dropdown.makeActive'
-            //                 defaultMessage='Activate'
-            //             />
-            //         </a>
-            //     </li>
-            // );
-        }
-
-        const makeNotActive = null;
-        if (showMakeNotActive) {
-            // makeNotActive = (
-            //     <li role='presentation'>
-            //         <a
-            //             role='menuitem'
-            //             href='#'
-            //             onClick={this.handleMakeNotActive}
-            //         >
-            //             <FormattedMessage
-            //                 id='team_members_dropdown.makeInactive'
-            //                 defaultMessage='Deactivate'
-            //             />
-            //         </a>
-            //     </li>
-            // );
-        }
+        const canRemoveFromTeam = user.id !== me.id && !currentTeam.group_constrained;
 
         let makeDemoteModal = null;
-        if (this.props.user.id === me.id) {
+        if (user.id === me.id) {
             const title = (
                 <FormattedMessage
                     id='team_members_dropdown.confirmDemoteRoleTitle'
@@ -322,37 +228,54 @@ export default class TeamMembersDropdown extends React.Component {
             );
         }
 
-        if (!removeFromTeam && !makeAdmin && !makeMember && !makeActive && !makeNotActive) {
+        if (!canRemoveFromTeam && !showMakeAdmin && !showMakeMember) {
             return <div>{currentRoles}</div>;
         }
 
+        const {index, totalUsers} = this.props;
+        let openUp = false;
+        if (totalUsers > ROWS_FROM_BOTTOM_TO_OPEN_UP && totalUsers - index <= ROWS_FROM_BOTTOM_TO_OPEN_UP) {
+            openUp = true;
+        }
+
         return (
-            <div className='dropdown member-drop'>
+            <MenuWrapper>
                 <button
+                    id={`teamMembersDropdown_${user.username}`}
                     className='dropdown-toggle theme color--link style--none'
                     type='button'
-                    data-toggle='dropdown'
                     aria-expanded='true'
                 >
                     <span>{currentRoles} </span>
-                    <span
-                        className='fa fa-chevron-down'
-                        title={Utils.localizeMessage('generic_icons.dropdown', 'Dropdown Icon')}
-                    />
+                    <DropdownIcon/>
                 </button>
-                <ul
-                    className='dropdown-menu member-menu'
-                    role='menu'
-                >
-                    {removeFromTeam}
-                    {makeAdmin}
-                    {makeMember}
-                    {makeActive}
-                    {makeNotActive}
-                </ul>
-                {makeDemoteModal}
-                {serverError}
-            </div>
+                <div>
+                    <Menu
+                        openLeft={true}
+                        openUp={openUp}
+                        ariaLabel={Utils.localizeMessage('team_members_dropdown.menuAriaLabel', 'Team member role change')}
+                    >
+                        <MenuItemAction
+                            id='removeFromTeam'
+                            show={canRemoveFromTeam}
+                            onClick={this.handleRemoveFromTeam}
+                            text={Utils.localizeMessage('team_members_dropdown.leave_team', 'Remove From Team')}
+                        />
+                        <MenuItemAction
+                            show={showMakeAdmin}
+                            onClick={this.handleMakeAdmin}
+                            text={Utils.localizeMessage('team_members_dropdown.makeAdmin', 'Make Team Admin')}
+                        />
+                        <MenuItemAction
+                            show={showMakeMember}
+                            onClick={this.handleMakeMember}
+                            text={Utils.localizeMessage('team_members_dropdown.makeMember', 'Make Member')}
+                        />
+                    </Menu>
+                    {makeDemoteModal}
+                    {serverError}
+                </div>
+            </MenuWrapper>
         );
     }
 }

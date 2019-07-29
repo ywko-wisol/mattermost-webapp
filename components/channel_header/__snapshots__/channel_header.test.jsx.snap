@@ -2,8 +2,13 @@
 
 exports[`components/ChannelHeader should render archived view 1`] = `
 <div
-  className="channel-header alt"
+  aria-label="channel header region"
+  className="channel-header alt a11y__region"
+  data-a11y-sort-order="7"
+  data-channelid="channel_id"
   id="channel-header"
+  role="navigation"
+  tabIndex="-1"
 >
   <div
     className="flex-parent"
@@ -17,32 +22,42 @@ exports[`components/ChannelHeader should render archived view 1`] = `
       >
         <div
           className="channel-header__title dropdown"
-          id="channelHeaderTitle"
         >
-          <h2>
-            <button
-              aria-expanded="true"
-              className="dropdown-toggle theme style--none"
-              data-toggle="dropdown"
-              id="channelHeaderDropdownButton"
-              type="button"
+          <div>
+            <MenuWrapper
+              animationComponent={[Function]}
+              className=""
             >
-              <strong
-                className="heading"
-                id="channelHeaderTitle"
+              <div
+                className="channel-header__top"
+                id="channelHeaderDropdownButton"
               >
-                <ArchiveIcon
-                  className="icon icon__archive icon channel-header-archived-icon svg-text-color"
-                />
-              </strong>
-              <span
-                className="fa fa-angle-down header-dropdown__icon"
-                id="channelHeaderDropdownIcon"
-                title="Dropdown Icon"
-              />
-            </button>
-            <Connect(ChannelHeaderDropdown) />
-          </h2>
+                <button
+                  aria-label="channel menu"
+                  className="channel-header__trigger style--none"
+                >
+                  <strong
+                    aria-level="2"
+                    className="heading"
+                    id="channelHeaderTitle"
+                    role="heading"
+                  >
+                    <span>
+                      <ArchiveIcon
+                        className="icon icon__archive icon channel-header-archived-icon svg-text-color"
+                      />
+                    </span>
+                  </strong>
+                  <span
+                    aria-label="dropdown icon"
+                    className="fa fa-angle-down header-dropdown__icon"
+                    id="channelHeaderDropdownIcon"
+                  />
+                </button>
+              </div>
+              <ChannelHeaderDropdown />
+            </MenuWrapper>
+          </div>
         </div>
         <div
           className="channel-header__description light"
@@ -81,6 +96,7 @@ exports[`components/ChannelHeader should render archived view 1`] = `
       }
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonClass="style--none channel-header__icon"
       buttonId="channelHeaderPinButton"
       iconComponent={
@@ -104,6 +120,7 @@ exports[`components/ChannelHeader should render archived view 1`] = `
       tooltipKey="search"
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonId="channelHeaderMentionButton"
       iconComponent={
         <MentionsIcon
@@ -115,6 +132,7 @@ exports[`components/ChannelHeader should render archived view 1`] = `
       tooltipKey="recentMentions"
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonId="channelHeaderFlagButton"
       iconComponent={
         <FlagIcon
@@ -130,8 +148,13 @@ exports[`components/ChannelHeader should render archived view 1`] = `
 
 exports[`components/ChannelHeader should render correct menu when muted 1`] = `
 <div
-  className="channel-header alt"
+  aria-label="channel header region"
+  className="channel-header alt a11y__region"
+  data-a11y-sort-order="7"
+  data-channelid="channel_id"
   id="channel-header"
+  role="navigation"
+  tabIndex="-1"
 >
   <div
     className="flex-parent"
@@ -145,37 +168,135 @@ exports[`components/ChannelHeader should render correct menu when muted 1`] = `
       >
         <div
           className="channel-header__title dropdown"
-          id="channelHeaderTitle"
         >
-          <h2>
-            <button
-              aria-expanded="true"
-              className="dropdown-toggle theme style--none"
-              data-toggle="dropdown"
-              id="channelHeaderDropdownButton"
-              type="button"
+          <div>
+            <MenuWrapper
+              animationComponent={[Function]}
+              className=""
             >
-              <strong
-                className="heading"
-                id="channelHeaderTitle"
+              <div
+                className="channel-header__top"
+                id="channelHeaderDropdownButton"
               >
-                <ArchiveIcon
-                  className="icon icon__archive icon channel-header-archived-icon svg-text-color"
+                <OverlayTrigger
+                  defaultOverlayShown={false}
+                  delayShow={400}
+                  onEntering={[Function]}
+                  overlay={
+                    <Tooltip
+                      bsClass="tooltip"
+                      id="favoriteTooltip"
+                      placement="right"
+                    >
+                      <FormattedMessage
+                        defaultMessage="Add to Favorites"
+                        id="channelHeader.addToFavorites"
+                        values={Object {}}
+                      />
+                    </Tooltip>
+                  }
+                  placement="bottom"
+                  trigger={
+                    Array [
+                      "hover",
+                      "focus",
+                    ]
+                  }
+                >
+                  <button
+                    aria-label="add to favorites"
+                    className="style--none color--link channel-header__favorites inactive"
+                    id="toggleFavorite"
+                    onClick={[Function]}
+                  >
+                    <i
+                      className="icon fa fa-star-o"
+                    />
+                  </button>
+                </OverlayTrigger>
+                <button
+                  aria-label="channel menu"
+                  className="channel-header__trigger style--none"
+                >
+                  <strong
+                    aria-level="2"
+                    className="heading"
+                    id="channelHeaderTitle"
+                    role="heading"
+                  >
+                    <span />
+                  </strong>
+                  <span
+                    aria-label="dropdown icon"
+                    className="fa fa-angle-down header-dropdown__icon"
+                    id="channelHeaderDropdownIcon"
+                  />
+                </button>
+              </div>
+              <ChannelHeaderDropdown />
+            </MenuWrapper>
+          </div>
+          <OverlayTrigger
+            defaultOverlayShown={false}
+            delayShow={400}
+            overlay={
+              <Tooltip
+                bsClass="tooltip"
+                id="channelMutedTooltip"
+                placement="right"
+              >
+                <FormattedMessage
+                  defaultMessage="Unmute"
+                  id="channelHeader.unmute"
+                  values={Object {}}
                 />
-              </strong>
-              <span
-                className="fa fa-angle-down header-dropdown__icon"
-                id="channelHeaderDropdownIcon"
-                title="Dropdown Icon"
+              </Tooltip>
+            }
+            placement="bottom"
+            trigger={
+              Array [
+                "hover",
+                "focus",
+              ]
+            }
+          >
+            <button
+              aria-label="Muted Icon"
+              className="style--none color--link channel-header__mute inactive"
+              id="toggleMute"
+              onClick={[Function]}
+            >
+              <i
+                className="icon fa fa-bell-slash-o"
               />
             </button>
-            <Connect(ChannelHeaderDropdown) />
-          </h2>
+          </OverlayTrigger>
         </div>
         <div
           className="channel-header__description light"
           id="channelHeaderDescription"
-        />
+        >
+          <Connect(ChannelPermissionGate)
+            channelId="channel_id"
+            permissions={
+              Array [
+                "manage_public_channel_properties",
+              ]
+            }
+            teamId="team_id"
+          >
+            <button
+              className="style--none"
+              onClick={[Function]}
+            >
+              <FormattedMessage
+                defaultMessage="Add a channel description"
+                id="channel_header.addChannelHeader"
+                values={Object {}}
+              />
+            </button>
+          </Connect(ChannelPermissionGate)>
+        </div>
       </div>
     </div>
     <div
@@ -184,6 +305,7 @@ exports[`components/ChannelHeader should render correct menu when muted 1`] = `
       <Connect(PopoverListMembers)
         channel={
           Object {
+            "delete_at": 0,
             "id": "channel_id",
             "name": "Test",
             "team_id": "team_id",
@@ -194,6 +316,7 @@ exports[`components/ChannelHeader should render correct menu when muted 1`] = `
     <Connect(ChannelHeaderPlug)
       channel={
         Object {
+          "delete_at": 0,
           "id": "channel_id",
           "name": "Test",
           "team_id": "team_id",
@@ -202,14 +325,12 @@ exports[`components/ChannelHeader should render correct menu when muted 1`] = `
       channelMember={
         Object {
           "channel_id": "channel_id",
-          "notify_props": Object {
-            "mark_unread": "mention",
-          },
           "user_id": "user_id",
         }
       }
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonClass="style--none channel-header__icon"
       buttonId="channelHeaderPinButton"
       iconComponent={
@@ -233,6 +354,7 @@ exports[`components/ChannelHeader should render correct menu when muted 1`] = `
       tooltipKey="search"
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonId="channelHeaderMentionButton"
       iconComponent={
         <MentionsIcon
@@ -244,6 +366,7 @@ exports[`components/ChannelHeader should render correct menu when muted 1`] = `
       tooltipKey="recentMentions"
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonId="channelHeaderFlagButton"
       iconComponent={
         <FlagIcon
@@ -265,8 +388,13 @@ exports[`components/ChannelHeader should render properly when empty 1`] = `
 
 exports[`components/ChannelHeader should render properly when populated 1`] = `
 <div
-  className="channel-header alt"
+  aria-label="channel header region"
+  className="channel-header alt a11y__region"
+  data-a11y-sort-order="7"
+  data-channelid="channel_id"
   id="channel-header"
+  role="navigation"
+  tabIndex="-1"
 >
   <div
     className="flex-parent"
@@ -280,37 +408,100 @@ exports[`components/ChannelHeader should render properly when populated 1`] = `
       >
         <div
           className="channel-header__title dropdown"
-          id="channelHeaderTitle"
         >
-          <h2>
-            <button
-              aria-expanded="true"
-              className="dropdown-toggle theme style--none"
-              data-toggle="dropdown"
-              id="channelHeaderDropdownButton"
-              type="button"
+          <div>
+            <MenuWrapper
+              animationComponent={[Function]}
+              className=""
             >
-              <strong
-                className="heading"
-                id="channelHeaderTitle"
+              <div
+                className="channel-header__top"
+                id="channelHeaderDropdownButton"
               >
-                <ArchiveIcon
-                  className="icon icon__archive icon channel-header-archived-icon svg-text-color"
-                />
-              </strong>
-              <span
-                className="fa fa-angle-down header-dropdown__icon"
-                id="channelHeaderDropdownIcon"
-                title="Dropdown Icon"
-              />
-            </button>
-            <Connect(ChannelHeaderDropdown) />
-          </h2>
+                <OverlayTrigger
+                  defaultOverlayShown={false}
+                  delayShow={400}
+                  onEntering={[Function]}
+                  overlay={
+                    <Tooltip
+                      bsClass="tooltip"
+                      id="favoriteTooltip"
+                      placement="right"
+                    >
+                      <FormattedMessage
+                        defaultMessage="Add to Favorites"
+                        id="channelHeader.addToFavorites"
+                        values={Object {}}
+                      />
+                    </Tooltip>
+                  }
+                  placement="bottom"
+                  trigger={
+                    Array [
+                      "hover",
+                      "focus",
+                    ]
+                  }
+                >
+                  <button
+                    aria-label="add to favorites"
+                    className="style--none color--link channel-header__favorites inactive"
+                    id="toggleFavorite"
+                    onClick={[Function]}
+                  >
+                    <i
+                      className="icon fa fa-star-o"
+                    />
+                  </button>
+                </OverlayTrigger>
+                <button
+                  aria-label="channel menu"
+                  className="channel-header__trigger style--none"
+                >
+                  <strong
+                    aria-level="2"
+                    className="heading"
+                    id="channelHeaderTitle"
+                    role="heading"
+                  >
+                    <span />
+                  </strong>
+                  <span
+                    aria-label="dropdown icon"
+                    className="fa fa-angle-down header-dropdown__icon"
+                    id="channelHeaderDropdownIcon"
+                  />
+                </button>
+              </div>
+              <ChannelHeaderDropdown />
+            </MenuWrapper>
+          </div>
         </div>
         <div
           className="channel-header__description light"
           id="channelHeaderDescription"
-        />
+        >
+          <Connect(ChannelPermissionGate)
+            channelId="channel_id"
+            permissions={
+              Array [
+                "manage_public_channel_properties",
+              ]
+            }
+            teamId="team_id"
+          >
+            <button
+              className="style--none"
+              onClick={[Function]}
+            >
+              <FormattedMessage
+                defaultMessage="Add a channel description"
+                id="channel_header.addChannelHeader"
+                values={Object {}}
+              />
+            </button>
+          </Connect(ChannelPermissionGate)>
+        </div>
       </div>
     </div>
     <div
@@ -319,6 +510,7 @@ exports[`components/ChannelHeader should render properly when populated 1`] = `
       <Connect(PopoverListMembers)
         channel={
           Object {
+            "delete_at": 0,
             "id": "channel_id",
             "name": "Test",
             "team_id": "team_id",
@@ -329,6 +521,7 @@ exports[`components/ChannelHeader should render properly when populated 1`] = `
     <Connect(ChannelHeaderPlug)
       channel={
         Object {
+          "delete_at": 0,
           "id": "channel_id",
           "name": "Test",
           "team_id": "team_id",
@@ -342,6 +535,7 @@ exports[`components/ChannelHeader should render properly when populated 1`] = `
       }
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonClass="style--none channel-header__icon"
       buttonId="channelHeaderPinButton"
       iconComponent={
@@ -365,6 +559,7 @@ exports[`components/ChannelHeader should render properly when populated 1`] = `
       tooltipKey="search"
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonId="channelHeaderMentionButton"
       iconComponent={
         <MentionsIcon
@@ -376,6 +571,7 @@ exports[`components/ChannelHeader should render properly when populated 1`] = `
       tooltipKey="recentMentions"
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonId="channelHeaderFlagButton"
       iconComponent={
         <FlagIcon
@@ -391,8 +587,13 @@ exports[`components/ChannelHeader should render properly when populated 1`] = `
 
 exports[`components/ChannelHeader should render properly when populated with channel props 1`] = `
 <div
-  className="channel-header alt"
+  aria-label="channel header region"
+  className="channel-header alt a11y__region"
+  data-a11y-sort-order="7"
+  data-channelid="channel_id"
   id="channel-header"
+  role="navigation"
+  tabIndex="-1"
 >
   <div
     className="flex-parent"
@@ -406,32 +607,42 @@ exports[`components/ChannelHeader should render properly when populated with cha
       >
         <div
           className="channel-header__title dropdown"
-          id="channelHeaderTitle"
         >
-          <h2>
-            <button
-              aria-expanded="true"
-              className="dropdown-toggle theme style--none"
-              data-toggle="dropdown"
-              id="channelHeaderDropdownButton"
-              type="button"
+          <div>
+            <MenuWrapper
+              animationComponent={[Function]}
+              className=""
             >
-              <strong
-                className="heading"
-                id="channelHeaderTitle"
+              <div
+                className="channel-header__top"
+                id="channelHeaderDropdownButton"
               >
-                <ArchiveIcon
-                  className="icon icon__archive icon channel-header-archived-icon svg-text-color"
-                />
-              </strong>
-              <span
-                className="fa fa-angle-down header-dropdown__icon"
-                id="channelHeaderDropdownIcon"
-                title="Dropdown Icon"
-              />
-            </button>
-            <Connect(ChannelHeaderDropdown) />
-          </h2>
+                <button
+                  aria-label="channel menu"
+                  className="channel-header__trigger style--none"
+                >
+                  <strong
+                    aria-level="2"
+                    className="heading"
+                    id="channelHeaderTitle"
+                    role="heading"
+                  >
+                    <span>
+                      <ArchiveIcon
+                        className="icon icon__archive icon channel-header-archived-icon svg-text-color"
+                      />
+                    </span>
+                  </strong>
+                  <span
+                    aria-label="dropdown icon"
+                    className="fa fa-angle-down header-dropdown__icon"
+                    id="channelHeaderDropdownIcon"
+                  />
+                </button>
+              </div>
+              <ChannelHeaderDropdown />
+            </MenuWrapper>
+          </div>
         </div>
         <OverlayTrigger
           defaultOverlayShown={false}
@@ -539,6 +750,7 @@ exports[`components/ChannelHeader should render properly when populated with cha
       }
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonClass="style--none channel-header__icon"
       buttonId="channelHeaderPinButton"
       iconComponent={
@@ -562,6 +774,7 @@ exports[`components/ChannelHeader should render properly when populated with cha
       tooltipKey="search"
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonId="channelHeaderMentionButton"
       iconComponent={
         <MentionsIcon
@@ -573,6 +786,7 @@ exports[`components/ChannelHeader should render properly when populated with cha
       tooltipKey="recentMentions"
     />
     <HeaderIconWrapper
+      ariaLabel={true}
       buttonId="channelHeaderFlagButton"
       iconComponent={
         <FlagIcon

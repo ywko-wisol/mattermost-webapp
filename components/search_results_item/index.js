@@ -5,15 +5,16 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {getChannel} from 'mattermost-redux/selectors/entities/channels';
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
+import {getUser} from 'mattermost-redux/selectors/entities/users';
 import {makeGetCommentCountForPost} from 'mattermost-redux/selectors/entities/posts';
 import {getMyPreferences} from 'mattermost-redux/selectors/entities/preferences';
 import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
-import {getUser, getStatusForUserId} from 'mattermost-redux/selectors/entities/users';
 import {isPostFlagged} from 'mattermost-redux/utils/post_utils';
 
 import {
     closeRightHandSide,
     selectPostFromRightHandSideSearch,
+    selectPostCardFromRightHandSideSearch,
     setRhsExpanded,
 } from 'actions/views/rhs';
 
@@ -27,6 +28,7 @@ function mapStateToProps() {
         const preferences = getMyPreferences(state);
         const enablePostUsernameOverride = config.EnablePostUsernameOverride === 'true';
         const {post} = ownProps;
+        const user = getUser(state, post.user_id);
 
         return {
             channel: getChannel(state, post.channel_id),
@@ -34,8 +36,7 @@ function mapStateToProps() {
             commentCountForPost: getCommentCountForPost(state, {post}),
             enablePostUsernameOverride,
             isFlagged: isPostFlagged(post.id, preferences),
-            user: getUser(state, post.user_id),
-            status: getStatusForUserId(state, post.user_id) || 'offline',
+            isBot: user ? user.is_bot : false,
         };
     };
 }
@@ -45,6 +46,7 @@ function mapDispatchToProps(dispatch) {
         actions: bindActionCreators({
             closeRightHandSide,
             selectPost: selectPostFromRightHandSideSearch,
+            selectPostCard: selectPostCardFromRightHandSideSearch,
             setRhsExpanded,
         }, dispatch),
     };

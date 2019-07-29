@@ -7,14 +7,10 @@ import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 
 import Constants from 'utils/constants.jsx';
-import {localizeMessage} from 'utils/utils.jsx';
 
 export default class SearchResultsHeader extends React.Component {
     static propTypes = {
-        isMentionSearch: PropTypes.bool,
-        isFlaggedPosts: PropTypes.bool,
-        isPinnedPosts: PropTypes.bool,
-        channelDisplayName: PropTypes.string.isRequired,
+        children: PropTypes.element,
         actions: PropTypes.shape({
             closeRightHandSide: PropTypes.func,
             toggleRhsExpanded: PropTypes.func.isRequired,
@@ -22,13 +18,6 @@ export default class SearchResultsHeader extends React.Component {
     };
 
     render() {
-        var title = (
-            <FormattedMessage
-                id='search_header.results'
-                defaultMessage='Search Results'
-            />
-        );
-
         const closeSidebarTooltip = (
             <Tooltip id='closeSidebarTooltip'>
                 <FormattedMessage
@@ -56,35 +45,9 @@ export default class SearchResultsHeader extends React.Component {
             </Tooltip>
         );
 
-        if (this.props.isMentionSearch) {
-            title = (
-                <FormattedMessage
-                    id='search_header.title2'
-                    defaultMessage='Recent Mentions'
-                />
-            );
-        } else if (this.props.isFlaggedPosts) {
-            title = (
-                <FormattedMessage
-                    id='search_header.title3'
-                    defaultMessage='Flagged Posts'
-                />
-            );
-        } else if (this.props.isPinnedPosts) {
-            title = (
-                <FormattedMessage
-                    id='search_header.title4'
-                    defaultMessage='Pinned posts in {channelDisplayName}'
-                    values={{
-                        channelDisplayName: this.props.channelDisplayName,
-                    }}
-                />
-            );
-        }
-
         return (
             <div className='sidebar--right__header'>
-                <span className='sidebar--right__title'>{title}</span>
+                <span className='sidebar--right__title'>{this.props.children}</span>
                 <div className='pull-right'>
                     <button
                         type='button'
@@ -93,45 +56,63 @@ export default class SearchResultsHeader extends React.Component {
                         onClick={this.props.actions.toggleRhsExpanded}
                     >
                         <OverlayTrigger
-                            trigger={['hover', 'focus']}
                             delayShow={Constants.OVERLAY_TIME_DELAY}
                             placement='top'
                             overlay={expandSidebarTooltip}
                         >
-                            <i
-                                className='fa fa-expand'
-                                title={localizeMessage('rhs_header.expandSidebarTooltip.icon', 'Expand Sidebar Icon')}
-                            />
+                            <FormattedMessage
+                                id='rhs_header.expandSidebarTooltip.icon'
+                                defaultMessage='Expand Sidebar Icon'
+                            >
+                                {(ariaLabel) => (
+                                    <i
+                                        className='fa fa-expand'
+                                        aria-label={ariaLabel}
+                                    />
+                                )}
+                            </FormattedMessage>
                         </OverlayTrigger>
                         <OverlayTrigger
-                            trigger={['hover', 'focus']}
                             delayShow={Constants.OVERLAY_TIME_DELAY}
                             placement='top'
                             overlay={shrinkSidebarTooltip}
                         >
-                            <i
-                                className='fa fa-compress'
-                                title={localizeMessage('rhs_header.expandTooltip.icon', 'Shrink Sidebar Icon')}
-                            />
+                            <FormattedMessage
+                                id='rhs_header.expandTooltip.icon'
+                                defaultMessage='Shrink Sidebar Icon'
+                            >
+                                {(ariaLabel) => (
+                                    <i
+                                        className='fa fa-compress'
+                                        aria-label={ariaLabel}
+                                    />
+                                )}
+                            </FormattedMessage>
                         </OverlayTrigger>
                     </button>
                     <button
+                        id='searchResultsCloseButton'
                         type='button'
                         className='sidebar--right__close'
                         aria-label='Close'
-                        title='Close'
                         onClick={this.props.actions.closeRightHandSide}
                     >
                         <OverlayTrigger
-                            trigger={['hover', 'focus']}
                             delayShow={Constants.OVERLAY_TIME_DELAY}
                             placement='top'
                             overlay={closeSidebarTooltip}
                         >
-                            <i
-                                className='fa fa-sign-out'
-                                title={localizeMessage('rhs_header.closeTooltip.icon', 'Close Sidebar Icon')}
-                            />
+                            <FormattedMessage
+                                id='rhs_header.closeTooltip.icon'
+                                defaultMessage='Close Sidebar Icon'
+                            >
+                                {(ariaLabel) => (
+                                    <i
+                                        className='fa fa-sign-out'
+                                        aria-label={ariaLabel}
+                                    />
+                                )}
+                            </FormattedMessage>
                         </OverlayTrigger>
                     </button>
                 </div>

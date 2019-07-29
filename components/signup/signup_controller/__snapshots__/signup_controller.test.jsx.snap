@@ -20,6 +20,7 @@ exports[`components/SignupController should match snapshot for addUserToTeamFrom
       className="signup-team__container"
     >
       <img
+        alt="signup team logo"
         className="signup-team-logo"
         src={null}
       />
@@ -72,7 +73,6 @@ exports[`components/SignupController should match snapshot for addUserToTeamFrom
         />
          
         <Link
-          replace={false}
           to="/login?id=ppni7a9t87fn3j4d56rwocdctc"
         >
           <FormattedMessage
@@ -100,6 +100,7 @@ exports[`components/SignupController should match snapshot for all signup option
       className="signup-team__container"
     >
       <img
+        alt="signup team logo"
         className="signup-team-logo"
         src={null}
       />
@@ -131,8 +132,7 @@ exports[`components/SignupController should match snapshot for all signup option
         <Link
           className="btn btn-custom-login btn--full email"
           key="email"
-          replace={false}
-          to="/signup_emailundefined"
+          to="/signup_email"
         >
           <span>
             <span
@@ -148,7 +148,7 @@ exports[`components/SignupController should match snapshot for all signup option
         </Link>
         <a
           className="btn btn-custom-login btn--full gitlab"
-          href="/oauth/gitlab/signupundefined"
+          href="/oauth/gitlab/signup"
           key="gitlab"
         >
           <span>
@@ -175,7 +175,6 @@ exports[`components/SignupController should match snapshot for all signup option
         />
          
         <Link
-          replace={false}
           to="/login"
         >
           <FormattedMessage
@@ -203,6 +202,7 @@ exports[`components/SignupController should match snapshot for all signup option
       className="signup-team__container"
     >
       <img
+        alt="signup team logo"
         className="signup-team-logo"
         src={null}
       />
@@ -234,8 +234,7 @@ exports[`components/SignupController should match snapshot for all signup option
         <Link
           className="btn btn-custom-login btn--full email"
           key="email"
-          replace={false}
-          to="/signup_emailundefined"
+          to="/signup_email"
         >
           <span>
             <span
@@ -251,7 +250,7 @@ exports[`components/SignupController should match snapshot for all signup option
         </Link>
         <a
           className="btn btn-custom-login btn--full gitlab"
-          href="/oauth/gitlab/signupundefined"
+          href="/oauth/gitlab/signup"
           key="gitlab"
         >
           <span>
@@ -269,7 +268,7 @@ exports[`components/SignupController should match snapshot for all signup option
         </a>
         <a
           className="btn btn-custom-login btn--full google"
-          href="/oauth/google/signupundefined"
+          href="/oauth/google/signup"
           key="google"
         >
           <span>
@@ -287,7 +286,7 @@ exports[`components/SignupController should match snapshot for all signup option
         </a>
         <a
           className="btn btn-custom-login btn--full office365"
-          href="/oauth/office365/signupundefined"
+          href="/oauth/office365/signup"
           key="office365"
         >
           <span>
@@ -306,7 +305,6 @@ exports[`components/SignupController should match snapshot for all signup option
         <Link
           className="btn btn-custom-login btn--full ldap"
           key="ldap"
-          replace={false}
           to="/login?extra=create_ldap"
         >
           <span>
@@ -326,8 +324,7 @@ exports[`components/SignupController should match snapshot for all signup option
         <Link
           className="btn btn-custom-login btn--full saml"
           key="saml"
-          replace={false}
-          to="/login/sso/samlundefined?action=signup"
+          to="/login/sso/saml?action=signup"
         >
           <span>
             <span
@@ -350,7 +347,6 @@ exports[`components/SignupController should match snapshot for all signup option
         />
          
         <Link
-          replace={false}
           to="/login"
         >
           <FormattedMessage

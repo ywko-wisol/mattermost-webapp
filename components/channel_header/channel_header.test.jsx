@@ -2,10 +2,11 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {shallow} from 'enzyme';
 
+import {shallowWithIntl} from 'tests/helpers/intl-test-helper.jsx';
 import ChannelHeader from 'components/channel_header/channel_header';
-import {NotificationLevels} from 'utils/constants';
+import Markdown from 'components/markdown';
+import Constants from 'utils/constants';
 
 describe('components/ChannelHeader', () => {
     const baseProps = {
@@ -39,6 +40,7 @@ describe('components/ChannelHeader', () => {
             id: 'channel_id',
             team_id: 'team_id',
             name: 'Test',
+            delete_at: 0,
         },
         channelMember: {
             channel_id: 'channel_id',
@@ -50,14 +52,14 @@ describe('components/ChannelHeader', () => {
     };
 
     test('should render properly when empty', () => {
-        const wrapper = shallow(
+        const wrapper = shallowWithIntl(
             <ChannelHeader {...baseProps}/>
         );
         expect(wrapper).toMatchSnapshot();
     });
 
     test('should render properly when populated', () => {
-        const wrapper = shallow(
+        const wrapper = shallowWithIntl(
             <ChannelHeader {...populatedProps}/>
         );
         expect(wrapper).toMatchSnapshot();
@@ -88,7 +90,7 @@ describe('components/ChannelHeader', () => {
             },
         };
 
-        const wrapper = shallow(
+        const wrapper = shallowWithIntl(
             <ChannelHeader {...props}/>
         );
         expect(wrapper).toMatchSnapshot();
@@ -100,7 +102,7 @@ describe('components/ChannelHeader', () => {
             channel: {...populatedProps.channel, delete_at: 1234},
         };
 
-        const wrapper = shallow(
+        const wrapper = shallowWithIntl(
             <ChannelHeader {...props}/>
         );
         expect(wrapper).toMatchSnapshot();
@@ -109,12 +111,36 @@ describe('components/ChannelHeader', () => {
     test('should render correct menu when muted', () => {
         const props = {
             ...populatedProps,
-            channelMember: {...populatedProps.channelMember, notify_props: {mark_unread: NotificationLevels.MENTION}},
+            isMuted: true,
         };
 
-        const wrapper = shallow(
+        const wrapper = shallowWithIntl(
             <ChannelHeader {...props}/>
         );
         expect(wrapper).toMatchSnapshot();
+    });
+
+    test('should render bot description', () => {
+        const props = {
+            ...populatedProps,
+            channel: {
+                header: 'not the bot description',
+                type: Constants.DM_CHANNEL,
+            },
+            dmUser: {
+                id: 'user_id',
+                is_bot: true,
+                bot_description: 'the bot description',
+            },
+        };
+
+        const wrapper = shallowWithIntl(
+            <ChannelHeader {...props}/>
+        );
+        expect(wrapper.containsMatchingElement(
+            <Markdown
+                message={props.currentUser.bot_description}
+            />
+        )).toEqual(true);
     });
 });

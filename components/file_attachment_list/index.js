@@ -2,8 +2,6 @@
 // See LICENSE.txt for license information.
 
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {getMissingFilesForPost} from 'mattermost-redux/actions/files';
 import {makeGetFilesForPost} from 'mattermost-redux/selectors/entities/files';
 
 import {getCurrentLocale} from 'selectors/i18n';
@@ -19,7 +17,7 @@ function makeMapStateToProps() {
         const fileInfos = selectFilesForPost(state, postId);
 
         let fileCount = 0;
-        if (ownProps.post.metadata) {
+        if (ownProps.post.metadata && ownProps.post.metadata.files) {
             fileCount = (ownProps.post.metadata.files || []).length;
         } else if (ownProps.post.file_ids) {
             fileCount = ownProps.post.file_ids.length;
@@ -36,12 +34,4 @@ function makeMapStateToProps() {
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators({
-            getMissingFilesForPost,
-        }, dispatch),
-    };
-}
-
-export default connect(makeMapStateToProps, mapDispatchToProps)(FileAttachmentList);
+export default connect(makeMapStateToProps)(FileAttachmentList);

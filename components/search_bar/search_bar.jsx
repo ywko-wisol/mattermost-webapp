@@ -223,13 +223,21 @@ export default class SearchBar extends React.Component {
             <div className='sidebar-right__table'>
                 <div className='sidebar-collapse__container'>
                     <div
+                        id='sidebarCollapse'
                         className='sidebar-collapse'
                         onClick={this.handleClose}
                     >
-                        <span
-                            className='fa fa-chevron-left'
-                            title={Utils.localizeMessage('generic_icons.back', 'Back Icon')}
-                        />
+                        <FormattedMessage
+                            id='generic_icons.back'
+                            defaultMessage='Back Icon'
+                        >
+                            {(title) => (
+                                <span
+                                    className='fa fa-2x fa-angle-left'
+                                    title={title}
+                                />
+                            )}
+                        </FormattedMessage>
                     </div>
                 </div>
                 <div
@@ -237,7 +245,6 @@ export default class SearchBar extends React.Component {
                     className='search-form__container'
                 >
                     <form
-                        role='form'
                         className={searchFormClass}
                         onSubmit={this.handleSubmit}
                         style={style.searchForm}
@@ -249,9 +256,13 @@ export default class SearchBar extends React.Component {
                             aria-hidden='true'
                         />
                         <SuggestionBox
-                            id='searchBox'
                             ref={this.getSearch}
-                            className='search-bar'
+                            role='application'
+                            id='searchBox'
+                            tabIndex='0'
+                            className='search-bar a11y__region'
+                            data-a11y-sort-order='8'
+                            aria-describedby='searchbar-help-popup'
                             placeholder={Utils.localizeMessage('search_bar.search', 'Search')}
                             value={this.props.searchTerms}
                             onFocus={this.handleUserFocus}
@@ -273,7 +284,6 @@ export default class SearchBar extends React.Component {
                                 onClick={this.handleClear}
                             >
                                 <OverlayTrigger
-                                    trigger={['hover', 'focus']}
                                     delayShow={Constants.OVERLAY_TIME_DELAY}
                                     placement='bottom'
                                     overlay={searchClearTooltip}

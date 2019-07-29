@@ -4,11 +4,12 @@ exports[`components/NewChannelModal should match snapshot, display only private 
 <span>
   <Modal
     animation={true}
+    aria-labelledby="newChannelModalLabel"
     autoFocus={true}
     backdrop={true}
     bsClass="modal"
     bsSize="large"
-    dialogClassName="new-channel__modal new-channel"
+    dialogClassName="a11y__modal new-channel__modal new-channel"
     dialogComponentClass={[Function]}
     enforceFocus={true}
     keyboard={true}
@@ -27,6 +28,7 @@ exports[`components/NewChannelModal should match snapshot, display only private 
     onHide={[MockFunction]}
     renderBackdrop={[Function]}
     restoreFocus={true}
+    role="dialog"
     show={true}
   >
     <ModalHeader
@@ -37,7 +39,6 @@ exports[`components/NewChannelModal should match snapshot, display only private 
       <button
         className="close"
         onClick={[MockFunction]}
-        tabIndex="5"
         type="button"
       >
         <span
@@ -53,7 +54,8 @@ exports[`components/NewChannelModal should match snapshot, display only private 
       </button>
       <ModalTitle
         bsClass="modal-title"
-        componentClass="h4"
+        componentClass="h1"
+        id="newChannelModalLabel"
       >
         <FormattedMessage
           defaultMessage="New Channel"
@@ -127,15 +129,19 @@ exports[`components/NewChannelModal should match snapshot, display only private 
           <div
             className="col-sm-9"
           >
-            <input
+            <LocalizedInput
               autoFocus={true}
               className="form-control"
-              id="newPublicChannelName"
-              maxLength={22}
+              id="newChannelName"
+              maxLength={64}
               onChange={[Function]}
               onKeyDown={[Function]}
-              placeholder="E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\""
-              tabIndex="1"
+              placeholder={
+                Object {
+                  "defaultMessage": "E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\"",
+                  "id": "channel_modal.nameEx",
+                }
+              }
               type="text"
               value="testchannel"
             />
@@ -146,7 +152,6 @@ exports[`components/NewChannelModal should match snapshot, display only private 
               <button
                 className="color--link style--none"
                 onClick={[Function]}
-                tabIndex="7"
               >
                 <FormattedMessage
                   defaultMessage="Edit"
@@ -188,12 +193,11 @@ exports[`components/NewChannelModal should match snapshot, display only private 
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelPurpose"
+              id="newChannelPurpose"
               maxLength="250"
               onChange={[Function]}
               placeholder="E.g.: \\"A channel to file bugs and improvements\\""
               rows="4"
-              tabIndex="2"
               value=""
             />
             <p
@@ -237,12 +241,11 @@ exports[`components/NewChannelModal should match snapshot, display only private 
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelHeader"
+              id="newChannelHeader"
               maxLength="1024"
               onChange={[Function]}
               placeholder="E.g.: \\"[Link Title](http://example.com)\\""
               rows="4"
-              tabIndex="3"
               value=""
             />
             <p
@@ -263,9 +266,9 @@ exports[`components/NewChannelModal should match snapshot, display only private 
       >
         <button
           className="btn btn-link"
+          id="cancelNewChannel"
           onBlur={[Function]}
           onClick={[MockFunction]}
-          tabIndex="8"
           type="button"
         >
           <FormattedMessage
@@ -276,8 +279,8 @@ exports[`components/NewChannelModal should match snapshot, display only private 
         </button>
         <button
           className="btn btn-primary"
+          id="submitNewChannel"
           onClick={[Function]}
-          tabIndex="4"
           type="submit"
         >
           <FormattedMessage
@@ -296,11 +299,12 @@ exports[`components/NewChannelModal should match snapshot, display only public c
 <span>
   <Modal
     animation={true}
+    aria-labelledby="newChannelModalLabel"
     autoFocus={true}
     backdrop={true}
     bsClass="modal"
     bsSize="large"
-    dialogClassName="new-channel__modal new-channel"
+    dialogClassName="a11y__modal new-channel__modal new-channel"
     dialogComponentClass={[Function]}
     enforceFocus={true}
     keyboard={true}
@@ -319,6 +323,7 @@ exports[`components/NewChannelModal should match snapshot, display only public c
     onHide={[MockFunction]}
     renderBackdrop={[Function]}
     restoreFocus={true}
+    role="dialog"
     show={true}
   >
     <ModalHeader
@@ -329,7 +334,6 @@ exports[`components/NewChannelModal should match snapshot, display only public c
       <button
         className="close"
         onClick={[MockFunction]}
-        tabIndex="5"
         type="button"
       >
         <span
@@ -345,7 +349,8 @@ exports[`components/NewChannelModal should match snapshot, display only public c
       </button>
       <ModalTitle
         bsClass="modal-title"
-        componentClass="h4"
+        componentClass="h1"
+        id="newChannelModalLabel"
       >
         <FormattedMessage
           defaultMessage="New Channel"
@@ -419,15 +424,19 @@ exports[`components/NewChannelModal should match snapshot, display only public c
           <div
             className="col-sm-9"
           >
-            <input
+            <LocalizedInput
               autoFocus={true}
               className="form-control"
-              id="newPublicChannelName"
-              maxLength={22}
+              id="newChannelName"
+              maxLength={64}
               onChange={[Function]}
               onKeyDown={[Function]}
-              placeholder="E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\""
-              tabIndex="1"
+              placeholder={
+                Object {
+                  "defaultMessage": "E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\"",
+                  "id": "channel_modal.nameEx",
+                }
+              }
               type="text"
               value="testchannel"
             />
@@ -438,7 +447,6 @@ exports[`components/NewChannelModal should match snapshot, display only public c
               <button
                 className="color--link style--none"
                 onClick={[Function]}
-                tabIndex="7"
               >
                 <FormattedMessage
                   defaultMessage="Edit"
@@ -480,12 +488,11 @@ exports[`components/NewChannelModal should match snapshot, display only public c
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelPurpose"
+              id="newChannelPurpose"
               maxLength="250"
               onChange={[Function]}
               placeholder="E.g.: \\"A channel to file bugs and improvements\\""
               rows="4"
-              tabIndex="2"
               value=""
             />
             <p
@@ -529,12 +536,11 @@ exports[`components/NewChannelModal should match snapshot, display only public c
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelHeader"
+              id="newChannelHeader"
               maxLength="1024"
               onChange={[Function]}
               placeholder="E.g.: \\"[Link Title](http://example.com)\\""
               rows="4"
-              tabIndex="3"
               value=""
             />
             <p
@@ -555,9 +561,9 @@ exports[`components/NewChannelModal should match snapshot, display only public c
       >
         <button
           className="btn btn-link"
+          id="cancelNewChannel"
           onBlur={[Function]}
           onClick={[MockFunction]}
-          tabIndex="8"
           type="button"
         >
           <FormattedMessage
@@ -568,8 +574,8 @@ exports[`components/NewChannelModal should match snapshot, display only public c
         </button>
         <button
           className="btn btn-primary"
+          id="submitNewChannel"
           onClick={[Function]}
-          tabIndex="4"
           type="submit"
         >
           <FormattedMessage
@@ -588,11 +594,12 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
 <span>
   <Modal
     animation={true}
+    aria-labelledby="newChannelModalLabel"
     autoFocus={true}
     backdrop={true}
     bsClass="modal"
     bsSize="large"
-    dialogClassName="new-channel__modal new-channel"
+    dialogClassName="a11y__modal new-channel__modal new-channel"
     dialogComponentClass={[Function]}
     enforceFocus={true}
     keyboard={true}
@@ -611,6 +618,7 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
     onHide={[MockFunction]}
     renderBackdrop={[Function]}
     restoreFocus={true}
+    role="dialog"
     show={false}
   >
     <ModalHeader
@@ -621,7 +629,6 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
       <button
         className="close"
         onClick={[MockFunction]}
-        tabIndex="5"
         type="button"
       >
         <span
@@ -637,7 +644,8 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
       </button>
       <ModalTitle
         bsClass="modal-title"
-        componentClass="h4"
+        componentClass="h1"
+        id="newChannelModalLabel"
       >
         <FormattedMessage
           defaultMessage="New Channel"
@@ -669,7 +677,7 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
           <div
             className="col-sm-9"
           >
-            <div
+            <fieldset
               className="multi-select__radio"
               key="channelType"
             >
@@ -733,7 +741,7 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
                   </div>
                 </label>
               </div>
-            </div>
+            </fieldset>
           </div>
         </div>
         <div
@@ -751,15 +759,19 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
           <div
             className="col-sm-9"
           >
-            <input
+            <LocalizedInput
               autoFocus={true}
               className="form-control"
-              id="newPublicChannelName"
-              maxLength={22}
+              id="newChannelName"
+              maxLength={64}
               onChange={[Function]}
               onKeyDown={[Function]}
-              placeholder="E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\""
-              tabIndex="1"
+              placeholder={
+                Object {
+                  "defaultMessage": "E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\"",
+                  "id": "channel_modal.nameEx",
+                }
+              }
               type="text"
               value="testchannel"
             />
@@ -770,7 +782,6 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
               <button
                 className="color--link style--none"
                 onClick={[Function]}
-                tabIndex="7"
               >
                 <FormattedMessage
                   defaultMessage="Edit"
@@ -812,12 +823,11 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelPurpose"
+              id="newChannelPurpose"
               maxLength="250"
               onChange={[Function]}
               placeholder="E.g.: \\"A channel to file bugs and improvements\\""
               rows="4"
-              tabIndex="2"
               value=""
             />
             <p
@@ -861,12 +871,11 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelHeader"
+              id="newChannelHeader"
               maxLength="1024"
               onChange={[Function]}
               placeholder="E.g.: \\"[Link Title](http://example.com)\\""
               rows="4"
-              tabIndex="3"
               value=""
             />
             <p
@@ -887,9 +896,9 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
       >
         <button
           className="btn btn-link"
+          id="cancelNewChannel"
           onBlur={[Function]}
           onClick={[MockFunction]}
-          tabIndex="8"
           type="button"
         >
           <FormattedMessage
@@ -900,8 +909,8 @@ exports[`components/NewChannelModal should match snapshot, modal not showing 1`]
         </button>
         <button
           className="btn btn-primary"
+          id="submitNewChannel"
           onClick={[Function]}
-          tabIndex="4"
           type="submit"
         >
           <FormattedMessage
@@ -920,11 +929,12 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
 <span>
   <Modal
     animation={true}
+    aria-labelledby="newChannelModalLabel"
     autoFocus={true}
     backdrop={true}
     bsClass="modal"
     bsSize="large"
-    dialogClassName="new-channel__modal new-channel"
+    dialogClassName="a11y__modal new-channel__modal new-channel"
     dialogComponentClass={[Function]}
     enforceFocus={true}
     keyboard={true}
@@ -943,6 +953,7 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
     onHide={[MockFunction]}
     renderBackdrop={[Function]}
     restoreFocus={true}
+    role="dialog"
     show={true}
   >
     <ModalHeader
@@ -953,7 +964,6 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
       <button
         className="close"
         onClick={[MockFunction]}
-        tabIndex="5"
         type="button"
       >
         <span
@@ -969,7 +979,8 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
       </button>
       <ModalTitle
         bsClass="modal-title"
-        componentClass="h4"
+        componentClass="h1"
+        id="newChannelModalLabel"
       >
         <FormattedMessage
           defaultMessage="New Channel"
@@ -1001,7 +1012,7 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
           <div
             className="col-sm-9"
           >
-            <div
+            <fieldset
               className="multi-select__radio"
               key="channelType"
             >
@@ -1065,7 +1076,7 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
                   </div>
                 </label>
               </div>
-            </div>
+            </fieldset>
           </div>
         </div>
         <div
@@ -1083,15 +1094,19 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
           <div
             className="col-sm-9"
           >
-            <input
+            <LocalizedInput
               autoFocus={true}
               className="form-control"
-              id="newPublicChannelName"
-              maxLength={22}
+              id="newChannelName"
+              maxLength={64}
               onChange={[Function]}
               onKeyDown={[Function]}
-              placeholder="E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\""
-              tabIndex="1"
+              placeholder={
+                Object {
+                  "defaultMessage": "E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\"",
+                  "id": "channel_modal.nameEx",
+                }
+              }
               type="text"
               value="testchannel"
             />
@@ -1102,7 +1117,6 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
               <button
                 className="color--link style--none"
                 onClick={[Function]}
-                tabIndex="7"
               >
                 <FormattedMessage
                   defaultMessage="Edit"
@@ -1144,12 +1158,11 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelPurpose"
+              id="newChannelPurpose"
               maxLength="250"
               onChange={[Function]}
               placeholder="E.g.: \\"A channel to file bugs and improvements\\""
               rows="4"
-              tabIndex="2"
               value=""
             />
             <p
@@ -1193,12 +1206,11 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelHeader"
+              id="newChannelHeader"
               maxLength="1024"
               onChange={[Function]}
               placeholder="E.g.: \\"[Link Title](http://example.com)\\""
               rows="4"
-              tabIndex="3"
               value=""
             />
             <p
@@ -1219,9 +1231,9 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
       >
         <button
           className="btn btn-link"
+          id="cancelNewChannel"
           onBlur={[Function]}
           onClick={[MockFunction]}
-          tabIndex="8"
           type="button"
         >
           <FormattedMessage
@@ -1232,8 +1244,8 @@ exports[`components/NewChannelModal should match snapshot, modal showing 1`] = `
         </button>
         <button
           className="btn btn-primary"
+          id="submitNewChannel"
           onClick={[Function]}
-          tabIndex="4"
           type="submit"
         >
           <FormattedMessage
@@ -1252,11 +1264,12 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
 <span>
   <Modal
     animation={true}
+    aria-labelledby="newChannelModalLabel"
     autoFocus={true}
     backdrop={true}
     bsClass="modal"
     bsSize="large"
-    dialogClassName="new-channel__modal new-channel"
+    dialogClassName="a11y__modal new-channel__modal new-channel"
     dialogComponentClass={[Function]}
     enforceFocus={true}
     keyboard={true}
@@ -1275,6 +1288,7 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
     onHide={[MockFunction]}
     renderBackdrop={[Function]}
     restoreFocus={true}
+    role="dialog"
     show={true}
   >
     <ModalHeader
@@ -1285,7 +1299,6 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
       <button
         className="close"
         onClick={[MockFunction]}
-        tabIndex="5"
         type="button"
       >
         <span
@@ -1301,7 +1314,8 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
       </button>
       <ModalTitle
         bsClass="modal-title"
-        componentClass="h4"
+        componentClass="h1"
+        id="newChannelModalLabel"
       >
         <FormattedMessage
           defaultMessage="New Channel"
@@ -1333,7 +1347,7 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
           <div
             className="col-sm-9"
           >
-            <div
+            <fieldset
               className="multi-select__radio"
               key="channelType"
             >
@@ -1397,7 +1411,7 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
                   </div>
                 </label>
               </div>
-            </div>
+            </fieldset>
           </div>
         </div>
         <div
@@ -1415,15 +1429,19 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
           <div
             className="col-sm-9"
           >
-            <input
+            <LocalizedInput
               autoFocus={true}
               className="form-control"
-              id="newPublicChannelName"
-              maxLength={22}
+              id="newChannelName"
+              maxLength={64}
               onChange={[Function]}
               onKeyDown={[Function]}
-              placeholder="E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\""
-              tabIndex="1"
+              placeholder={
+                Object {
+                  "defaultMessage": "E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\"",
+                  "id": "channel_modal.nameEx",
+                }
+              }
               type="text"
               value="testchannel"
             />
@@ -1444,7 +1462,6 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
               <button
                 className="color--link style--none"
                 onClick={[Function]}
-                tabIndex="7"
               >
                 <FormattedMessage
                   defaultMessage="Edit"
@@ -1486,12 +1503,11 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelPurpose"
+              id="newChannelPurpose"
               maxLength="250"
               onChange={[Function]}
               placeholder="E.g.: \\"A channel to file bugs and improvements\\""
               rows="4"
-              tabIndex="2"
               value=""
             />
             <p
@@ -1535,12 +1551,11 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelHeader"
+              id="newChannelHeader"
               maxLength="1024"
               onChange={[Function]}
               placeholder="E.g.: \\"[Link Title](http://example.com)\\""
               rows="4"
-              tabIndex="3"
               value=""
             />
             <p
@@ -1561,9 +1576,9 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
       >
         <button
           className="btn btn-link"
+          id="cancelNewChannel"
           onBlur={[Function]}
           onClick={[MockFunction]}
-          tabIndex="8"
           type="button"
         >
           <FormattedMessage
@@ -1574,8 +1589,8 @@ exports[`components/NewChannelModal should match snapshot, on displayNameError 1
         </button>
         <button
           className="btn btn-primary"
+          id="submitNewChannel"
           onClick={[Function]}
-          tabIndex="4"
           type="submit"
         >
           <FormattedMessage
@@ -1594,11 +1609,12 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
 <span>
   <Modal
     animation={true}
+    aria-labelledby="newChannelModalLabel"
     autoFocus={true}
     backdrop={true}
     bsClass="modal"
     bsSize="large"
-    dialogClassName="new-channel__modal new-channel"
+    dialogClassName="a11y__modal new-channel__modal new-channel"
     dialogComponentClass={[Function]}
     enforceFocus={true}
     keyboard={true}
@@ -1617,6 +1633,7 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
     onHide={[MockFunction]}
     renderBackdrop={[Function]}
     restoreFocus={true}
+    role="dialog"
     show={true}
   >
     <ModalHeader
@@ -1627,7 +1644,6 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
       <button
         className="close"
         onClick={[MockFunction]}
-        tabIndex="5"
         type="button"
       >
         <span
@@ -1643,7 +1659,8 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
       </button>
       <ModalTitle
         bsClass="modal-title"
-        componentClass="h4"
+        componentClass="h1"
+        id="newChannelModalLabel"
       >
         <FormattedMessage
           defaultMessage="New Channel"
@@ -1675,7 +1692,7 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
           <div
             className="col-sm-9"
           >
-            <div
+            <fieldset
               className="multi-select__radio"
               key="channelType"
             >
@@ -1739,7 +1756,7 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
                   </div>
                 </label>
               </div>
-            </div>
+            </fieldset>
           </div>
         </div>
         <div
@@ -1757,15 +1774,19 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
           <div
             className="col-sm-9"
           >
-            <input
+            <LocalizedInput
               autoFocus={true}
               className="form-control"
-              id="newPublicChannelName"
-              maxLength={22}
+              id="newChannelName"
+              maxLength={64}
               onChange={[Function]}
               onKeyDown={[Function]}
-              placeholder="E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\""
-              tabIndex="1"
+              placeholder={
+                Object {
+                  "defaultMessage": "E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\"",
+                  "id": "channel_modal.nameEx",
+                }
+              }
               type="text"
               value="testchannel"
             />
@@ -1776,7 +1797,6 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
               <button
                 className="color--link style--none"
                 onClick={[Function]}
-                tabIndex="7"
               >
                 <FormattedMessage
                   defaultMessage="Edit"
@@ -1818,12 +1838,11 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelPurpose"
+              id="newChannelPurpose"
               maxLength="250"
               onChange={[Function]}
               placeholder="E.g.: \\"A channel to file bugs and improvements\\""
               rows="4"
-              tabIndex="2"
               value=""
             />
             <p
@@ -1867,12 +1886,11 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
           >
             <textarea
               className="form-control no-resize"
-              id="newPublicChannelHeader"
+              id="newChannelHeader"
               maxLength="1024"
               onChange={[Function]}
               placeholder="E.g.: \\"[Link Title](http://example.com)\\""
               rows="4"
-              tabIndex="3"
               value=""
             />
             <p
@@ -1892,6 +1910,7 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
               >
                 <p
                   className="input__help error"
+                  id="createChannelError"
                 >
                   server error
                 </p>
@@ -1906,9 +1925,9 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
       >
         <button
           className="btn btn-link"
+          id="cancelNewChannel"
           onBlur={[Function]}
           onClick={[MockFunction]}
-          tabIndex="8"
           type="button"
         >
           <FormattedMessage
@@ -1919,8 +1938,8 @@ exports[`components/NewChannelModal should match snapshot, on serverError 1`] = 
         </button>
         <button
           className="btn btn-primary"
+          id="submitNewChannel"
           onClick={[Function]}
-          tabIndex="4"
           type="submit"
         >
           <FormattedMessage
@@ -1939,11 +1958,12 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
 <span>
   <Modal
     animation={true}
+    aria-labelledby="newChannelModalLabel"
     autoFocus={true}
     backdrop={true}
     bsClass="modal"
     bsSize="large"
-    dialogClassName="new-channel__modal new-channel"
+    dialogClassName="a11y__modal new-channel__modal new-channel"
     dialogComponentClass={[Function]}
     enforceFocus={true}
     keyboard={true}
@@ -1962,6 +1982,7 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
     onHide={[MockFunction]}
     renderBackdrop={[Function]}
     restoreFocus={true}
+    role="dialog"
     show={true}
   >
     <ModalHeader
@@ -1972,7 +1993,6 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
       <button
         className="close"
         onClick={[MockFunction]}
-        tabIndex="5"
         type="button"
       >
         <span
@@ -1988,7 +2008,8 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
       </button>
       <ModalTitle
         bsClass="modal-title"
-        componentClass="h4"
+        componentClass="h1"
+        id="newChannelModalLabel"
       >
         <FormattedMessage
           defaultMessage="New Channel"
@@ -2020,7 +2041,7 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
           <div
             className="col-sm-9"
           >
-            <div
+            <fieldset
               className="multi-select__radio"
               key="channelType"
             >
@@ -2084,7 +2105,7 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
                   </div>
                 </label>
               </div>
-            </div>
+            </fieldset>
           </div>
         </div>
         <div
@@ -2102,15 +2123,19 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
           <div
             className="col-sm-9"
           >
-            <input
+            <LocalizedInput
               autoFocus={true}
               className="form-control"
-              id="newPrivateChannelName"
-              maxLength={22}
+              id="newChannelName"
+              maxLength={64}
               onChange={[Function]}
               onKeyDown={[Function]}
-              placeholder="E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\""
-              tabIndex="1"
+              placeholder={
+                Object {
+                  "defaultMessage": "E.g.: \\"Bugs\\", \\"Marketing\\", \\"客户支持\\"",
+                  "id": "channel_modal.nameEx",
+                }
+              }
               type="text"
               value="testchannel"
             />
@@ -2121,7 +2146,6 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
               <button
                 className="color--link style--none"
                 onClick={[Function]}
-                tabIndex="7"
               >
                 <FormattedMessage
                   defaultMessage="Edit"
@@ -2163,12 +2187,11 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
           >
             <textarea
               className="form-control no-resize"
-              id="newPrivateChannelPurpose"
+              id="newChannelPurpose"
               maxLength="250"
               onChange={[Function]}
               placeholder="E.g.: \\"A channel to file bugs and improvements\\""
               rows="4"
-              tabIndex="2"
               value="some purpose"
             />
             <p
@@ -2212,12 +2235,11 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
           >
             <textarea
               className="form-control no-resize"
-              id="newPrivateChannelHeader"
+              id="newChannelHeader"
               maxLength="1024"
               onChange={[Function]}
               placeholder="E.g.: \\"[Link Title](http://example.com)\\""
               rows="4"
-              tabIndex="3"
               value="some header"
             />
             <p
@@ -2238,9 +2260,9 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
       >
         <button
           className="btn btn-link"
+          id="cancelNewChannel"
           onBlur={[Function]}
           onClick={[MockFunction]}
-          tabIndex="8"
           type="button"
         >
           <FormattedMessage
@@ -2251,8 +2273,8 @@ exports[`components/NewChannelModal should match snapshot, private channel fille
         </button>
         <button
           className="btn btn-primary"
+          id="submitNewChannel"
           onClick={[Function]}
-          tabIndex="4"
           type="submit"
         >
           <FormattedMessage

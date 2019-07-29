@@ -3,11 +3,14 @@
 exports[`components/delete_post_modal should match snapshot for delete_post_modal with 0 comments 1`] = `
 <Modal
   animation={true}
+  aria-labelledby="deletePostModalLabel"
   autoFocus={true}
   backdrop={true}
   bsClass="modal"
+  dialogClassName="a11y__modal"
   dialogComponentClass={[Function]}
   enforceFocus={false}
+  id="deletePostModal"
   keyboard={true}
   manager={
     ModalManager {
@@ -26,6 +29,7 @@ exports[`components/delete_post_modal should match snapshot for delete_post_moda
   onHide={[Function]}
   renderBackdrop={[Function]}
   restoreFocus={true}
+  role="dialog"
   show={true}
 >
   <ModalHeader
@@ -35,7 +39,8 @@ exports[`components/delete_post_modal should match snapshot for delete_post_moda
   >
     <ModalTitle
       bsClass="modal-title"
-      componentClass="h4"
+      componentClass="h1"
+      id="deletePostModalLabel"
     >
       <FormattedMessage
         defaultMessage="Confirm {term} Delete"
@@ -90,6 +95,7 @@ exports[`components/delete_post_modal should match snapshot for delete_post_moda
     <button
       autoFocus={true}
       className="btn btn-danger"
+      id="deletePostModalButton"
       onClick={[Function]}
       type="button"
     >
@@ -106,11 +112,14 @@ exports[`components/delete_post_modal should match snapshot for delete_post_moda
 exports[`components/delete_post_modal should match snapshot for delete_post_modal with 1 comment 1`] = `
 <Modal
   animation={true}
+  aria-labelledby="deletePostModalLabel"
   autoFocus={true}
   backdrop={true}
   bsClass="modal"
+  dialogClassName="a11y__modal"
   dialogComponentClass={[Function]}
   enforceFocus={false}
+  id="deletePostModal"
   keyboard={true}
   manager={
     ModalManager {
@@ -129,6 +138,7 @@ exports[`components/delete_post_modal should match snapshot for delete_post_moda
   onHide={[Function]}
   renderBackdrop={[Function]}
   restoreFocus={true}
+  role="dialog"
   show={true}
 >
   <ModalHeader
@@ -138,7 +148,8 @@ exports[`components/delete_post_modal should match snapshot for delete_post_moda
   >
     <ModalTitle
       bsClass="modal-title"
-      componentClass="h4"
+      componentClass="h1"
+      id="deletePostModalLabel"
     >
       <FormattedMessage
         defaultMessage="Confirm {term} Delete"
@@ -202,6 +213,7 @@ exports[`components/delete_post_modal should match snapshot for delete_post_moda
     <button
       autoFocus={true}
       className="btn btn-danger"
+      id="deletePostModalButton"
       onClick={[Function]}
       type="button"
     >
@@ -218,11 +230,14 @@ exports[`components/delete_post_modal should match snapshot for delete_post_moda
 exports[`components/delete_post_modal should match snapshot for post with 1 commentCount and is not rootPost 1`] = `
 <Modal
   animation={true}
+  aria-labelledby="deletePostModalLabel"
   autoFocus={true}
   backdrop={true}
   bsClass="modal"
+  dialogClassName="a11y__modal"
   dialogComponentClass={[Function]}
   enforceFocus={false}
+  id="deletePostModal"
   keyboard={true}
   manager={
     ModalManager {
@@ -241,6 +256,7 @@ exports[`components/delete_post_modal should match snapshot for post with 1 comm
   onHide={[Function]}
   renderBackdrop={[Function]}
   restoreFocus={true}
+  role="dialog"
   show={true}
 >
   <ModalHeader
@@ -250,7 +266,8 @@ exports[`components/delete_post_modal should match snapshot for post with 1 comm
   >
     <ModalTitle
       bsClass="modal-title"
-      componentClass="h4"
+      componentClass="h1"
+      id="deletePostModalLabel"
     >
       <FormattedMessage
         defaultMessage="Confirm {term} Delete"
@@ -305,6 +322,7 @@ exports[`components/delete_post_modal should match snapshot for post with 1 comm
     <button
       autoFocus={true}
       className="btn btn-danger"
+      id="deletePostModalButton"
       onClick={[Function]}
       type="button"
     >

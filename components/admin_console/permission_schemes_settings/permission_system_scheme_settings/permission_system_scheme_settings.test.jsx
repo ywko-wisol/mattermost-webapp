@@ -9,12 +9,25 @@ import {DefaultRolePermissions} from 'utils/constants.jsx';
 
 describe('components/admin_console/permission_schemes_settings/permission_system_scheme_settings/permission_system_scheme_settings', () => {
     const defaultProps = {
+        config: {
+            EnableGuestAccounts: 'true',
+        },
         license: {
             IsLicensed: 'true',
             CustomPermissionsSchemes: 'true',
+            GuestAccountsPermissions: 'true',
         },
         location: {},
         roles: {
+            system_guest: {
+                permissions: [],
+            },
+            team_guest: {
+                permissions: [],
+            },
+            channel_guest: {
+                permissions: [],
+            },
             system_user: {
                 permissions: [],
             },
@@ -70,6 +83,15 @@ describe('components/admin_console/permission_schemes_settings/permission_system
 
     test('should match snapshot on roles with permissions', (done) => {
         const roles = {
+            system_guest: {
+                permissions: ['create_post'],
+            },
+            team_guest: {
+                permissions: ['invite_user'],
+            },
+            channel_guest: {
+                permissions: ['add_reaction'],
+            },
             system_user: {
                 permissions: ['create_post'],
             },
@@ -115,7 +137,7 @@ describe('components/admin_console/permission_schemes_settings/permission_system
         expect(wrapper).toMatchSnapshot();
 
         await wrapper.instance().handleSubmit();
-        expect(editRole).toHaveBeenCalledTimes(5);
+        expect(editRole).toHaveBeenCalledTimes(8);
     });
 
     test('should show error if editRole fails', async () => {
@@ -135,28 +157,29 @@ describe('components/admin_console/permission_schemes_settings/permission_system
         const wrapper = shallow(
             <PermissionSystemSchemeSettings {...defaultProps}/>
         );
+        const instance = wrapper.instance();
         expect(wrapper.state().openRoles.all_users).toBe(true);
-        wrapper.find('.header').first().simulate('click');
+        instance.toggleRole('all_users');
         expect(wrapper.state().openRoles.all_users).toBe(false);
-        wrapper.find('.header').first().simulate('click');
+        instance.toggleRole('all_users');
         expect(wrapper.state().openRoles.all_users).toBe(true);
 
         expect(wrapper.state().openRoles.channel_admin).toBe(true);
-        wrapper.find('.header').at(1).simulate('click');
+        instance.toggleRole('channel_admin');
         expect(wrapper.state().openRoles.channel_admin).toBe(false);
-        wrapper.find('.header').at(1).simulate('click');
+        instance.toggleRole('channel_admin');
         expect(wrapper.state().openRoles.channel_admin).toBe(true);
 
         expect(wrapper.state().openRoles.team_admin).toBe(true);
-        wrapper.find('.header').at(2).simulate('click');
+        instance.toggleRole('team_admin');
         expect(wrapper.state().openRoles.team_admin).toBe(false);
-        wrapper.find('.header').at(2).simulate('click');
+        instance.toggleRole('team_admin');
         expect(wrapper.state().openRoles.team_admin).toBe(true);
 
         expect(wrapper.state().openRoles.system_admin).toBe(true);
-        wrapper.find('.header').at(3).simulate('click');
+        instance.toggleRole('system_admin');
         expect(wrapper.state().openRoles.system_admin).toBe(false);
-        wrapper.find('.header').at(3).simulate('click');
+        instance.toggleRole('system_admin');
         expect(wrapper.state().openRoles.system_admin).toBe(true);
     });
 
@@ -167,8 +190,6 @@ describe('components/admin_console/permission_schemes_settings/permission_system
         expect(wrapper.state().showResetDefaultModal).toBe(false);
         wrapper.find('.reset-defaults-btn').first().simulate('click');
         expect(wrapper.state().showResetDefaultModal).toBe(true);
-        wrapper.find('.btn-cancel').first().simulate('click');
-        expect(wrapper.state().showResetDefaultModal).toBe(false);
     });
 
     test('should have default permissions that match the defaults constant', () => {
@@ -178,8 +199,7 @@ describe('components/admin_console/permission_schemes_settings/permission_system
         expect(wrapper.state().roles.all_users.permissions.length).toBe(0);
         expect(wrapper.state().roles.channel_admin.permissions.length).toBe(0);
         expect(wrapper.state().roles.team_admin.permissions.length).toBe(0);
-        wrapper.find('.reset-defaults-btn').first().simulate('click');
-        wrapper.find('.btn-default').first().simulate('click');
+        wrapper.instance().resetDefaults();
         expect(wrapper.state().roles.all_users.permissions).toBe(DefaultRolePermissions.all_users);
         expect(wrapper.state().roles.channel_admin.permissions).toBe(DefaultRolePermissions.channel_admin);
         expect(wrapper.state().roles.team_admin.permissions).toBe(DefaultRolePermissions.team_admin);

@@ -1,0 +1,11 @@
+.MenuWrapper {
+    position: relative;
+
+    .Menu {
+        display: block;
+    }
+    *:first-child {
+        @include unselectable;
+        cursor: pointer;
+    }
+}

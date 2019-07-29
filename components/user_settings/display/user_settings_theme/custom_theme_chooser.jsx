@@ -7,7 +7,6 @@ import React from 'react';
 import {OverlayTrigger, Popover} from 'react-bootstrap';
 import {defineMessages, FormattedMessage, intlShape} from 'react-intl';
 
-import {localizeMessage} from 'utils/utils.jsx';
 import {t} from 'utils/i18n';
 import 'bootstrap-colorpicker';
 
@@ -282,6 +281,7 @@ export default class CustomThemeChooser extends React.Component {
                     >
                         <img
                             width='200'
+                            alt={'code theme image'}
                             src={codeThemeURL}
                         />
                     </Popover>
@@ -298,6 +298,7 @@ export default class CustomThemeChooser extends React.Component {
                             id={element.id}
                         >
                             <select
+                                id='codeThemeSelect'
                                 className='form-control'
                                 type='text'
                                 defaultValue={theme[element.id]}
@@ -305,13 +306,13 @@ export default class CustomThemeChooser extends React.Component {
                                 {codeThemeOptions}
                             </select>
                             <OverlayTrigger
-                                trigger={['hover', 'focus']}
                                 placement='top'
                                 overlay={popoverContent}
                                 ref='headerOverlay'
                             >
                                 <span className='input-group-addon'>
                                     <img
+                                        alt={'code theme image'}
                                         src={codeThemeURL}
                                     />
                                 </span>
@@ -381,6 +382,7 @@ export default class CustomThemeChooser extends React.Component {
                 <textarea
                     ref='textarea'
                     className='form-control'
+                    id='pasteBox'
                     value={this.state.copyTheme}
                     onPaste={this.pasteBoxChange}
                     onChange={this.onChangeHandle}
@@ -404,11 +406,11 @@ export default class CustomThemeChooser extends React.Component {
                         <div className='header__icon'>
                             <i
                                 className='fa fa-plus'
-                                title={localizeMessage('generic_icons.expand', 'Expand Icon')}
+                                title={formatMessage({id: 'generic_icons.expand', defaultMessage: 'Expand Icon'})}
                             />
                             <i
                                 className='fa fa-minus'
-                                title={localizeMessage('generic_icons.collapse', 'Collapse Icon')}
+                                title={formatMessage({id: 'generic_icons.collapse', defaultMessage: 'Collapse Icon'})}
                             />
                         </div>
                     </div>
@@ -419,7 +421,10 @@ export default class CustomThemeChooser extends React.Component {
                         {sidebarElements}
                     </div>
                 </div>
-                <div className='theme-elements row'>
+                <div
+                    id='centerChannelStyles'
+                    className='theme-elements row'
+                >
                     <div
                         ref='centerChannelStylesHeader'
                         className='theme-elements__header'
@@ -432,11 +437,11 @@ export default class CustomThemeChooser extends React.Component {
                         <div className='header__icon'>
                             <i
                                 className='fa fa-plus'
-                                title={localizeMessage('generic_icons.expand', 'Expand Icon')}
+                                title={formatMessage({id: 'generic_icons.expand', defaultMessage: 'Expand Icon'})}
                             />
                             <i
                                 className='fa fa-minus'
-                                title={localizeMessage('generic_icons.collapse', 'Collapse Icon')}
+                                title={formatMessage({id: 'generic_icons.collapse', defaultMessage: 'Collapse Icon'})}
                             />
                         </div>
                     </div>
@@ -447,7 +452,7 @@ export default class CustomThemeChooser extends React.Component {
                         {centerChannelElements}
                     </div>
                 </div>
-                <div className='theme-elements row form-group'>
+                <div className='theme-elements row'>
                     <div
                         ref='linkAndButtonStylesHeader'
                         className='theme-elements__header'
@@ -460,11 +465,11 @@ export default class CustomThemeChooser extends React.Component {
                         <div className='header__icon'>
                             <i
                                 className='fa fa-plus'
-                                title={localizeMessage('generic_icons.expand', 'Expand Icon')}
+                                title={formatMessage({id: 'generic_icons.expand', defaultMessage: 'Expand Icon'})}
                             />
                             <i
                                 className='fa fa-minus'
-                                title={localizeMessage('generic_icons.collapse', 'Collapse Icon')}
+                                title={formatMessage({id: 'generic_icons.collapse', defaultMessage: 'Collapse Icon'})}
                             />
                         </div>
                     </div>
@@ -475,7 +480,7 @@ export default class CustomThemeChooser extends React.Component {
                         {linkAndButtonElements}
                     </div>
                 </div>
-                <div className='row'>
+                <div className='row margin-top x2'>
                     {pasteBox}
                 </div>
             </div>

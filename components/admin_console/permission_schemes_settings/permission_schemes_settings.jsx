@@ -4,7 +4,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {FormattedMessage} from 'react-intl';
-import {Link} from 'react-router-dom';
 
 import {t} from 'utils/i18n';
 import * as Utils from 'utils/utils';
@@ -15,6 +14,7 @@ import LoadingScreen from 'components/loading_screen.jsx';
 import LoadingWrapper from 'components/widgets/loading/loading_wrapper.jsx';
 
 import FormattedAdminHeader from 'components/widgets/admin_console/formatted_admin_header.jsx';
+import AdminPanelWithLink from 'components/widgets/admin_console/admin_panel_with_link.jsx';
 
 import PermissionsSchemeSummary from './permissions_scheme_summary';
 
@@ -26,6 +26,9 @@ export default class PermissionSchemesSettings extends React.PureComponent {
         schemes: PropTypes.object.isRequired,
         jobsAreEnabled: PropTypes.bool,
         clusterIsEnabled: PropTypes.bool,
+        license: PropTypes.shape({
+            CustomPermissionsSchemes: PropTypes.string,
+        }),
         actions: PropTypes.shape({
             loadSchemes: PropTypes.func.isRequired,
             loadSchemeTeams: PropTypes.func.isRequired,
@@ -128,10 +131,7 @@ export default class PermissionSchemesSettings extends React.PureComponent {
         );
     };
 
-    render = () => {
-        if (this.state.loading) {
-            return (<LoadingScreen/>);
-        }
+    renderTeamOverrideSchemes = () => {
         const schemes = Object.values(this.props.schemes).map((scheme) => (
             <PermissionsSchemeSummary
                 scheme={scheme}
@@ -139,92 +139,22 @@ export default class PermissionSchemesSettings extends React.PureComponent {
                 key={scheme.id}
             />
         ));
-
+        const hasCustomSchemes = this.props.license.CustomPermissionsSchemes === 'true';
         const teamOverrideView = this.teamOverrideSchemesMigrationView();
 
-        return (
-            <div className='wrapper--fixed'>
-                <FormattedAdminHeader
-                    id='admin.permissions.permissionSchemes'
-                    defaultMessage='Permission Schemes'
-                />
-                <div className={'banner info'}>
-                    <div className='banner__content'>
-                        <span>
-                            <FormattedMarkdownMessage
-                                id='admin.permissions.introBanner'
-                                defaultMessage='Permission Schemes set the default permissions for Team Admins, Channel Admins and everyone else. Learn more about permission schemes in our [documentation](!https://about.mattermost.com/default-advanced-permissions).'
-                            />
-                        </span>
-                    </div>
-                </div>
-
-                <div className='permissions-block'>
-                    <div className='header'>
-                        <div>
-                            <h3>
-                                <FormattedMessage
-                                    id='admin.permissions.systemSchemeBannerTitle'
-                                    defaultMessage='System Scheme'
-                                />
-                            </h3>
-                            <span>
-                                <FormattedMarkdownMessage
-                                    id='admin.permissions.systemSchemeBannerText'
-                                    defaultMessage='Set the default permissions inherited by all teams unless a [Team Override Scheme](!https://about.mattermost.com/default-team-override-scheme) is applied.'
-                                />
-                            </span>
-                        </div>
-                        <div className='button'>
-                            <Link
-                                className='btn btn-primary'
-                                to='/admin_console/permissions/system-scheme'
-                            >
-                                <FormattedMessage
-                                    id='admin.permissions.systemSchemeBannerButton'
-                                    defaultMessage='Edit Scheme'
-                                />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='permissions-block'>
-                    <div className='header'>
-                        <div>
-                            <h3>
-                                <FormattedMessage
-                                    id='admin.permissions.teamOverrideSchemesTitle'
-                                    defaultMessage='Team Override Schemes'
-                                />
-                            </h3>
-                            <span>
-                                <FormattedMarkdownMessage
-                                    id='admin.permissions.teamOverrideSchemesBannerText'
-                                    defaultMessage='Use when specific teams need permission exceptions to the [System Scheme](!https://about.mattermost.com/default-system-scheme).'
-                                />
-                            </span>
-                        </div>
-                        <div className='button'>
-                            <Link
-                                className='btn btn-primary'
-                                to='/admin_console/permissions/team-override-scheme'
-                                disabled={teamOverrideView !== null}
-                                onClick={(e) => {
-                                    if (teamOverrideView !== null) {
-                                        e.preventDefault();
-                                        return false;
-                                    }
-                                    return true;
-                                }}
-                            >
-                                <FormattedMessage
-                                    id='admin.permissions.teamOverrideSchemesNewButton'
-                                    defaultMessage='New Team Override Scheme'
-                                />
-                            </Link>
-                        </div>
-                    </div>
+        if (hasCustomSchemes) {
+            return (
+                <AdminPanelWithLink
+                    className='permissions-block'
+                    titleId={t('admin.permissions.teamOverrideSchemesTitle')}
+                    titleDefault='Team Override Schemes'
+                    subtitleId={t('admin.permissions.teamOverrideSchemesBannerText')}
+                    subtitleDefault='Use when specific teams need permission exceptions to the [System Scheme](!https://about.mattermost.com/default-system-scheme).'
+                    url='/admin_console/user_management/permissions/team_override_scheme'
+                    disabled={teamOverrideView !== null}
+                    linkTextId={t('admin.permissions.teamOverrideSchemesNewButton')}
+                    linkTextDefault='New Team Override Scheme'
+                >
                     {schemes.length === 0 && teamOverrideView === null &&
                         <div className='no-team-schemes'>
                             <FormattedMessage
@@ -250,6 +180,52 @@ export default class PermissionSchemesSettings extends React.PureComponent {
                                 />
                             </LoadingWrapper>
                         </button>}
+                </AdminPanelWithLink>
+            );
+        }
+        return false;
+    }
+
+    render = () => {
+        if (this.state.loading) {
+            return (<LoadingScreen/>);
+        }
+
+        const teamOverrideView = this.teamOverrideSchemesMigrationView();
+
+        return (
+            <div className='wrapper--fixed'>
+                <FormattedAdminHeader
+                    id='admin.permissions.permissionSchemes'
+                    defaultMessage='Permission Schemes'
+                />
+
+                <div className='admin-console__wrapper'>
+                    <div className='admin-console__content'>
+                        <div className='banner info'>
+                            <div className='banner__content'>
+                                <span>
+                                    <FormattedMarkdownMessage
+                                        id='admin.permissions.introBanner'
+                                        defaultMessage='Permission Schemes set the default permissions for Team Admins, Channel Admins and everyone else. Learn more about permission schemes in our [documentation](!https://about.mattermost.com/default-advanced-permissions).'
+                                    />
+                                </span>
+                            </div>
+                        </div>
+
+                        <AdminPanelWithLink
+                            titleId={t('admin.permissions.systemSchemeBannerTitle')}
+                            titleDefault='System Scheme'
+                            subtitleId={t('admin.permissions.systemSchemeBannerText')}
+                            subtitleDefault='Set the default permissions inherited by all teams unless a [Team Override Scheme](!https://about.mattermost.com/default-team-override-scheme) is applied.'
+                            url='/admin_console/user_management/permissions/system_scheme'
+                            disabled={teamOverrideView !== null}
+                            linkTextId={t('admin.permissions.systemSchemeBannerButton')}
+                            linkTextDefault='Edit Scheme'
+                        />
+
+                        {this.renderTeamOverrideSchemes()}
+                    </div>
                 </div>
             </div>
         );
@@ -310,8 +286,12 @@ t('admin.permissions.permission.list_users_without_team.description');
 t('admin.permissions.permission.list_users_without_team.name');
 t('admin.permissions.permission.manage_channel_roles.description');
 t('admin.permissions.permission.manage_channel_roles.name');
-t('admin.permissions.permission.manage_emojis.description');
-t('admin.permissions.permission.manage_emojis.name');
+t('admin.permissions.permission.create_emojis.description');
+t('admin.permissions.permission.create_emojis.name');
+t('admin.permissions.permission.delete_emojis.description');
+t('admin.permissions.permission.delete_emojis.name');
+t('admin.permissions.permission.delete_others_emojis.description');
+t('admin.permissions.permission.delete_others_emojis.name');
 t('admin.permissions.permission.manage_jobs.description');
 t('admin.permissions.permission.manage_jobs.name');
 t('admin.permissions.permission.manage_oauth.description');
@@ -334,8 +314,10 @@ t('admin.permissions.permission.manage_team.description');
 t('admin.permissions.permission.manage_team.name');
 t('admin.permissions.permission.manage_team_roles.description');
 t('admin.permissions.permission.manage_team_roles.name');
-t('admin.permissions.permission.manage_webhooks.description');
-t('admin.permissions.permission.manage_webhooks.name');
+t('admin.permissions.permission.manage_incoming_webhooks.description');
+t('admin.permissions.permission.manage_incoming_webhooks.name');
+t('admin.permissions.permission.manage_outgoing_webhooks.description');
+t('admin.permissions.permission.manage_outgoing_webhooks.name');
 t('admin.permissions.permission.permanent_delete_user.description');
 t('admin.permissions.permission.permanent_delete_user.name');
 t('admin.permissions.permission.read_channel.description');
@@ -352,6 +334,8 @@ t('admin.permissions.permission.view_team.description');
 t('admin.permissions.permission.view_team.name');
 t('admin.permissions.permission.edit_others_posts.description');
 t('admin.permissions.permission.edit_others_posts.name');
+t('admin.permissions.permission.invite_guest.name');
+t('admin.permissions.permission.invite_guest.description');
 t('admin.permissions.roles.all_users.name');
 t('admin.permissions.roles.channel_admin.name');
 t('admin.permissions.roles.channel_user.name');

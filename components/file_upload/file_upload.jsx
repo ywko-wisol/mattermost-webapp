@@ -7,7 +7,6 @@ import React, {PureComponent} from 'react';
 import ReactDOM from 'react-dom';
 import {defineMessages, intlShape, FormattedMessage} from 'react-intl';
 import 'jquery-dragster/jquery.dragster.js';
-import {Dropdown} from 'react-bootstrap';
 
 import Constants from 'utils/constants.jsx';
 import DelayedAction from 'utils/delayed_action.jsx';
@@ -16,6 +15,7 @@ import {
     isIosChrome,
     isMobileApp,
 } from 'utils/user_agent.jsx';
+import {getTable} from 'utils/paste.jsx';
 import {
     clearFileInput,
     cmdOrCtrlPressed,
@@ -24,6 +24,9 @@ import {
     isFileTransfer,
     localizeMessage,
 } from 'utils/utils.jsx';
+
+import MenuWrapper from 'components/widgets/menu/menu_wrapper';
+import Menu from 'components/widgets/menu/menu';
 
 import AttachmentIcon from 'components/svg/attachment_icon';
 
@@ -59,6 +62,13 @@ const holders = defineMessages({
 });
 
 const OVERLAY_TIMEOUT = 500;
+
+const customStyles = {
+    left: 'inherit',
+    right: 0,
+    bottom: '100%',
+    top: 'auto',
+};
 
 export default class FileUpload extends PureComponent {
     static propTypes = {
@@ -164,6 +174,7 @@ export default class FileUpload extends PureComponent {
             requests: {},
             menuOpen: false,
         };
+        this.fileInput = React.createRef();
     }
 
     componentDidMount() {
@@ -347,9 +358,36 @@ export default class FileUpload extends PureComponent {
 
         this.props.onUploadError(null);
 
-        var files = e.originalEvent.dataTransfer.files;
+        const items = e.originalEvent.dataTransfer.items || [];
+        const droppedFiles = e.originalEvent.dataTransfer.files;
+        const files = [];
+        Array.from(droppedFiles).forEach((file, index) => {
+            const item = items[index];
+            if (item && item.webkitGetAsEntry && item.webkitGetAsEntry().isDirectory) {
+                return;
+            }
+            files.push(file);
+        });
 
-        if (typeof files !== 'string' && files.length) {
+        const types = e.originalEvent.dataTransfer.types;
+        if (types) {
+            // For non-IE browsers
+            if (types.includes && !types.includes('Files')) {
+                return;
+            }
+
+            // For IE browsers
+            if (types.contains && !types.contains('Files')) {
+                return;
+            }
+        }
+
+        if (files.length === 0) {
+            this.props.onUploadError(localizeMessage('file_upload.drag_folder', 'Folders cannot be uploaded. Please drag all files separately.'));
+            return;
+        }
+
+        if (files.length) {
             this.checkPluginHooksAndUploadFiles(files);
         }
 
@@ -410,15 +448,18 @@ export default class FileUpload extends PureComponent {
         $(containerSelector).dragster(dragsterActions);
     }
 
+    containsEventTarget = (targetElement, eventTarget) => targetElement && targetElement.contains(eventTarget);
+
     pasteUpload = (e) => {
         const {formatMessage} = this.context.intl;
 
-        if (!e.clipboardData || !e.clipboardData.items) {
+        if (!e.clipboardData || !e.clipboardData.items || getTable(e.clipboardData)) {
             return;
         }
 
-        const textarea = ReactDOM.findDOMNode(this.props.getTarget());
-        if (!textarea || !textarea.contains(e.target)) {
+        const target = this.props.getTarget();
+        const textarea = ReactDOM.findDOMNode(target);
+        if (!this.containsEventTarget(textarea, e.target)) {
             return;
         }
 
@@ -467,7 +508,9 @@ export default class FileUpload extends PureComponent {
 
                 const name = formatMessage(holders.pasted) + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + hour + '-' + minute + ext;
 
-                files.push(new File([file], name));
+                const newFile = new Blob([file], {type: file.type});
+                newFile.name = name;
+                files.push(newFile);
             }
 
             if (files.length > 0) {
@@ -488,7 +531,8 @@ export default class FileUpload extends PureComponent {
             const postTextbox = this.props.postType === 'post' && document.activeElement.id === 'post_textbox';
             const commentTextbox = this.props.postType === 'comment' && document.activeElement.id === 'reply_textbox';
             if (postTextbox || commentTextbox) {
-                $(this.refs.fileInput).focus().trigger('click');
+                this.fileInput.current.focus();
+                this.fileInput.current.click();
             }
         }
     }
@@ -532,6 +576,10 @@ export default class FileUpload extends PureComponent {
         this.setState({menuOpen: false});
     }
 
+    simulateInputClick = () => {
+        this.fileInput.current.click();
+    }
+
     render() {
         const {formatMessage} = this.context.intl;
         let multiple = true;
@@ -549,16 +597,25 @@ export default class FileUpload extends PureComponent {
         const uploadsRemaining = Constants.MAX_UPLOAD_FILES - this.props.fileCount;
 
         let bodyAction;
+        const ariaLabel = formatMessage({id: 'accessibility.button.attachment', defaultMessage: 'attachment'});
+
         if (this.props.pluginFileUploadMethods.length === 0) {
             bodyAction = (
-                <div
-                    id='fileUploadButton'
-                    className='icon icon--attachment'
-                >
-                    <AttachmentIcon/>
+                <div>
+                    <button
+                        type='button'
+                        id='fileUploadButton'
+                        aria-label={ariaLabel}
+                        className='style--none post-action icon icon--attachment'
+                        onClick={this.simulateInputClick}
+                    >
+                        <AttachmentIcon/>
+                    </button>
                     <input
+                        id='fileUploadInput'
+                        tabIndex='-1'
                         aria-label={formatMessage(holders.uploadFile)}
-                        ref='fileInput'
+                        ref={this.fileInput}
                         type='file'
                         onChange={this.handleChange}
                         onClick={this.handleLocalFileUploaded}
@@ -579,60 +636,61 @@ export default class FileUpload extends PureComponent {
                             this.setState({menuOpen: false});
                         }}
                     >
-                        <a>
-                            {item.icon}
+                        <a href='#'>
+                            <span className='margin-right'>{item.icon}</span>
                             {item.text}
                         </a>
                     </li>
                 );
             });
-            const FileDropdownComponent = (props) => {
-                return (
-                    <button
-                        onClick={props.onClick}
-                        className='style--none'
-                    >
-                        <div
-                            id='fileUploadButton'
-                            className='icon icon--attachment'
-                        >
-                            <AttachmentIcon/>
-                        </div>
-                    </button>
-                );
-            };
             bodyAction = (
-                <Dropdown
-                    dropup={true}
-                    pullRight={true}
-                    id='fileInputDropdown'
-                    open={this.state.menuOpen}
-                    onToggle={this.toggleMenu}
-                >
-                    <FileDropdownComponent bsRole='toggle'/>
-                    <Dropdown.Menu className='dropdown-menu__icons'>
-                        <li>
-                            <a>
-                                <i className='fa fa-laptop'/>
-                                <FormattedMessage
-                                    id='yourcomputer'
-                                    defaultMessage='Your computer'
-                                />
-                                <input
-                                    aria-label={formatMessage(holders.uploadFile)}
-                                    ref='fileInput'
-                                    type='file'
-                                    className='file-attachment-menu-item-input'
-                                    onChange={this.handleChange}
-                                    onClick={this.handleLocalFileUploaded}
-                                    multiple={multiple}
-                                    accept={accept}
-                                />
-                            </a>
-                        </li>
-                        {pluginFileUploadMethods}
-                    </Dropdown.Menu>
-                </Dropdown>
+                <div>
+                    <input
+                        tabIndex='-1'
+                        aria-label={formatMessage(holders.uploadFile)}
+                        ref={this.fileInput}
+                        type='file'
+                        className='file-attachment-menu-item-input'
+                        onChange={this.handleChange}
+                        onClick={this.handleLocalFileUploaded}
+                        multiple={multiple}
+                        accept={accept}
+                    />
+                    <MenuWrapper>
+                        <button
+                            type='button'
+                            aria-label={ariaLabel}
+                            className='style--none post-action'
+                        >
+                            <div
+                                id='fileUploadButton'
+                                className='icon icon--attachment'
+                            >
+                                <AttachmentIcon/>
+                            </div>
+                        </button>
+                        <Menu
+                            openLeft={true}
+                            openUp={true}
+                            ariaLabel={formatMessage({id: 'file_upload.menuAriaLabel', defaultMessage: 'Upload type selector'})}
+                            customStyles={customStyles}
+                        >
+                            <li>
+                                <a
+                                    href='#'
+                                    onClick={this.simulateInputClick}
+                                >
+                                    <span className='margin-right'><i className='fa fa-laptop'/></span>
+                                    <FormattedMessage
+                                        id='yourcomputer'
+                                        defaultMessage='Your computer'
+                                    />
+                                </a>
+                            </li>
+                            {pluginFileUploadMethods}
+                        </Menu>
+                    </MenuWrapper>
+                </div>
             );
         }
 
@@ -641,12 +699,9 @@ export default class FileUpload extends PureComponent {
         }
 
         return (
-            <span
-                ref='input'
-                className={uploadsRemaining <= 0 ? ' btn-file__disabled' : ''}
-            >
+            <div className={uploadsRemaining <= 0 ? ' style--none btn-file__disabled' : 'style--none'}>
                 {bodyAction}
-            </span>
+            </div>
         );
     }
 }

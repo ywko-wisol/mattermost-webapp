@@ -34,8 +34,17 @@ export default class ActionMenu extends React.PureComponent {
             }
         }
 
+        let selected;
+        let value = '';
+
+        if (action.default_option && action.options) {
+            selected = action.options.find((option) => option.value === action.default_option);
+            value = selected ? selected.text : '';
+        }
+
         this.state = {
-            value: '',
+            selected,
+            value,
         };
     }
 
@@ -70,7 +79,7 @@ export default class ActionMenu extends React.PureComponent {
             value = selected.value;
         }
 
-        this.props.actions.selectAttachmentMenuAction(this.props.postId, this.props.action.id, this.props.action.data_source, text, value);
+        this.props.actions.selectAttachmentMenuAction(this.props.postId, this.props.action.id, this.props.action.cookie, this.props.action.data_source, text, value);
 
         this.setState({value: text});
     }

@@ -5,9 +5,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 
+import {FormattedMessage} from 'react-intl';
+
 import {debounce} from 'mattermost-redux/actions/helpers';
 
-import Constants from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
 
 import SearchResultsHeader from 'components/search_results_header';
@@ -54,10 +55,12 @@ export default class SearchResults extends React.PureComponent {
         isSearchingFlaggedPost: PropTypes.bool,
         isSearchingPinnedPost: PropTypes.bool,
         isSearchGettingMore: PropTypes.bool,
+        isSearchAtEnd: PropTypes.bool,
         compactDisplay: PropTypes.bool,
         isMentionSearch: PropTypes.bool,
         isFlaggedPosts: PropTypes.bool,
         isPinnedPosts: PropTypes.bool,
+        isCard: PropTypes.bool,
         channelDisplayName: PropTypes.string.isRequired,
         dataRetentionEnableMessageDeletion: PropTypes.bool.isRequired,
         dataRetentionMessageRetentionDays: PropTypes.string,
@@ -127,6 +130,7 @@ export default class SearchResults extends React.PureComponent {
         const searchTerms = this.props.searchTerms;
 
         let ctls = null;
+        let loadingMorePostsComponent = null;
 
         if (
             this.props.isSearchingTerm ||
@@ -182,32 +186,77 @@ export default class SearchResults extends React.PureComponent {
                 sortedResults = results;
             }
 
-            ctls = sortedResults.map((post, idx, arr) => {
-                const reverseCount = arr.length - idx - 1;
-
+            ctls = sortedResults.map((post) => {
                 return (
                     <SearchResultsItem
                         key={post.id}
                         compactDisplay={this.props.compactDisplay}
                         post={post}
                         matches={this.props.matches[post.id]}
-                        lastPostCount={(reverseCount >= 0 && reverseCount < Constants.TEST_ID_COUNT) ? reverseCount : -1}
                         term={(!this.props.isFlaggedPosts && !this.props.isPinnedPosts && !this.props.isMentionSearch) ? searchTerms : ''}
                         isMentionSearch={this.props.isMentionSearch}
                     />
                 );
             }, this);
+
+            if (!this.props.isSearchAtEnd && !this.props.isFlaggedPosts && !this.props.isPinnedPosts) {
+                loadingMorePostsComponent = (
+                    <div className='loading-screen'>
+                        <div className='loading__content'>
+                            <div className='round round-1'/>
+                            <div className='round round-2'/>
+                            <div className='round round-3'/>
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        var formattedTitle = (
+            <FormattedMessage
+                id='search_header.results'
+                defaultMessage='Search Results'
+            />
+        );
+
+        if (this.props.isMentionSearch) {
+            formattedTitle = (
+                <FormattedMessage
+                    id='search_header.title2'
+                    defaultMessage='Recent Mentions'
+                />
+            );
+        } else if (this.props.isFlaggedPosts) {
+            formattedTitle = (
+                <FormattedMessage
+                    id='search_header.title3'
+                    defaultMessage='Flagged Posts'
+                />
+            );
+        } else if (this.props.isPinnedPosts) {
+            formattedTitle = (
+                <FormattedMessage
+                    id='search_header.title4'
+                    defaultMessage='Pinned posts in {channelDisplayName}'
+                    values={{
+                        channelDisplayName: this.props.channelDisplayName,
+                    }}
+                />
+            );
+        } else if (this.props.isCard) {
+            formattedTitle = (
+                <FormattedMessage
+                    id='search_header.title5'
+                    defaultMessage='Extra information'
+                />
+            );
         }
 
         return (
             <div className='sidebar-right__body'>
-                <SearchResultsHeader
-                    isMentionSearch={this.props.isMentionSearch}
-                    isFlaggedPosts={this.props.isFlaggedPosts}
-                    isPinnedPosts={this.props.isPinnedPosts}
-                    channelDisplayName={this.props.channelDisplayName}
-                    isLoading={this.props.isSearchingTerm}
-                />
+                <SearchResultsHeader>
+                    {formattedTitle}
+                </SearchResultsHeader>
                 <Scrollbars
                     ref='scrollbars'
                     autoHide={true}
@@ -223,6 +272,7 @@ export default class SearchResults extends React.PureComponent {
                         className='search-items-container'
                     >
                         {ctls}
+                        {loadingMorePostsComponent}
                     </div>
                 </Scrollbars>
             </div>
