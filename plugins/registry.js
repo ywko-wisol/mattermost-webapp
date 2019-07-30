@@ -92,6 +92,12 @@ export default class PluginRegistry {
         return dispatchPluginComponentAction('LinkTooltip', this.id, component);
     }
 
+    // Register a component fixed to the bottom of the channel header.
+    // Accepts a React component. Returns a unique identifier.
+    registerChannelSubHeaderComponent(component) {
+        return dispatchPluginComponentAction('ChannelSubHeader', this.id, component);
+    }
+
     // Add a button to the channel header. If there are more than one buttons registered by any
     // plugin, a dropdown menu is created to contain all the plugin buttons.
     // Accepts the following:

@@ -143,6 +143,10 @@ exports[`components/ChannelHeader should render archived view 1`] = `
       tooltipKey="flaggedPosts"
     />
   </div>
+  <Connect(Pluggable)
+    channelId="channel_id"
+    pluggableName="ChannelSubHeader"
+  />
 </div>
 `;
 
@@ -377,6 +381,10 @@ exports[`components/ChannelHeader should render correct menu when muted 1`] = `
       tooltipKey="flaggedPosts"
     />
   </div>
+  <Connect(Pluggable)
+    channelId="channel_id"
+    pluggableName="ChannelSubHeader"
+  />
 </div>
 `;
 
@@ -582,6 +590,10 @@ exports[`components/ChannelHeader should render properly when populated 1`] = `
       tooltipKey="flaggedPosts"
     />
   </div>
+  <Connect(Pluggable)
+    channelId="channel_id"
+    pluggableName="ChannelSubHeader"
+  />
 </div>
 `;
 
@@ -797,5 +809,9 @@ exports[`components/ChannelHeader should render properly when populated with cha
       tooltipKey="flaggedPosts"
     />
   </div>
+  <Connect(Pluggable)
+    channelId="channel_id"
+    pluggableName="ChannelSubHeader"
+  />
 </div>
 `;

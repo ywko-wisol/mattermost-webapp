@@ -26,6 +26,7 @@ import {ChannelHeaderDropdown} from 'components/channel_header_dropdown';
 import MenuWrapper from 'components/widgets/menu/menu_wrapper.jsx';
 import GuestBadge from 'components/widgets/badges/guest_badge.jsx';
 import BotBadge from 'components/widgets/badges/bot_badge.jsx';
+import Pluggable from 'plugins/pluggable';
 
 import {
     Constants,
@@ -699,6 +700,10 @@ export default class ChannelHeader extends React.PureComponent {
                         tooltipKey={'flaggedPosts'}
                     />
                 </div>
+                <Pluggable
+                    pluggableName='ChannelSubHeader'
+                    channelId={channel.id}
+                />
             </div>
         );
     }
