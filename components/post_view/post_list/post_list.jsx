@@ -85,10 +85,6 @@ export default class PostList extends React.PureComponent {
         }).isRequired,
     }
 
-    static defaultProps = {
-        postListIds: [],
-    };
-
     constructor(props) {
         super(props);
         this.state = {
@@ -100,7 +96,6 @@ export default class PostList extends React.PureComponent {
                 loading: false,
                 allLoaded: false,
             },
-            loadingFirstSetOfPosts: !props.postListIds || !props.postListIds.length,
             autoRetryEnable: true,
         };
 
@@ -163,7 +158,6 @@ export default class PostList extends React.PureComponent {
                     loading: false,
                     allLoaded: atLatestMessage,
                 },
-                loadingFirstSetOfPosts: false,
             });
         }
     }
@@ -278,7 +272,7 @@ export default class PostList extends React.PureComponent {
     }
 
     render() {
-        if (this.state.loadingFirstSetOfPosts) {
+        if (!this.props.postListIds) {
             return (
                 <div id='post-list'>
                     <LoadingScreen
