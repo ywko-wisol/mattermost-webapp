@@ -177,7 +177,7 @@ export default class InteractiveDialog extends React.Component {
                         {icon}{title}
                     </Modal.Title>
                 </Modal.Header>
-                {elements && <Modal.Body>
+                {elements && elements.length > 0 && <Modal.Body>
                     {elements.map((e) => {
                         return (
                             <DialogElement
