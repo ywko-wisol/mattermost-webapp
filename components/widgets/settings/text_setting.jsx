@@ -14,6 +14,7 @@ export default class TextSetting extends React.Component {
         'email',
         'tel',
         'url',
+        'password',
     ];
     static propTypes = {
 
@@ -101,7 +102,7 @@ export default class TextSetting extends React.Component {
                 />
             );
         } else {
-            type = ['input', 'email', 'tel', 'number', 'url'].includes(type) ? type : 'input';
+            type = ['input', 'email', 'tel', 'number', 'url', 'password'].includes(type) ? type : 'input';
 
             input = (
                 <input
