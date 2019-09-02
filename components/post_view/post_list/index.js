@@ -64,7 +64,7 @@ function makeMapStateToProps() {
         }
 
         if (postIds) {
-            formattedPostIds = preparePostIdsForPostList(state, {postIds, lastViewedAt, indicateNewMessages: true, channelId: ownProps.channelId});
+            formattedPostIds = preparePostIdsForPostList(state, {postIds, lastViewedAt, indicateNewMessages: true});
             if (postIds.length) {
                 const latestPostId = memoizedGetLatestPostId(postIds);
                 const latestPost = getPost(state, latestPostId);
