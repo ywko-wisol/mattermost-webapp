@@ -12,7 +12,6 @@ exports[`components/PostMarkdown plugin hooks can build upon other hook message 
   imageProps={Object {}}
   isRHS={false}
   message="hello world!"
-  proxyImages={true}
 />
 `;
 
@@ -28,7 +27,6 @@ exports[`components/PostMarkdown plugin hooks can overwrite other hooks messages
   imageProps={Object {}}
   isRHS={false}
   message="world!"
-  proxyImages={true}
 />
 `;
 
@@ -91,7 +89,6 @@ exports[`components/PostMarkdown should render properly with a post 1`] = `
   imageProps={Object {}}
   isRHS={false}
   message="See ~test"
-  proxyImages={true}
 />
 `;
 
@@ -100,6 +97,5 @@ exports[`components/PostMarkdown should render properly with an empty post 1`] =
   imageProps={Object {}}
   isRHS={false}
   message="message"
-  proxyImages={true}
 />
 `;

@@ -42,7 +42,6 @@ function makeMapStateToProps() {
             mentionKeys: getCurrentUserMentionKeys(state),
             siteURL: getSiteURL(),
             team: getCurrentTeam(state),
-            hasImageProxy: config.HasImageProxy === 'true',
             minimumHashtagLength: parseInt(config.MinimumHashtagLength, 10),
         };
     };

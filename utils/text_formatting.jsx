@@ -39,7 +39,6 @@ const cjkPattern = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-
 // - channelNamesMap - An object mapping channel display names to channels. If provided, ~channel mentions will be replaced with
 //     links to the relevant channel.
 // - team - The current team.
-// - proxyImages - If specified, images are proxied. Defaults to false.
 // - autolinkedUrlSchemes - An array of url schemes that will be allowed for autolinking. Defaults to autolinking with any url scheme.
 // - renderer - a custom renderer object to use in the formatWithRenderer function. Defaults to empty.
 // - minimumHashtagLength - Minimum number of characters in a hashtag. Defaults to 3.

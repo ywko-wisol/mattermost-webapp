@@ -57,19 +57,9 @@ export default class Markdown extends React.PureComponent {
         team: PropTypes.object.isRequired,
 
         /**
-         * If an image proxy is enabled.
-         */
-        hasImageProxy: PropTypes.bool.isRequired,
-
-        /**
          * Minimum number of characters in a hashtag.
          */
         minimumHashtagLength: PropTypes.number,
-
-        /**
-         * Whether or not to proxy image URLs
-         */
-        proxyImages: PropTypes.bool,
 
         /**
          * Any extra props that should be passed into the image component
@@ -90,7 +80,6 @@ export default class Markdown extends React.PureComponent {
     static defaultProps = {
         options: {},
         isRHS: false,
-        proxyImages: true,
         imagesMetadata: {},
     };
 
@@ -105,7 +94,6 @@ export default class Markdown extends React.PureComponent {
             mentionKeys: this.props.mentionKeys,
             atMentions: true,
             channelNamesMap: this.props.channelNamesMap,
-            proxyImages: this.props.hasImageProxy && this.props.proxyImages,
             team: this.props.team,
             minimumHashtagLength: this.props.minimumHashtagLength,
         }, this.props.options);
