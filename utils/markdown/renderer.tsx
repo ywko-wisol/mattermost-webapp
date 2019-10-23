@@ -142,15 +142,14 @@ export default class Renderer extends marked.Renderer {
         return `<h${level} class="markdown__heading">${text}</h${level}>`;
     }
 
-    public link(href: string, title: string, text: string) {
+    public link(href: string, title: string, text: string, isUrl: boolean = false) {
         let outHref = href;
 
         if (!href.startsWith('/')) {
             const scheme = getScheme(href);
             if (!scheme) {
                 outHref = `http://${outHref}`;
-            // eslint-disable-next-line prefer-rest-params
-            } else if (arguments[3] && this.formattingOptions.autolinkedUrlSchemes) {
+            } else if (isUrl && this.formattingOptions.autolinkedUrlSchemes) {
                 const isValidUrl = this.formattingOptions.autolinkedUrlSchemes.indexOf(
                     scheme.toLowerCase()
                 ) !== -1;
@@ -232,9 +231,7 @@ export default class Renderer extends marked.Renderer {
         return marked.Renderer.prototype.tablecell(content, flags).trim();
     }
 
-    public listitem(text: string) {
-        // eslint-disable-next-line prefer-rest-params
-        const bullet: string = arguments[1];
+    public listitem(text: string, bullet: string = '') {
         const taskListReg = /^\[([ |xX])] /;
         const isTaskList = taskListReg.exec(text);
 
