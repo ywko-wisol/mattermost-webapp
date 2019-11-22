@@ -127,6 +127,8 @@ export default class PostList extends React.PureComponent {
             dynamicListStyle: {
                 willChange: 'transform',
             },
+            hoveringPostId: null,
+            hasFocus: false,
         };
 
         this.listRef = React.createRef();
@@ -297,6 +299,9 @@ export default class PostList extends React.PureComponent {
                     loadOlderPosts={this.props.actions.loadOlderPosts}
                     loadNewerPosts={this.props.actions.loadNewerPosts}
                     togglePostMenu={this.togglePostMenu}
+                    hoveringPostId={this.state.hoveringPostId}
+                    setHoveringPostId={this.setHoveringPostId}
+                    postListHasFocus={this.state.hasFocus}
                 />
             </div>
         );
@@ -378,6 +383,10 @@ export default class PostList extends React.PureComponent {
         }
     }
 
+    setHoveringPostId = (id) => {
+        this.setState({hoveringPostId: id});
+    }
+
     updateFloatingTimestamp = (visibleTopItem) => {
         if (!this.state.isMobile) {
             return;
@@ -444,6 +453,14 @@ export default class PostList extends React.PureComponent {
         this.listRef.current.scrollToItem(0, 'end');
     }
 
+    setFocus = () => {
+        this.setState({hasFocus: true});
+    }
+
+    unsetFocus = () => {
+        this.setState({hasFocus: false});
+    }
+
     render() {
         const channelId = this.props.channelId;
         let ariaLabel;
@@ -474,6 +491,9 @@ export default class PostList extends React.PureComponent {
                 data-a11y-order-reversed={true}
                 data-a11y-loop-navigation={false}
                 aria-label={Utils.localizeMessage('accessibility.sections.centerContent', 'message list main region')}
+                onMouseOver={this.setFocus}
+                onMouseLeave={this.unsetFocus}
+                onTouchStart={this.setFocus}
             >
                 {this.state.isMobile && (
                     <React.Fragment>

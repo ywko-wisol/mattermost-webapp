@@ -9,8 +9,6 @@ import {memoizeResult} from 'mattermost-redux/utils/helpers';
 import {markChannelAsRead, markChannelAsViewed} from 'mattermost-redux/actions/channels';
 import {makePreparePostIdsForPostList} from 'mattermost-redux/utils/post_list';
 
-import {setPostListFocus} from 'actions/post_actions';
-
 import {getLatestPostId, makeCreateAriaLabelForPost} from 'utils/post_utils.jsx';
 import {
     checkAndSetMobileView,
@@ -94,7 +92,6 @@ function mapDispatchToProps(dispatch) {
             syncPostsInChannel,
             markChannelAsViewed,
             markChannelAsRead,
-            setPostListFocus,
         }, dispatch),
     };
 }

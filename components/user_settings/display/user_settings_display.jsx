@@ -181,7 +181,7 @@ export default class UserSettingsDisplay extends React.Component {
         this.setState({channelDisplayMode});
     }
 
-    handleHighlightThreadModeRadio(channelDisplayMode) {
+    handleHighlightThreadModeRadio(highlightThreadMode) {
         this.setState({highlightThreadMode});
     }
 
@@ -669,20 +669,20 @@ export default class UserSettingsDisplay extends React.Component {
             defaultDisplay: Preferences.HIGHLIGHT_THREAD_MODE_DEFAULT,
             title: {
                 id: t('user.settings.display.highlightThreadTitle'),
-                message: 'Highlights Threads',
+                message: 'Highlight Threads',
             },
             firstOption: {
                 value: Preferences.HIGHLIGHT_THREAD_MODE_DEFAULT,
                 radionButtonText: {
                     id: t('user.settings.display.highlightThreadstandard'),
-                    message: 'No Highlight',
+                    message: 'Disabled',
                 },
             },
             secondOption: {
-                value: Preferences.HIGHLIGHT_THREAD_MODE_HIGHLIGHT,
+                value: Preferences.HIGHLIGHT_THREAD_MODE_ENABLED,
                 radionButtonText: {
                     id: t('user.settings.display.highlightThread'),
-                    message: 'Highlight',
+                    message: 'Enabled',
                 },
             },
             description: {

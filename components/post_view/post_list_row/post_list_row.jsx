@@ -23,6 +23,9 @@ export default class PostListRow extends React.PureComponent {
         loadOlderPosts: PropTypes.func,
         loadNewerPosts: PropTypes.func,
         togglePostMenu: PropTypes.func,
+        hoveringPostId: PropTypes.number,
+        setHoveringPostId: PropTypes.func,
+        postListHasFocus: PropTypes.bool,
     }
 
     render() {
@@ -83,6 +86,9 @@ export default class PostListRow extends React.PureComponent {
             previousPostId: previousListId,
             shouldHighlight: this.props.shouldHighlight,
             togglePostMenu: this.props.togglePostMenu,
+            hoveringPostId: this.props.hoveringPostId,
+            setHoveringPostId: this.props.setHoveringPostId,
+            postListHasFocus: this.props.postListHasFocus,
         };
 
         if (PostListUtils.isCombinedUserActivityPost(listId)) {

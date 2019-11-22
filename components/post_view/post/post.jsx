@@ -79,9 +79,9 @@ export default class Post extends React.PureComponent {
 
         shouldDimPost: PropTypes.bool,
 
+        setHoveringPostId: PropTypes.func.isRequired,
+
         actions: PropTypes.shape({
-            setHoveringPost: PropTypes.func.isRequired,
-            unsetHoveringPost: PropTypes.func.isRequired,
             selectPost: PropTypes.func.isRequired,
             selectPostCard: PropTypes.func.isRequired,
             markPostAsUnread: PropTypes.func.isRequired,
@@ -251,12 +251,12 @@ export default class Post extends React.PureComponent {
     }
 
     setHover = () => {
-        this.props.actions.setHoveringPost();
+        this.props.setHoveringPostId(this.props.post.id);
         this.setState({hover: true});
     }
 
     unsetHover = () => {
-        this.props.actions.unsetHoveringPost();
+        this.props.setHoveringPostId(null);
         this.setState({hover: false});
     }
 

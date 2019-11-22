@@ -282,33 +282,3 @@ export function toggleEmbedVisibility(postId) {
 export function resetEmbedVisibility() {
     return StorageActions.actionOnGlobalItemsWithPrefix(StoragePrefixes.EMBED_VISIBLE, () => null);
 }
-
-export function setHoveringPostId(postId, hovering) {
-    return (dispatch) => {
-        if (hovering) {
-            dispatch({
-                type: ActionTypes.POST_HOVER_START,
-                postId,
-            });
-        } else {
-            dispatch({
-                type: ActionTypes.POST_HOVER_END,
-                postId,
-            });
-        }
-    };
-}
-
-export function setPostListFocus(isFocused) {
-    return (dispatch) => {
-        if (isFocused) {
-            dispatch({
-                type: ActionTypes.POST_LIST_FOCUS,
-            });
-        } else {
-            dispatch({
-                type: ActionTypes.POST_LIST_BLUR,
-            });
-        }
-    };
-}

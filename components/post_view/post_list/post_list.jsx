@@ -103,8 +103,6 @@ export default class PostList extends React.PureComponent {
             markChannelAsViewed: PropTypes.func.isRequred,
 
             markChannelAsRead: PropTypes.func.isRequred,
-
-            setPostListFocus: PropTypes.func.isRequired,
         }).isRequired,
     }
 
@@ -265,14 +263,6 @@ export default class PostList extends React.PureComponent {
         await this.callLoadPosts(this.props.channelId, latestPostId, PostRequestTypes.AFTER_ID);
     }
 
-    setFocus = () => {
-        this.props.actions.setPostListFocus(true);
-    }
-
-    unsetFocus = () => {
-        this.props.actions.setPostListFocus(false);
-    }
-
     render() {
         if (!this.props.postListIds) {
             return (
@@ -288,9 +278,6 @@ export default class PostList extends React.PureComponent {
                 ref='postlist'
                 className='post-list-holder-by-time'
                 key={'postlist-' + this.props.channelId}
-                onMouseOver={this.setFocus}
-                onMouseLeave={this.unsetFocus}
-                onTouchStart={this.setFocus}
             >
                 <div className='post-list__table'>
                     <div

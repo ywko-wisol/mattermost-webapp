@@ -41,15 +41,14 @@ function makeMapStateToProps() {
     const createAriaLabelForPost = makeCreateAriaLabelForPost();
 
     return (state, ownProps) => {
-        let shouldDimPost = false;
-        const hoveringPost = getHoveringPost(state);
-        const postListHasFocus = isPostListFocused(state);
-
+        const postListHasFocus = ownProps.postListHasFocus;
         const highlightPreference = getBool(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.HIGHLIGHT_THREAD_MODE, false);
+
+        let shouldDimPost = false;
         if (postListHasFocus && highlightPreference) {
-            if (!hoveringPost) {
+            if (!ownProps.hoveringPostId) {
                 shouldDimPost = true;
-            } else if (!arePostsInSameThread(state, ownProps.postId, hoveringPost.id)) {
+            } else if (!arePostsInSameThread(state, ownProps.postId, ownProps.hoveringPostId)) {
                 shouldDimPost = true;
             }
         }
@@ -79,7 +78,6 @@ function makeMapStateToProps() {
 
         return {
             post,
-            shouldDimPost,
             createAriaLabel: createAriaLabelForPost(state, post),
             currentUserId: getCurrentUserId(state),
             isFirstReply: isFirstReply(post, previousPost),
@@ -89,18 +87,17 @@ function makeMapStateToProps() {
             isCommentMention: isPostCommentMention(state, post.id),
             center: get(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.CHANNEL_DISPLAY_MODE, Preferences.CHANNEL_DISPLAY_MODE_DEFAULT) === Preferences.CHANNEL_DISPLAY_MODE_CENTERED,
             compactDisplay: get(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.MESSAGE_DISPLAY, Preferences.MESSAGE_DISPLAY_DEFAULT) === Preferences.MESSAGE_DISPLAY_COMPACT,
+            shouldDimPost,
         };
     };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
             selectPost,
             selectPostCard,
             markPostAsUnread,
-            setHoveringPost: () => setHoveringPostId(ownProps.postId, true),
-            unsetHoveringPost: () => setHoveringPostId(ownProps.postId, false),
         }, dispatch),
     };
 }

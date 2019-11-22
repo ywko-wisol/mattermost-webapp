@@ -50,31 +50,7 @@ function menuActions(state = {}, action) {
     }
 }
 
-function hoveringPostId(state = null, action) {
-    switch (action.type) {
-    case ActionTypes.POST_HOVER_START:
-        return action.postId;
-    case ActionTypes.POST_HOVER_END:
-        return null;
-    default:
-        return state;
-    }
-}
-
-function postListHasFocus(state = false, action) {
-    switch (action.type) {
-    case ActionTypes.POST_LIST_FOCUS:
-        return true;
-    case ActionTypes.POST_LIST_BLUR:
-        return false;
-    default:
-        return state;
-    }
-}
-
 export default combineReducers({
     editingPost,
     menuActions,
-    hoveringPostId,
-    postListHasFocus,
 });

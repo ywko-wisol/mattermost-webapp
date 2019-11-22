@@ -42,18 +42,6 @@ export function shouldShowJoinLeaveMessages(state) {
     return getBoolPreference(state, Preferences.CATEGORY_ADVANCED_SETTINGS, Preferences.ADVANCED_FILTER_JOIN_LEAVE, true);
 }
 
-export const getHoveringPost = (state) => {
-    if (state.views.posts.hoveringPostId) {
-        return getPost(state, state.views.posts.hoveringPostId);
-    }
-
-    return null;
-};
-
-export const isPostListFocused = (state) => {
-    return state.views.posts.postListHasFocus;
-};
-
 export function arePostsInSameThread(state, postId1, postId2) {
     if (postId1 === postId2) {
         return true;
