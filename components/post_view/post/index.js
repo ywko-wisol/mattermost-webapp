@@ -45,7 +45,7 @@ function makeMapStateToProps() {
         const hoveringPost = getHoveringPost(state);
         const postListHasFocus = isPostListFocused(state);
 
-        const highlightPreference = getBool(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.HIGHLIGHT_THREAD_POSTS, true);
+        const highlightPreference = getBool(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.HIGHLIGHT_THREAD_MODE, false);
         if (postListHasFocus && highlightPreference) {
             if (!hoveringPost) {
                 shouldDimPost = true;

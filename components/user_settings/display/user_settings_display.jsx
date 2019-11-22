@@ -28,6 +28,7 @@ function getDisplayStateFromProps(props) {
         militaryTime: props.militaryTime,
         teammateNameDisplay: props.teammateNameDisplay,
         channelDisplayMode: props.channelDisplayMode,
+        highlightThreadMode: props.highlightThreadMode,
         messageDisplay: props.messageDisplay,
         collapseDisplay: props.collapseDisplay,
         linkPreviewDisplay: props.linkPreviewDisplay,
@@ -56,6 +57,7 @@ export default class UserSettingsDisplay extends React.Component {
         militaryTime: PropTypes.string,
         teammateNameDisplay: PropTypes.string,
         channelDisplayMode: PropTypes.string,
+        highlightThreadMode: PropTypes.string,
         messageDisplay: PropTypes.string,
         collapseDisplay: PropTypes.string,
         linkPreviewDisplay: PropTypes.string,
@@ -85,7 +87,8 @@ export default class UserSettingsDisplay extends React.Component {
             linkpreview: 'clock',
             message_display: 'linkpreview',
             channel_display_mode: 'message_display',
-            languages: 'channel_display_mode',
+            highlight_thread_mode: 'channel_display_mode',
+            languages: 'highlight_thread_mode',
         };
     }
 
@@ -124,6 +127,12 @@ export default class UserSettingsDisplay extends React.Component {
             name: Preferences.CHANNEL_DISPLAY_MODE,
             value: this.state.channelDisplayMode,
         };
+        const highlightThreadModePreference = {
+            user_id: userId,
+            category: Preferences.CATEGORY_DISPLAY_SETTINGS,
+            name: Preferences.HIGHLIGHT_THREAD_MODE,
+            value: this.state.highlightThreadMode,
+        };
         const messageDisplayPreference = {
             user_id: userId,
             category: Preferences.CATEGORY_DISPLAY_SETTINGS,
@@ -148,6 +157,7 @@ export default class UserSettingsDisplay extends React.Component {
         const preferences = [
             timePreference,
             channelDisplayModePreference,
+            highlightThreadModePreference,
             messageDisplayPreference,
             collapseDisplayPreference,
             linkPreviewDisplayPreference,
@@ -169,6 +179,10 @@ export default class UserSettingsDisplay extends React.Component {
 
     handleChannelDisplayModeRadio(channelDisplayMode) {
         this.setState({channelDisplayMode});
+    }
+
+    handleHighlightThreadModeRadio(channelDisplayMode) {
+        this.setState({highlightThreadMode});
     }
 
     handlemessageDisplayRadio(messageDisplay) {
@@ -648,6 +662,35 @@ export default class UserSettingsDisplay extends React.Component {
             },
         });
 
+        const highlightThreadModeSection = this.createSection({
+            section: Preferences.HIGHLIGHT_THREAD_MODE,
+            display: 'highlightThreadMode',
+            value: this.state.highlightThreadMode,
+            defaultDisplay: Preferences.HIGHLIGHT_THREAD_MODE_DEFAULT,
+            title: {
+                id: t('user.settings.display.highlightThreadTitle'),
+                message: 'Highlights Threads',
+            },
+            firstOption: {
+                value: Preferences.HIGHLIGHT_THREAD_MODE_DEFAULT,
+                radionButtonText: {
+                    id: t('user.settings.display.highlightThreadstandard'),
+                    message: 'No Highlight',
+                },
+            },
+            secondOption: {
+                value: Preferences.HIGHLIGHT_THREAD_MODE_HIGHLIGHT,
+                radionButtonText: {
+                    id: t('user.settings.display.highlightThread'),
+                    message: 'Highlight',
+                },
+            },
+            description: {
+                id: t('user.settings.display.highlightThreadmode'),
+                message: 'Highlight threaded posts in the center channel while holding down Alt.',
+            },
+        });
+
         let languagesSection;
         let userLocale = this.props.user.locale;
         if (this.props.activeSection === 'languages') {
@@ -758,6 +801,7 @@ export default class UserSettingsDisplay extends React.Component {
                     {collapseSection}
                     {messageDisplaySection}
                     {channelDisplayModeSection}
+                    {highlightThreadModeSection}
                     {languagesSection}
                 </div>
             </div>
