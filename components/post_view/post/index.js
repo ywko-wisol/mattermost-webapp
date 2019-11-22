@@ -13,7 +13,7 @@ import {isSystemMessage} from 'mattermost-redux/utils/post_utils';
 import {markPostAsUnread, setHoveringPostId} from 'actions/post_actions';
 import {selectPost, selectPostCard} from 'actions/views/rhs';
 
-import {arePostsInSameThread, getHoveringPost} from 'selectors/posts.js';
+import {arePostsInSameThread, getHoveringPost, isPostListFocused} from 'selectors/posts.js';
 
 import {Preferences} from 'utils/constants';
 import {makeCreateAriaLabelForPost} from 'utils/post_utils.jsx';
@@ -43,8 +43,10 @@ function makeMapStateToProps() {
     return (state, ownProps) => {
         let shouldDimPost = false;
         const hoveringPost = getHoveringPost(state);
+        const postListHasFocus = isPostListFocused(state);
+
         const highlightPreference = getBool(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.HIGHLIGHT_THREAD_POSTS, true);
-        if (highlightPreference) {
+        if (postListHasFocus && highlightPreference) {
             if (!hoveringPost) {
                 shouldDimPost = true;
             } else if (!arePostsInSameThread(state, ownProps.postId, hoveringPost.id)) {
@@ -97,8 +99,8 @@ function mapDispatchToProps(dispatch, ownProps) {
             selectPost,
             selectPostCard,
             markPostAsUnread,
-            setHoveringPost: setHoveringPostId(ownProps.postId, true),
-            unsetHoveringPost: setHoveringPostId(ownProps.postId, false),
+            setHoveringPost: () => setHoveringPostId(ownProps.postId, true),
+            unsetHoveringPost: () => setHoveringPostId(ownProps.postId, false),
         }, dispatch),
     };
 }

@@ -284,7 +284,7 @@ export function resetEmbedVisibility() {
 }
 
 export function setHoveringPostId(postId, hovering) {
-    return () => (dispatch) => {
+    return (dispatch) => {
         if (hovering) {
             dispatch({
                 type: ActionTypes.POST_HOVER_START,
@@ -294,6 +294,20 @@ export function setHoveringPostId(postId, hovering) {
             dispatch({
                 type: ActionTypes.POST_HOVER_END,
                 postId,
+            });
+        }
+    };
+}
+
+export function setPostListFocus(isFocused) {
+    return (dispatch) => {
+        if (isFocused) {
+            dispatch({
+                type: ActionTypes.POST_LIST_FOCUS,
+            });
+        } else {
+            dispatch({
+                type: ActionTypes.POST_LIST_BLUR,
             });
         }
     };

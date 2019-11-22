@@ -80,8 +80,8 @@ export default class Post extends React.PureComponent {
         shouldDimPost: PropTypes.bool,
 
         actions: PropTypes.shape({
-            setHoveringPost: PropTypes.func,
-            unsetHoveringPost: PropTypes.func,
+            setHoveringPost: PropTypes.func.isRequired,
+            unsetHoveringPost: PropTypes.func.isRequired,
             selectPost: PropTypes.func.isRequired,
             selectPostCard: PropTypes.func.isRequired,
             markPostAsUnread: PropTypes.func.isRequired,

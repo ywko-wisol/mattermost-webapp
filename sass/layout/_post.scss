@@ -1673,7 +1673,7 @@
         &:before {
             content: '\f065';
             font-size: 14px;
-}
+        }
 
         &[data-expanded='true']:before {
             content: '\f066';
@@ -1896,6 +1896,10 @@
             display: none;
         }
     }
+}
+
+.dim-post {
+    opacity: 0.2;
 }
 
 .post__pinned-badge {

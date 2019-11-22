@@ -173,6 +173,9 @@ export const ActionTypes = keyMirror({
     POST_HOVER_START: null,
     POST_HOVER_END: null,
 
+    POST_LIST_FOCUS: null,
+    POST_LIST_BLUR: null,
+
     RECEIVED_TRANSLATIONS: null,
 
     INCREMENT_WS_ERROR_COUNT: null,
