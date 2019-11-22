@@ -50,7 +50,19 @@ function menuActions(state = {}, action) {
     }
 }
 
+function hoveringPostId(state = null, action) {
+    switch (action.type) {
+    case ActionTypes.POST_HOVER_START:
+        return action.postId;
+    case ActionTypes.POST_HOVER_END:
+        return null;
+    default:
+        return state;
+    }
+}
+
 export default combineReducers({
     editingPost,
     menuActions,
+    hoveringPostId,
 });

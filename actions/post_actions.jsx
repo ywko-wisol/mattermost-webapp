@@ -282,3 +282,19 @@ export function toggleEmbedVisibility(postId) {
 export function resetEmbedVisibility() {
     return StorageActions.actionOnGlobalItemsWithPrefix(StoragePrefixes.EMBED_VISIBLE, () => null);
 }
+
+export function setHoveringPostId(postId, hovering) {
+    return () => (dispatch) => {
+        if (hovering) {
+            dispatch({
+                type: ActionTypes.POST_HOVER_START,
+                postId,
+            });
+        } else {
+            dispatch({
+                type: ActionTypes.POST_HOVER_END,
+                postId,
+            });
+        }
+    };
+}

@@ -41,3 +41,29 @@ export function isEmbedVisible(state, postId) {
 export function shouldShowJoinLeaveMessages(state) {
     return getBoolPreference(state, Preferences.CATEGORY_ADVANCED_SETTINGS, Preferences.ADVANCED_FILTER_JOIN_LEAVE, true);
 }
+
+export const getHoveringPost = (state) => {
+    if (state.views.posts.hoveringPostId) {
+        return getPost(state, state.views.posts.hoveringPostId);
+    }
+
+    return null;
+};
+
+export function arePostsInSameThread(state, postId1, postId2) {
+    if (postId1 === postId2) {
+        return true;
+    }
+
+    const threads = state.entities.posts.postsInThread;
+    const found = Object.keys(threads).find((rootId) => {
+        const isRoot = postId1 === rootId || postId2 === rootId;
+        if (isRoot) {
+            return threads[rootId].includes(postId1) || threads[rootId].includes(postId2);
+        }
+
+        return threads[rootId].includes(postId1) && threads[rootId].includes(postId2);
+    });
+
+    return Boolean(found);
+}

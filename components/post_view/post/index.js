@@ -6,12 +6,14 @@ import {bindActionCreators} from 'redux';
 
 import {Posts} from 'mattermost-redux/constants';
 import {getPost, makeIsPostCommentMention} from 'mattermost-redux/selectors/entities/posts';
-import {get} from 'mattermost-redux/selectors/entities/preferences';
+import {get, getBool} from 'mattermost-redux/selectors/entities/preferences';
 import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
 import {isSystemMessage} from 'mattermost-redux/utils/post_utils';
 
-import {markPostAsUnread} from 'actions/post_actions';
+import {markPostAsUnread, setHoveringPostId} from 'actions/post_actions';
 import {selectPost, selectPostCard} from 'actions/views/rhs';
+
+import {arePostsInSameThread, getHoveringPost} from 'selectors/posts.js';
 
 import {Preferences} from 'utils/constants';
 import {makeCreateAriaLabelForPost} from 'utils/post_utils.jsx';
@@ -39,6 +41,17 @@ function makeMapStateToProps() {
     const createAriaLabelForPost = makeCreateAriaLabelForPost();
 
     return (state, ownProps) => {
+        let shouldDimPost = false;
+        const hoveringPost = getHoveringPost(state);
+        const highlightPreference = getBool(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.HIGHLIGHT_THREAD_POSTS, true);
+        if (highlightPreference) {
+            if (!hoveringPost) {
+                shouldDimPost = true;
+            } else if (!arePostsInSameThread(state, ownProps.postId, hoveringPost.id)) {
+                shouldDimPost = true;
+            }
+        }
+
         const post = ownProps.post || getPost(state, ownProps.postId);
         let replyCount = post.reply_count;
         if (post.root_id !== '') {
@@ -64,6 +77,7 @@ function makeMapStateToProps() {
 
         return {
             post,
+            shouldDimPost,
             createAriaLabel: createAriaLabelForPost(state, post),
             currentUserId: getCurrentUserId(state),
             isFirstReply: isFirstReply(post, previousPost),
@@ -77,12 +91,14 @@ function makeMapStateToProps() {
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, ownProps) {
     return {
         actions: bindActionCreators({
             selectPost,
             selectPostCard,
             markPostAsUnread,
+            setHoveringPost: setHoveringPostId(ownProps.postId, true),
+            unsetHoveringPost: setHoveringPostId(ownProps.postId, false),
         }, dispatch),
     };
 }

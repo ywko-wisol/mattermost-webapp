@@ -77,7 +77,11 @@ export default class Post extends React.PureComponent {
          */
         replyCount: PropTypes.number,
 
+        shouldDimPost: PropTypes.bool,
+
         actions: PropTypes.shape({
+            setHoveringPost: PropTypes.func,
+            unsetHoveringPost: PropTypes.func,
             selectPost: PropTypes.func.isRequired,
             selectPostCard: PropTypes.func.isRequired,
             markPostAsUnread: PropTypes.func.isRequired,
@@ -247,14 +251,20 @@ export default class Post extends React.PureComponent {
     }
 
     setHover = () => {
+        this.props.actions.setHoveringPost();
         this.setState({hover: true});
     }
 
     unsetHover = () => {
+        this.props.actions.unsetHoveringPost();
         this.setState({hover: false});
     }
 
     handleAlt = (e) => {
+        if (e.key !== 'Alt') {
+            return;
+        }
+
         this.setState({alt: e.altKey});
     }
 
@@ -313,6 +323,8 @@ export default class Post extends React.PureComponent {
             centerClass = 'center';
         }
 
+        const dimClass = this.state.alt && this.props.shouldDimPost ? 'dim-post' : '';
+
         return (
             <PostContext.Provider value={{handlePopupOpened: this.handleDropdownOpened}}>
                 <div
@@ -320,7 +332,7 @@ export default class Post extends React.PureComponent {
                     id={'post_' + post.id}
                     data-testid='postView'
                     role='listitem'
-                    className={`a11y__section ${this.getClassName(post, isSystemMessage, isMeMessage, fromWebhook, fromAutoResponder, fromBot)}`}
+                    className={`a11y__section ${dimClass} ${this.getClassName(post, isSystemMessage, isMeMessage, fromWebhook, fromAutoResponder, fromBot)}`}
                     tabIndex='0'
                     onFocus={this.handlePostFocus}
                     onBlur={this.removeFocus}

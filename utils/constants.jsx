@@ -80,6 +80,7 @@ export const Preferences = {
     MESSAGE_DISPLAY_CLEAN: 'clean',
     MESSAGE_DISPLAY_COMPACT: 'compact',
     MESSAGE_DISPLAY_DEFAULT: 'clean',
+    HIGHLIGHT_THREAD_POSTS: 'highlight_thread_posts',
     LINK_PREVIEW_DISPLAY: 'link_previews',
     LINK_PREVIEW_DISPLAY_DEFAULT: 'true',
     COLLAPSE_DISPLAY: 'collapse_previews',
@@ -168,6 +169,9 @@ export const ActionTypes = keyMirror({
     DISMISS_NOTICE: null,
 
     SELECT_ATTACHMENT_MENU_ACTION: null,
+
+    POST_HOVER_START: null,
+    POST_HOVER_END: null,
 
     RECEIVED_TRANSLATIONS: null,
 
