@@ -115,12 +115,14 @@ export default class Post extends React.PureComponent {
         this.postRef.current.addEventListener(A11yCustomEventTypes.ACTIVATE, this.handleA11yActivateEvent);
         document.addEventListener('keydown', this.handleAlt);
         document.addEventListener('keyup', this.handleAlt);
+        window.addEventListener('focus', this.handleWindowFocus);
         this.postRef.current.addEventListener(A11yCustomEventTypes.DEACTIVATE, this.handleA11yDeactivateEvent);
     }
     componentWillUnmount() {
         this.postRef.current.removeEventListener(A11yCustomEventTypes.ACTIVATE, this.handleA11yActivateEvent);
         document.removeEventListener('keydown', this.handleAlt);
         document.removeEventListener('keyup', this.handleAlt);
+        window.removeEventListener('focus', this.handleWindowFocus);
         this.postRef.current.removeEventListener(A11yCustomEventTypes.DEACTIVATE, this.handleA11yDeactivateEvent);
     }
 
@@ -266,6 +268,10 @@ export default class Post extends React.PureComponent {
         }
 
         this.setState({alt: e.altKey});
+    }
+
+    handleWindowFocus = () => {
+        this.setState({alt: false});
     }
 
     handleA11yActivateEvent = () => {
