@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+/* eslint-disable react/require-optimization */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage, intlShape} from 'react-intl';
@@ -31,12 +33,18 @@ import MsgTyping from 'components/msg_typing';
 import PostDeletedModal from 'components/post_deleted_modal';
 import ResetStatusModal from 'components/reset_status_modal';
 import EmojiIcon from 'components/widgets/icons/emoji_icon';
+import ShowFormattingIcon from 'components/widgets/icons/show_formatting_icon';
 import Textbox from 'components/textbox';
 import TextboxLinks from 'components/textbox/textbox_links.jsx';
 import TutorialTip from 'components/tutorial/tutorial_tip';
 
 import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx';
 import MessageSubmitError from 'components/message_submit_error';
+import BoldIcon from 'components/widgets/icons/bold_icon';
+import ItalicsIcon from 'components/widgets/icons/italics_icon';
+import LinkIconSmall from 'components/widgets/icons/link_icon_small';
+import CodeIcon from 'components/widgets/icons/code_icon';
+import StrikeIcon from 'components/widgets/icons/strike_icon';
 
 const KeyCodes = Constants.KeyCodes;
 
@@ -280,6 +288,7 @@ export default class CreatePost extends React.Component {
             caretPosition: this.props.draft.message.length,
             submitting: false,
             showPostDeletedModal: false,
+            showpostEditorTools: false,
             showEmojiPicker: false,
             showConfirmModal: false,
             channelTimezoneCount: 0,
@@ -887,6 +896,14 @@ export default class CreatePost extends React.Component {
         return this.refs.createPostControls;
     }
 
+    getEmojiPickerButton = () => {
+        return this.refs.showEmojiPickerButton;
+    }
+
+    getTextAreaElement = () => {
+        return this.refs.textbox.getWrappedInstance().getInputBox();
+    }
+
     fillMessageFromHistory() {
         const lastMessage = this.props.messageInHistoryItem;
         if (lastMessage) {
@@ -1074,6 +1091,91 @@ export default class CreatePost extends React.Component {
         this.setState({renderScrollbar: height > maxHeight});
     }
 
+    handleBoldButtonClick = () => {
+        const selectionRange = this.getTextAreaSelection();
+        const formatBegin = '**';
+        const formatEnd = '**';
+        this.applyFormatting(selectionRange.start, selectionRange.end, formatBegin, formatEnd);
+        this.setMessageSelection(selectionRange.start + formatBegin.length, selectionRange.end + formatBegin.length);
+    }
+
+    handleItalicsButtonClick = () => {
+        const selectionRange = this.getTextAreaSelection();
+        const formatBegin = '_';
+        const formatEnd = '_';
+        this.applyFormatting(selectionRange.start, selectionRange.end, formatBegin, formatEnd);
+        this.setMessageSelection(selectionRange.start + formatBegin.length, selectionRange.end + formatBegin.length);
+    }
+
+    handleStrikeButtonClick = () => {
+        const selectionRange = this.getTextAreaSelection();
+        const formatBegin = '~~';
+        const formatEnd = '~~';
+        this.applyFormatting(selectionRange.start, selectionRange.end, formatBegin, formatEnd);
+        this.setMessageSelection(selectionRange.start + formatBegin.length, selectionRange.end + formatBegin.length);
+    }
+
+    handleLinkButtonClick = () => {
+        const selectionRange = this.getTextAreaSelection();
+        const formatBegin = '[';
+        const formatEnd = ']()';
+        this.applyFormatting(selectionRange.start, selectionRange.end, formatBegin, formatEnd);
+        this.setMessageSelection(selectionRange.start + formatBegin.length, selectionRange.end + formatBegin.length);
+    }
+
+    handleCodeButtonClick = () => {
+        const selectionRange = this.getTextAreaSelection();
+        const formatBegin = '```\n';
+        const formatEnd = '\n```';
+        this.applyFormatting(selectionRange.start, selectionRange.end, formatBegin, formatEnd);
+        this.setMessageSelection(selectionRange.start + formatBegin.length, selectionRange.end + formatBegin.length);
+    }
+
+    togglePostEditorTools = () => {
+        this.setState({showpostEditorTools: !this.state.showpostEditorTools});
+        this.focusTextbox();
+    }
+
+    getTextAreaSelection = () => {
+        const textarea = this.getTextAreaElement();
+
+        // re-focus textarea
+        textarea.focus();
+
+        return {
+            start: textarea.selectionStart,
+            end: textarea.selectionEnd,
+        };
+    }
+
+    getFormattedMessage = (message, start, end, formatStart, formatEnd) => {
+        const messageStart = message.substring(0, start);
+        const messageEnd = message.substring(end, message.length);
+        const messageSelection = message.substring(start, end);
+        return messageStart + formatStart + messageSelection + formatEnd + messageEnd;
+    }
+
+    applyFormatting = (selectionStart, selectionEnd, formatStart, formatEnd) => {
+        const textarea = this.getTextAreaElement();
+
+        // apply new formatting
+        const newMessage = this.getFormattedMessage(this.state.message, selectionStart, selectionEnd, formatStart, formatEnd);
+        textarea.value = newMessage;
+
+        // force update existing infrastructure
+        this.handleChange({
+            target: {
+                value: newMessage,
+            },
+        });
+    }
+
+    setMessageSelection = (selectionStart, selectionEnd) => {
+        const textarea = this.getTextAreaElement();
+        textarea.selectionStart = selectionStart;
+        textarea.selectionEnd = selectionEnd;
+    }
+
     render() {
         const {
             currentChannel,
@@ -1181,6 +1283,108 @@ export default class CreatePost extends React.Component {
             attachmentsDisabled = ' post-create--attachment-disabled';
         }
 
+        const boldButtonAriaLabel = formatMessage({id: 'post_editor.boldButton', defaultMessage: 'Toggle bold'}).toLowerCase();
+        const boldButton = (
+            <div
+                ref='boldButton'
+                className={'post-editor__button' + (this.state.showpostEditorTools ? '' : ' post-editor__button--hidden') + (this.state.boldButtonActive ? ' post-editor__button--toggled' : '')}
+            >
+                <button
+                    type='button'
+                    aria-label={boldButtonAriaLabel}
+                    onClick={this.handleBoldButtonClick}
+                    className='style--none post-action'
+                >
+                    <BoldIcon/>
+                </button>
+            </div>
+        );
+
+        const italicsButtonAriaLabel = formatMessage({id: 'post_editor.italicsButton', defaultMessage: 'Toggle italics'}).toLowerCase();
+        const italicsButton = (
+            <div
+                ref='italicsButton'
+                className={'post-editor__button' + (this.state.showpostEditorTools ? '' : ' post-editor__button--hidden') + (this.state.italicsButtonActive ? ' post-editor__button--toggled' : '')}
+            >
+                <button
+                    type='button'
+                    aria-label={italicsButtonAriaLabel}
+                    onClick={this.handleItalicsButtonClick}
+                    className='style--none post-action'
+                >
+                    <ItalicsIcon/>
+                </button>
+            </div>
+        );
+
+        const strikeButtonAriaLabel = formatMessage({id: 'post_editor.strikeButton', defaultMessage: 'Toggle strike out'}).toLowerCase();
+        const strikeButton = (
+            <div
+                ref='strikeButton'
+                className={'post-editor__button' + (this.state.showpostEditorTools ? '' : ' post-editor__button--hidden') + (this.state.strikeButtonActive ? ' post-editor__button--toggled' : '')}
+            >
+                <button
+                    type='button'
+                    aria-label={strikeButtonAriaLabel}
+                    onClick={this.handleStrikeButtonClick}
+                    className='style--none post-action'
+                >
+                    <StrikeIcon/>
+                </button>
+            </div>
+        );
+
+        const linkButtonAriaLabel = formatMessage({id: 'post_editor.italicsButton', defaultMessage: 'Add link'}).toLowerCase();
+        const linkButton = (
+            <div
+                ref='linkButton'
+                className={'post-editor__button' + (this.state.showpostEditorTools ? '' : ' post-editor__button--hidden') + (this.state.linkButtonActive ? ' post-editor__button--toggled' : '')}
+            >
+                <button
+                    type='button'
+                    aria-label={linkButtonAriaLabel}
+                    onClick={this.handleLinkButtonClick}
+                    className='style--none post-action'
+                >
+                    <LinkIconSmall/>
+                </button>
+            </div>
+        );
+
+        const codeButtonAriaLabel = formatMessage({id: 'post_editor.codeButton', defaultMessage: 'Add code block'}).toLowerCase();
+        const codeButton = (
+            <div
+                ref='codeButton'
+                className={'post-editor__button' + (this.state.showpostEditorTools ? '' : ' post-editor__button--hidden') + (this.state.codeButtonActive ? ' post-editor__button--toggled' : '')}
+            >
+                <button
+                    type='button'
+                    aria-label={codeButtonAriaLabel}
+                    onClick={this.handleCodeButtonClick}
+                    className='style--none post-action'
+                >
+                    <CodeIcon/>
+                </button>
+            </div>
+        );
+
+        let postEditorTools;
+        const postEditorToolsButtonAriaLabel = formatMessage({id: 'post_editor.formattingTools', defaultMessage: 'Show formatting tools'}).toLowerCase();
+        if (!readOnlyChannel && !this.state.showPreview) {
+            postEditorTools = (
+                <div className={'post-editor__button' + (this.state.showpostEditorTools ? ' post-editor__button--toggled' : '')}>
+                    <button
+                        type='button'
+                        aria-label={postEditorToolsButtonAriaLabel}
+                        onClick={this.togglePostEditorTools}
+                        className='style--none post-action'
+                    >
+                        <ShowFormattingIcon/>
+                    </button>
+                </div>
+            );
+        }
+
         let fileUpload;
         if (!readOnlyChannel && !this.state.showPreview) {
             fileUpload = (
@@ -1203,10 +1407,13 @@ export default class CreatePost extends React.Component {
 
         if (this.props.enableEmojiPicker && !readOnlyChannel && !this.state.showPreview) {
             emojiPicker = (
-                <div>
+                <div
+                    ref='showEmojiPickerButton'
+                    className={'post-editor__button' + (this.state.showEmojiPicker ? ' post-editor__button--toggled' : '')}
+                >
                     <EmojiPickerOverlay
                         show={this.state.showEmojiPicker}
-                        target={this.getCreatePostControls}
+                        target={this.getEmojiPickerButton}
                         onHide={this.hideEmojiPicker}
                         onEmojiClose={this.handleEmojiClose}
                         onEmojiClick={this.handleEmojiClick}
@@ -1222,12 +1429,33 @@ export default class CreatePost extends React.Component {
                     >
                         <EmojiIcon
                             id='emojiPickerButton'
-                            className={'icon icon--emoji ' + (this.state.showEmojiPicker ? 'active' : '')}
+                            className='icon icon--emoji'
                         />
                     </button>
                 </div>
             );
         }
+
+        const sendButton = (
+            <a
+                role='button'
+                tabIndex='0'
+                aria-label={formatMessage({
+                    id: 'create_post.send_message',
+                    defaultMessage: 'Send a message',
+                })}
+                className={sendButtonClass}
+                onClick={this.handleSubmit}
+            >
+                <i
+                    className='fa fa-paper-plane'
+                    title={formatMessage({
+                        id: 'create_post.icon',
+                        defaultMessage: 'Send Post Icon',
+                    })}
+                />
+            </a>
+        );
 
         let createMessage;
         if (readOnlyChannel) {
@@ -1258,7 +1486,7 @@ export default class CreatePost extends React.Component {
                             id='centerChannelFooter'
                             aria-label={ariaLabelMessageInput}
                             tabIndex='-1'
-                            className='post-body__cell a11y__region'
+                            className={'post-editor post-body__cell a11y__region' + (this.state.showpostEditorTools ? ' post-editor__tools--visible' : '')}
                             data-a11y-sort-order='2'
                         >
                             <Textbox
@@ -1283,31 +1511,21 @@ export default class CreatePost extends React.Component {
                                 badConnection={this.props.badConnection}
                                 listenForMentionKeyClick={true}
                             />
-                            <span
+                            <div
                                 ref='createPostControls'
-                                className='post-body__actions'
+                                className='post-editor__tools'
                             >
+                                {boldButton}
+                                {italicsButton}
+                                {strikeButton}
+                                <div className={'post-editor__separator' + (this.state.showpostEditorTools ? '' : ' post-editor__button--hidden')}/>
+                                {linkButton}
+                                {codeButton}
+                                <div className='post-editor__expander'/>
+                                {postEditorTools}
                                 {fileUpload}
                                 {emojiPicker}
-                                <a
-                                    role='button'
-                                    tabIndex='0'
-                                    aria-label={formatMessage({
-                                        id: 'create_post.send_message',
-                                        defaultMessage: 'Send a message',
-                                    })}
-                                    className={sendButtonClass}
-                                    onClick={this.handleSubmit}
-                                >
-                                    <i
-                                        className='fa fa-paper-plane'
-                                        title={formatMessage({
-                                            id: 'create_post.icon',
-                                            defaultMessage: 'Send Post Icon',
-                                        })}
-                                    />
-                                </a>
-                            </span>
+                            </div>
                         </div>
                         {tutorialTip}
                     </div>

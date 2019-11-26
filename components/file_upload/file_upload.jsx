@@ -588,7 +588,7 @@ export default class FileUpload extends PureComponent {
 
         if (this.props.pluginFileUploadMethods.length === 0) {
             bodyAction = (
-                <div>
+                <React.Fragment>
                     <button
                         type='button'
                         id='fileUploadButton'
@@ -610,7 +610,7 @@ export default class FileUpload extends PureComponent {
                         multiple={multiple}
                         accept={accept}
                     />
-                </div>
+                </React.Fragment>
             );
         } else {
             const pluginFileUploadMethods = this.props.pluginFileUploadMethods.map((item) => {
@@ -688,7 +688,7 @@ export default class FileUpload extends PureComponent {
         }
 
         return (
-            <div className={uploadsRemaining <= 0 ? ' style--none btn-file__disabled' : 'style--none'}>
+            <div className={'post-editor__button' + (uploadsRemaining <= 0 ? ' btn-file__disabled' : '')}>
                 {bodyAction}
             </div>
         );

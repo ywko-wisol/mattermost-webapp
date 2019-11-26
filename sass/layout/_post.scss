@@ -628,6 +628,136 @@
     }
 }
 
+.post-editor {
+    border: solid 1px #d0d0d0;
+    border-radius: 4px;
+    background: #f3f3f3;
+
+    &__tools {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 44px;
+        pointer-events: none;
+    }
+
+    &__expander {
+        flex-grow: 2;
+        height: 44px;
+        pointer-events: none;
+    }
+
+    &__separator {
+        margin: 0 4px;
+        width: 1px;
+        height: 24px;
+        background: rgba(black, 0.2);
+        pointer-events: none;
+        visibility: visible;
+        opacity: 1;
+
+        &--hidden {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+
+            .enable-animations & {
+                transition:
+                    visibility $transition-quick 0s step-end,
+                    opacity $transition-quick 0s ease-in;
+            }
+        }
+
+        .enable-animations & {
+            transition:
+                visibility $transition-quick $transition-quick step-start,
+                opacity $transition-quick $transition-quick ease-out;
+        }
+    }
+
+    &__button {
+        padding: 6px;
+        width: 44px;
+        height: 44px;
+        pointer-events: all;
+        visibility: visible;
+        opacity: 1;
+
+        button {
+            width: 32px;
+            height: 32px;
+            color: black;
+            border-radius: 4px;
+            background: transparent;
+
+            &:hover {
+                background: rgba(20, 93, 191, 0.12);
+            }
+
+            > span {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                opacity: 0.64;
+            }
+
+            .enable-animations & {
+                transition:
+                    color $transition-quick 0s ease-in-out,
+                    background $transition-quick 0s ease-in-out;
+            }
+        }
+
+        &--hidden {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+
+            .enable-animations & {
+                transition:
+                    visibility $transition-quick 0s step-end,
+                    opacity $transition-quick 0s ease-in;
+            }
+        }
+
+        &--toggled {
+            button {
+                color: #145DBF;
+                background: rgba(20, 93, 191, 0.12);
+            }
+        }
+        .enable-animations & {
+            transition:
+                visibility $transition-quick $transition-quick step-start,
+                opacity $transition-quick $transition-quick ease-out;
+        }
+    }
+
+    .enable-animations & {
+        transition: padding $transition-medium 0s ease-in-out;
+    }
+
+    .form-control {
+        border: none;
+    }
+
+    .custom-textarea {
+        .enable-animations & {
+            transition: height $transition-medium 0s ease-in-out;
+        }
+    }
+
+    &__tools--visible {
+        padding-bottom: 44px;
+    }
+}
+
 .post-create-footer {
     font-size: 13px;
     padding: 6px 0 0;
