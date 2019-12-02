@@ -42,11 +42,11 @@ export default class VersionBar extends React.PureComponent {
         const {serverVersionOnAppLoad} = this.state;
         const {serverVersion} = this.props;
 
-        if (!serverVersionOnAppLoad) {
-            return null;
-        }
+        // if (!serverVersionOnAppLoad) {
+        //     return null;
+        // }
 
-        if (!equalServerVersions(serverVersionOnAppLoad, serverVersion)) {
+        if (!serverVersionOnAppLoad || equalServerVersions(serverVersionOnAppLoad, serverVersion)) {
             return (
                 <AnnouncementBar
                     type={AnnouncementBarTypes.ANNOUNCEMENT}
