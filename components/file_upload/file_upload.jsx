@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, {PureComponent} from 'react';
 import ReactDOM from 'react-dom';
-import {defineMessages, FormattedMessage} from 'react-intl';
+import {defineMessages, FormattedMessage, injectIntl} from 'react-intl';
 
 import dragster from 'utils/dragster';
 import Constants from 'utils/constants';
@@ -71,7 +71,7 @@ const customStyles = {
     top: 'auto',
 };
 
-export default class FileUpload extends PureComponent {
+class FileUpload extends PureComponent {
     static propTypes = {
 
         /**
@@ -698,3 +698,5 @@ export default class FileUpload extends PureComponent {
         );
     }
 }
+
+export default injectIntl(FileUpload, {withRef: true});
