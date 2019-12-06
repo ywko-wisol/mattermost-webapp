@@ -94,6 +94,8 @@ class FileUpload extends PureComponent {
          */
         getTarget: PropTypes.func.isRequired,
 
+        intl: intlShape.isRequired,
+
         locale: PropTypes.string.isRequired,
 
         /**
@@ -158,10 +160,6 @@ class FileUpload extends PureComponent {
              */
             handleFileUploadEnd: PropTypes.func.isRequired,
         }).isRequired,
-    };
-
-    static contextTypes = {
-        intl: intlShape,
     };
 
     static defaultProps = {
@@ -306,7 +304,7 @@ class FileUpload extends PureComponent {
 
         this.props.onUploadStart(clientIds, currentChannelId);
 
-        const {formatMessage} = this.context.intl;
+        const {formatMessage} = this.props.intl;
         const errors = [];
         if (sortedFiles.length > uploadsRemaining) {
             errors.push(formatMessage(holders.limited, {count: Constants.MAX_UPLOAD_FILES}));
@@ -442,7 +440,7 @@ class FileUpload extends PureComponent {
     containsEventTarget = (targetElement, eventTarget) => targetElement && targetElement.contains(eventTarget);
 
     pasteUpload = (e) => {
-        const {formatMessage} = this.context.intl;
+        const {formatMessage} = this.props.intl;
 
         if (!e.clipboardData || !e.clipboardData.items || getTable(e.clipboardData)) {
             return;
@@ -546,7 +544,7 @@ class FileUpload extends PureComponent {
         }
 
         const {onUploadError} = this.props;
-        const {formatMessage} = this.context.intl;
+        const {formatMessage} = this.props.intl;
 
         onUploadError(formatMessage(holders.limited, {count: Constants.MAX_UPLOAD_FILES}));
     }
@@ -572,7 +570,7 @@ class FileUpload extends PureComponent {
     }
 
     render() {
-        const {formatMessage} = this.context.intl;
+        const {formatMessage} = this.props.intl;
         let multiple = true;
         if (isMobileApp()) {
             // iOS WebViews don't upload videos properly in multiple mode
